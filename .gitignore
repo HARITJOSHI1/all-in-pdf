@@ -1,2 +1,2 @@
-/api/node_modules
-/api/config.env
+node_modules
+config.env
