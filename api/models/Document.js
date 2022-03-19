@@ -21,11 +21,6 @@ const docSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "Users",
   },
-
-  createdAt: {
-    type: Date,
-    required: true,
-  },
   
 });
 

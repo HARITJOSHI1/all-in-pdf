@@ -8,8 +8,8 @@ const PORT = process.env.PORT || 5000;
 const DB_PASS = process.env.DB_PASSWORD;
 const DB_URL = process.env.DB_URL.replace('<password>', DB_PASS);
 
-process.on('uncaughtException', () => {
-    console.log('UNCAUGHT EXCEPTION! Shutting down...');
+process.on('uncaughtException', (err) => {
+    console.log('UNCAUGHT EXCEPTION! Shutting down...', err);
     process.exit(1);
 });
 
