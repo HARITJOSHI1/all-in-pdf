@@ -1,12 +1,5 @@
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const server = require('./app');
-
-dotenv.config({path: './config.env'});
-const PORT = process.env.PORT || 5000;
-
-const DB_PASS = process.env.DB_PASSWORD;
-const DB_URL = process.env.DB_URL.replace('<password>', DB_PASS);
 
 process.on('uncaughtException', (err) => {
     console.log('UNCAUGHT EXCEPTION! Shutting down...', err);
@@ -20,6 +13,11 @@ process.on('unhandledRejection', (err) => {
     });
 });
 
+dotenv.config({path: './config.env'});
+const PORT = process.env.PORT || 5000;
+
+const DB_PASS = process.env.DB_PASSWORD;
+const DB_URL = process.env.DB_URL.replace('<password>', DB_PASS);
 
 mongoose
   .connect(DB_URL, {
@@ -29,6 +27,10 @@ mongoose
     useUnifiedTopology: true
   })
   .then(() => console.log('Database sucessfully connected'));
+
+ exports.sessionUrl = DB_URL; 
+
+const server = require('./app');
 
 server.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);

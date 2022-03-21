@@ -1,20 +1,10 @@
 const mongoose = require("mongoose");
+const Users = require("./Users");
 
 const docSchema = new mongoose.Schema({
   name: {
     type: String,
-    unique: true,
     required: [true, "Please provide name of the document"],
-  },
-
-  size: {
-    type: Number,
-    required: [true, "Please provide size of the document"],
-  },
-
-  type: {
-    type: String,
-    required: [true, "Please provide type of the document"],
   },
 
   userId: {
@@ -24,4 +14,5 @@ const docSchema = new mongoose.Schema({
   
 });
 
-module.exports = mongoose.model("Document", docSchema);
+
+module.exports = mongoose.model("Documents", docSchema);
