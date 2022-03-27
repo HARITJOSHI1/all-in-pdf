@@ -1,4 +1,5 @@
 const Users = require("../models/Users");
+const DocSaver = require("../utils/classes/DocSaver");
 // const {client} = require("./initRedis");
 
 // const { promisify } = require("util");
@@ -13,8 +14,10 @@ exports.createUser = async (req, res, next) => {
     //     return;
     // }
 
-    const {_id} = await Users.create({});
-    req.session.userId = _id;
+    const {id} = await Users.create({});
+    req.session.userId = id;
+
+    DocSaver.initDoc(req.session.userId);
     // await client.set(_id, true);
     next();
 }
