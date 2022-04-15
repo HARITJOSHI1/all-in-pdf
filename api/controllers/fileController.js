@@ -38,9 +38,13 @@ exports.compress = async (req, res, next) => {
 exports.encrypt = async (req, res, next) => {
   console.log("File encrypting ......");
 
+  const rules = {
+    e_extract_content: false	
+  }
+
   await (await Encryption.secure(
     req.files[0],
-    undefined,
+    rules,
     "owner",
     req.session.userId
   )).encryptViaPass("test");
