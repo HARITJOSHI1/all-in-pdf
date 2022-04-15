@@ -1,6 +1,8 @@
-const path  = require('path');
+const path = require("path");
 const multer = require("multer");
 const CompressPDF = require("../utils/classes/compressPDF");
+// const { WordToPDF } = require("../utils/classes/Conversion");
+const Encryption = require("../utils/classes/Security");
 
 const multerStorage = multer.memoryStorage();
 const multerFilter = (req, file, cb) => {
@@ -11,21 +13,40 @@ const multerFilter = (req, file, cb) => {
 };
 
 const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
-exports.uploadFiles = upload.array('files', 10);
+exports.uploadFiles = upload.array("files", 10);
 
-// exports.save = async (req, res, next) => {
-//   console.log("File saving ......");
-//   const {userId} = req.session;
-//   await new DocSave(userId, req.files).saveToDB(req.files);
-//   next();
-// }
-
-exports.compress = async(req, res, next) => {
+exports.compress = async (req, res, next) => {
   console.log("File compressing ......");
   await CompressPDF.compress(req.files);
 
   res.status(200).json({
     status: "success",
-    message: "PDF compressed"
+    message: "PDF compressed",
   });
-}
+};
+
+// exports.convert = async (req, res, next) => {
+//   console.log("File converting ......");
+//   WordToPDF.files(req.files);
+
+//   res.status(200).json({
+//     status: "success",
+//     message: "converted",
+//   });
+// };
+
+exports.encrypt = async (req, res, next) => {
+  console.log("File encrypting ......");
+
+  await (await Encryption.secure(
+    req.files[0],
+    undefined,
+    "owner",
+    req.session.userId
+  )).encryptViaPass("test");
+
+  res.status(200).json({
+    status: "success",
+    message: "encypted",
+  });
+};
