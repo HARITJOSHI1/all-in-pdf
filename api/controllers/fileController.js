@@ -47,7 +47,7 @@ exports.encrypt = async (req, res, next) => {
     rules,
     "owner",
     req.session.userId
-  )).encryptViaPass("test");
+  )).encryptViaPass(req.password);
 
   res.status(200).json({
     status: "success",
