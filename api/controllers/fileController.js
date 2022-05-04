@@ -2,6 +2,7 @@ const path = require("path");
 const multer = require("multer");
 const CompressPDF = require("../utils/classes/compressPDF");
 // const { WordToPDF } = require("../utils/classes/Conversion");
+const catchAsync = require("../utils/catchAsync");
 const Encryption = require("../utils/classes/Security");
 
 const multerStorage = multer.memoryStorage();
@@ -15,7 +16,7 @@ const multerFilter = (req, file, cb) => {
 const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 exports.uploadFiles = upload.array("files", 10);
 
-exports.compress = async (req, res, next) => {
+exports.compress = catchAsync(async (req, res, next) => {
   console.log("File compressing ......");
   await CompressPDF.compress(req.files);
 
@@ -23,7 +24,7 @@ exports.compress = async (req, res, next) => {
     status: "success",
     message: "PDF compressed",
   });
-};
+});
 
 // exports.convert = async (req, res, next) => {
 //   console.log("File converting ......");
@@ -35,7 +36,7 @@ exports.compress = async (req, res, next) => {
 //   });
 // };
 
-exports.encrypt = async (req, res, next) => {
+exports.encrypt = catchAsync(async (req, res, next) => {
   console.log("File encrypting ......");
 
   const rules = {
@@ -53,4 +54,4 @@ exports.encrypt = async (req, res, next) => {
     status: "success",
     message: "encypted",
   });
-};
+});
