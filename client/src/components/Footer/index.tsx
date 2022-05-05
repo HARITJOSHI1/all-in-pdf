@@ -179,7 +179,7 @@ export default function Footer(props: Props) {
   };
 
   return (
-    <Box sx={{ pt: "2rem" }}>
+    <Box sx={{ pt: "4rem" }}>
       <Stack
         sx={{
           bgcolor: "secondary.dark",
