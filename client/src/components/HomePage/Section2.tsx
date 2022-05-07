@@ -41,7 +41,7 @@ export default function Section2(props: Props) {
 
               <Typography
                 component="span"
-                sx={{ fontSize: "1.1rem", px: "1rem" }}
+                sx={{px: "1rem" }}
               >
                 21 tools to convert, compress, and edit PDFs for free. Try it
                 out today!

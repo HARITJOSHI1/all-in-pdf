@@ -7,7 +7,7 @@ import { history } from "./history";
 import { createTheme, useMediaQuery } from "@mui/material";
 import { addGlobalMediaQ, AdddMediaQ } from "./actions";
 import { GMQ } from "./reducers";
-import HomePage from "./Sections";
+import HomePage from "./HomePage";
 
 interface Props {
   addGlobalMediaQ: (q: Record<keyof GMQ, boolean>) => AdddMediaQ;
