@@ -11,7 +11,7 @@ interface Props {
 export default function Section4(props: Props) {
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
   return (
-    <section>
+    <section style={{ borderBottom: "1px solid #CECFD3", paddingBottom: "2rem" }}>
       <Stack
         direction="column"
         alignItems="center"

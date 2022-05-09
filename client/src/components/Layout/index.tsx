@@ -28,13 +28,37 @@ interface Props {
 
 const theme = createTheme({
   typography: {
+
+    h1: {
+      color: "#2D3246"
+    },
+
+    h2: {
+      color: "#2D3246",
+      fontWeight: "700"
+    },
+
+    h3: {
+      color: "#2D3246",
+      fontWeight: "700"
+    },
+
+    h4: {
+      fontWeight: "700", 
+      color: "#2D3246"
+    },
+
     h5: {
       "@media (min-width: 300px)": {
         fontSize: "1.2rem",
       },
+
+      color: "#2D3246"
     },
 
+
     fontFamily: "Plus Jakarta Sans",
+    
   },
 
   palette: {

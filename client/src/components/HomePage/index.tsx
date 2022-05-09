@@ -5,6 +5,7 @@ import Section1 from "./Section1";
 import Section2 from "./Section2";
 import Section3 from "./Section3";
 import Section4 from "./Section4";
+import Section5 from "./Section5";
 
 interface Props {
   breakpoint: GMQ;
@@ -17,6 +18,7 @@ const _HomePage: React.FC<Props> = ({ breakpoint }) => {
       <Section2 breakpoint={breakpoint} />
       <Section3 breakpoint={breakpoint} />
       <Section4 breakpoint={breakpoint}/>
+      <Section5 breakpoint={breakpoint} />
     </>
   );
 };

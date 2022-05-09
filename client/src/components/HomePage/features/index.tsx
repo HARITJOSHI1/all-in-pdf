@@ -81,7 +81,6 @@ export default function Features(props: Props) {
                 <Stack direction="column" spacing={3} justifyContent= "center">
                   <Typography
                     variant="h4"
-                    sx={{ fontWeight: "700", color: "secondary.dark" }}
                   >
                     {f.feature}
                   </Typography>

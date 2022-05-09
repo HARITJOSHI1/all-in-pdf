@@ -15,6 +15,8 @@ interface Props {
 }
 
 export default function Section2(props: Props) {
+  const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
+  
   return (
     <section
       style={{ borderBottom: "1px solid #CECFD3", paddingBottom: "2rem" }}
@@ -30,11 +32,9 @@ export default function Section2(props: Props) {
             >
               <Typography
                 variant="h2"
-                sx={{
+                sx={[{
                   fontSize: "3rem",
-                  fontWeight: "700",
-                  color: "secondary.dark",
-                }}
+                }, mobile && {fontSize: "2.5rem"}]}
               >
                 Popular tools
               </Typography>
