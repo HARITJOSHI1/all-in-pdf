@@ -78,12 +78,8 @@ export default function Features(props: Props) {
                 lg={6}
                 sx={{ display: "flex", justifyContent: "center" }}
               >
-                <Stack direction="column" spacing={3} justifyContent= "center">
-                  <Typography
-                    variant="h4"
-                  >
-                    {f.feature}
-                  </Typography>
+                <Stack direction="column" spacing={3} justifyContent="center">
+                  <Typography variant="h4">{f.feature}</Typography>
 
                   <Typography sx={{ color: "secondary.dark" }}>
                     {f.description}
@@ -119,7 +115,15 @@ export default function Features(props: Props) {
                 lg={6}
                 sx={{ display: "flex", justifyContent: "center" }}
               >
-                <img src={f.img} alt="" style={{ width: "100%" }} />
+                <img
+                  src={f.img}
+                  alt=""
+                  style={{
+                    width: "100%",
+                    pointerEvents: "none",
+                    userSelect: "none",
+                  }}
+                />
               </Grid>
             </Grid>
           </Grid>

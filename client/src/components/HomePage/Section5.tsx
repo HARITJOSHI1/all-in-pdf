@@ -51,15 +51,18 @@ const GenerateReasons: React.FC<Props> = (props: Props) => {
           <Grid
             key={idx}
             container
-            sx={{ position: "relative", zIndex: "1000" , width: "95%"}}
+            sx={{ position: "relative", zIndex: "1000", width: "95%" }}
           >
             <Grid item xs={2} sm={2} lg={2}>
               <Icon
-                sx={[{
-                  display: "inline-block",
-                  width: "90%",
-                  height: "100%",
-                }, mobile && {width: "90%"}]}
+                sx={[
+                  {
+                    display: "inline-block",
+                    width: "90%",
+                    height: "100%",
+                  },
+                  mobile && { width: "90%" },
+                ]}
               >
                 <svg width={0} height={0}>
                   <linearGradient id="linearColors" x1={1} y1={0} x2={1} y2={1}>
@@ -82,7 +85,10 @@ const GenerateReasons: React.FC<Props> = (props: Props) => {
               <Stack direction="column" spacing={2}>
                 <Typography
                   variant="h4"
-                  sx={[{width: "max-content"}, tabPort && { fontSize: "1.7rem" }]}
+                  sx={[
+                    { width: "max-content" },
+                    tabPort && { fontSize: "1.7rem" },
+                  ]}
                 >
                   {r.head}
                 </Typography>
@@ -117,9 +123,11 @@ export default function Section5(props: Props) {
         direction="column"
         alignItems="center"
         sx={{ pt: "6rem" }}
-        spacing={mobile? 1 : 10}
+        spacing={mobile ? 1 : 10}
       >
-        <Typography variant="h2" sx= {[mobile && {fontSize: "2.5rem"}]}>Why Choose Us ?</Typography>
+        <Typography variant="h2" sx={[mobile && { fontSize: "2.5rem" }]}>
+          Why Choose Us ?
+        </Typography>
 
         <Grid container sx={{ overflow: "hidden" }}>
           <Stack direction={mobile ? "column" : "row"}>
@@ -132,7 +140,15 @@ export default function Section5(props: Props) {
               justifyContent="center"
             >
               <Box>
-                <img src={WCU} alt="some" style={{ width: "100%" }} />
+                <img
+                  src={WCU}
+                  alt="some"
+                  style={{
+                    width: "100%",
+                    pointerEvents: "none",
+                    userSelect: "none",
+                  }}
+                />
               </Box>
             </Grid>
 
@@ -149,7 +165,11 @@ export default function Section5(props: Props) {
               alignItems="center"
               justifyContent="center"
             >
-              <Stack spacing={4} direction="column" sx= {[mobile && {alignItems: "center", mt: "2rem"}]}>
+              <Stack
+                spacing={4}
+                direction="column"
+                sx={[mobile && { alignItems: "center", mt: "2rem" }]}
+              >
                 <GenerateReasons breakpoint={props.breakpoint} />
               </Stack>
             </Grid>
@@ -172,7 +192,8 @@ export default function Section5(props: Props) {
                     <img
                       src={dots}
                       alt="some"
-                      style={{ width: "40rem", opacity: ".6" }}
+                      style={{ width: "40rem", opacity: ".6", pointerEvents: "none",
+                      userSelect: "none", }}
                     />
                   </Box>
                 </Grid>
@@ -181,7 +202,8 @@ export default function Section5(props: Props) {
                     <img
                       src={wcuBlob}
                       alt="some"
-                      style={{ width: "50rem", opacity: ".84" }}
+                      style={{ width: "50rem", opacity: ".84", pointerEvents: "none",
+                      userSelect: "none", }}
                     />
                   </Box>
                 </Grid>

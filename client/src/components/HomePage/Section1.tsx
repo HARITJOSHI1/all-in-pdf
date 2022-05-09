@@ -29,7 +29,11 @@ const _Home: React.FC<Props> = ({ breakpoint }) => {
         <Stack
           sx={[{ width: "50%", height: "20%" }, mobile && { width: "100%" }]}
         >
-          <img src={HomeIcon} alt="Home icon" />
+          <img
+            src={HomeIcon}
+            alt="Home icon"
+            style={{ pointerEvents: "none", userSelect: "none" }}
+          />
         </Stack>
       </Stack>
     </section>
