@@ -61,7 +61,9 @@ const GenerateReasons: React.FC<Props> = (props: Props) => {
                     width: "90%",
                     height: "100%",
                   },
-                  mobile && { width: "90%" },
+
+                  // tabLand && { width : "90%" },
+                  mobile && { width : "90%" },
                 ]}
               >
                 <svg width={0} height={0}>

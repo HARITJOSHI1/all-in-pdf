@@ -4,7 +4,7 @@ import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDown
 import { Context } from "../Layout";
 
 export default function DropDown(props: { tabLand: boolean }) {
-  const [showAccord, setAccord] = useContext(Context);
+  const {showAccord, setAccord} = useContext(Context)[0];
 
   useEffect(() => {
     if (props.tabLand) setAccord(false);

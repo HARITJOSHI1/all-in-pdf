@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 import * as Types from "../actions/types";
 import { AdddMediaQ } from "../actions";
+import {reducer as FormReducer} from 'redux-form'
 // eslint-disable-next-line import/no-anonymous-default-export
 
 export interface GMQ {
@@ -34,4 +35,5 @@ const mediaQueryReducer = (state: State, action: AdddMediaQ) => {
 
 export default combineReducers ({
   breakpoint: mediaQueryReducer,
+  signUp: FormReducer
 });

@@ -74,7 +74,7 @@ export default function Features(props: Props) {
                 item
                 xs={12}
                 sm={8}
-                md={7}
+                md={6}
                 lg={6}
                 sx={{ display: "flex", justifyContent: "center" }}
               >
@@ -111,7 +111,7 @@ export default function Features(props: Props) {
                 item
                 xs={12}
                 sm={4}
-                md={5}
+                md={6}
                 lg={6}
                 sx={{ display: "flex", justifyContent: "center" }}
               >

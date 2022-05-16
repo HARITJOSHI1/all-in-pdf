@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import MenuBtn from "../Buttons/Menu";
 import Logo from "../Logo";
-import EditBtn from "../Buttons/Button";
+import SignUp from "../Buttons/Button";
 import Container from "@mui/material/Container";
 import DropDown from "../Icons/dropDown";
 import { connect } from "react-redux";
@@ -48,7 +48,7 @@ const _NavBar: React.FC<Props> = ({ breakpoint }) => {
               >
                 <Logo />
 
-                {(mobile || tabPort || tabLand) && <DropDown tabLand = {tabLand}/>}
+                {(mobile || tabPort) && <DropDown tabLand = {tabLand}/>}
 
                 {(tabLand || desktop) && (
                   <MenuBtn
@@ -66,8 +66,8 @@ const _NavBar: React.FC<Props> = ({ breakpoint }) => {
                 <Translator />
 
                 {!mobile && (
-                  <EditBtn
-                    text="Edit Pdf"
+                  <SignUp
+                    text="Sign Up"
                     sx={[
                       {
                         backgroundColor: "#0055FF",
