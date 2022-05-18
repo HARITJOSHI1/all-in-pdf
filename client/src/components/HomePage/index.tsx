@@ -27,7 +27,7 @@ const _HomePage: React.FC<Props> = ({ breakpoint }) => {
 
 const mapStateToProps = (state: State) => {
   return {
-    breakpoint: state.breakpoint,
+    breakpoint: state.breakpoint as GMQ,
   };
 };
 
