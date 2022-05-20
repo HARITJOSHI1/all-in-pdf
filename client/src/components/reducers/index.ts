@@ -1,4 +1,4 @@
-import { UserData } from './../actions/index';
+import { UserData, FormDataUser } from './../actions/index';
 import { combineReducers } from "redux";
 import * as Types from "../actions/types";
 import { AdddMediaQ } from "../actions";
@@ -15,7 +15,7 @@ export interface GMQ {
 
 export interface State {
   breakpoint: GMQ | null;
-  user: User | null;
+  user: User | FormDataUser | null;
 }
 
 const globalMedia: GMQ = {

@@ -70,7 +70,7 @@ export default function Index(props: Props) {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            height: "80%",
+            height: "85%",
             aspectRatio: "16/9",
           },
           tabLand && { height: "80%" },

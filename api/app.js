@@ -10,6 +10,8 @@ const cookieParser = require('cookie-parser');
 const {createUser} = require('./utils/createUser');
 const {sessionUrl} = require("./server");
 const AppError  = require("./utils/classes/AppError");
+const entryRoute = require("./routes/entryRoute");
+const refreshRoute = require("./routes/refreshRoute"); 
 
 const app = express();
 
@@ -36,6 +38,9 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, '/views'));
 
 app.use('/api/v1/pdf', createUser, testRoute);
+app.use('/api/v1/entry', entryRoute);
+app.use('/api/v1/refresh', refreshRoute);
+
 app.all("*", (req, res, next) => {
     next(new AppError(404, "Page is not found"));
 });

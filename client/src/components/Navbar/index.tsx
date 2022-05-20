@@ -13,19 +13,18 @@ import { connect } from "react-redux";
 import { GMQ, State } from "../reducers";
 import Translator from "../Translator";
 import { User } from "firebase/auth";
+import { FormDataUser } from "../actions";
 
 
 const navOpts = ["Compress", "Convert", "Merge", "Edit", "Sign"];
 
 interface Props {
   breakpoint: GMQ;
-  user: User;
+  user: User | FormDataUser;
 }
 
 const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
-  const { mobile, tabPort, tabLand, desktop } = breakpoint;
-  console.log(user);
-  
+  const { mobile, tabPort, tabLand, desktop } = breakpoint;  
   return (
     <>
       <AppBar
@@ -68,8 +67,8 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
               >
                 <Translator />
 
-                {!mobile && (
-                  !(user.displayName) && <SignUpBtn
+                {(desktop || tabLand) && (
+                  !(Object.keys(user).length) && <SignUpBtn 
                     text="Sign Up"
                     sx={[
                       {
@@ -102,7 +101,7 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
 const mapStateToProps = (state: State) => {
   return {
     breakpoint: state.breakpoint as GMQ,
-    user: state.user as User
+    user: state.user as User | FormDataUser
   };
 };
 

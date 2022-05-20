@@ -1,4 +1,4 @@
-import { Auth, User, UserCredential } from "firebase/auth";
+import { Auth, User } from "firebase/auth";
 import { firebase } from "../../firebaseInit";
 import {
     GoogleAuthProvider,

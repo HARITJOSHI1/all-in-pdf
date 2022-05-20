@@ -44,6 +44,8 @@ const App: React.FC<Props> = (props) => {
   useEffect(() => {
     const auth = firebase.auth();
     firebase.onAuthStateChanged(auth, (user) => {
+      console.log(user);
+      
       if (user) {
         props.addGlobalUser(user);
       }
