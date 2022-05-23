@@ -1,24 +1,18 @@
 module.exports = class AppError extends Error {
-    constructor(status, msg) {
+    constructor(status, msg = null, methodName, code = null, isOperational = true) {
         super();
-        this.status = status;
-        this.msg = msg;
-        this.error = this.generateError();
+        this.statusCode = status;
+        this.code = code;
+        this.status = this.getStatus(status);
+        this.methodName = methodName;
+        this.message = msg;
+        this.isOperational = isOperational;
+        this.stack = Error.captureStackTrace(this);
     }
 
     getStatus(status){
-        const statusMsg = [["Unauthorized", 204], ["Internal Error", 500], ["Bad request", 400], ["Success", 200], ["Not Found", 404]]
+        const statusMsg = [["Unauthorized", 401], ["Internal Error", 500], ["Bad request", 400], ["Success", 200], ["Not Found", 404], ["Conflicting", 409]]
         const [msg] = statusMsg.find(([m, s]) => s === status);
         return msg;
-    }
-
-    generateError(){
-        return {
-            statusCode: this.status,
-            status: this.getStatus(this.status),
-            message: this.message,
-            isOperational: true,
-            stack: Error.captureStackTrace(this, this.constructor)
-        }
     }
 }

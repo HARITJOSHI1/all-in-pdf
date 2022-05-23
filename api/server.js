@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const server = require('./app');
 
 process.on('uncaughtException', (err) => {
     console.log('UNCAUGHT EXCEPTION! Shutting down...', err);
@@ -8,9 +9,10 @@ process.on('uncaughtException', (err) => {
 
 process.on('unhandledRejection', (err) => {
     console.log('UNHANDLED REJECTION! Shutting down...', err);
-    server.close(() => {
-        process.exit(1);
-    });
+    process.exit(1);
+    // server.close(() => {
+    //     process.exit(1);
+    // });
 });
 
 dotenv.config({path: './config.env'});
@@ -30,7 +32,6 @@ mongoose
 
  exports.sessionUrl = DB_URL; 
 
-const server = require('./app');
 
 server.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);

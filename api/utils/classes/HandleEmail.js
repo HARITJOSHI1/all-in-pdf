@@ -1,4 +1,5 @@
 const GenerateEmailStruc = require("./GenerateEmailStruc");
+const AppError = require("../classes/AppError");
 const Email = require("./Emails");
 
 exports.VerificationEmail = class VerificationEmail extends GenerateEmailStruc {
@@ -32,10 +33,17 @@ exports.VerificationEmail = class VerificationEmail extends GenerateEmailStruc {
     try {
       await new Email(this.struct).sendVerificationEmail();
     } catch (err) {
-      this.instance.verifyEmail = undefined;
-      this.instance.verifyEmailExp = undefined;
-      await this.instance.save({ validateBeforeSave: false });
-      console.log(err);
+      
+      await this.instance.findByIdAndUpdate(this.instance.id, {
+        verifyEmail: undefined,
+        verifyEmailExp: undefined,
+      });
+
+      throw new AppError(
+        500,
+        "Email validation failed",
+        `fn send(), ${__dirname}`
+      );
     }
   }
 };

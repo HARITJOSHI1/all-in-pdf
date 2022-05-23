@@ -4,6 +4,7 @@ const CompressPDF = require("../utils/classes/compressPDF");
 // const { WordToPDF } = require("../utils/classes/Conversion");
 const catchAsync = require("../utils/catchAsync");
 const Encryption = require("../utils/classes/Security");
+const AppError = require("../utils/classes/AppError");
 
 const multerStorage = multer.memoryStorage();
 const multerFilter = (req, file, cb) => {
@@ -18,7 +19,9 @@ exports.uploadFiles = upload.array("files", 10);
 
 exports.compress = catchAsync(async (req, res, next) => {
   console.log("File compressing ......");
-  await CompressPDF.compress(req.files);
+  const file = await CompressPDF.compress(req.files);
+
+  if(!file) throw new AppError(500, "Failed to compress", ` fn upload(),  ${__filename}`);
 
   res.status(200).json({
     status: "success",
@@ -43,12 +46,14 @@ exports.encrypt = catchAsync(async (req, res, next) => {
     e_extract_content: false	
   }
 
-  await (await Encryption.secure(
+  const file = await (await Encryption.secure(
     req.files[0],
     rules,
     "owner",
     req.session.userId
   )).encryptViaPass(req.password);
+
+  if(!file) throw new AppError(500, "Failed to compress", ` fn upload(),  ${__filename}`);
 
   res.status(200).json({
     status: "success",
