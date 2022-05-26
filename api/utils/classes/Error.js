@@ -1,36 +1,40 @@
-const setDevErr = (err) => {
+const setDevErr = (err, res) => {
   const devErr = {
     statusCode: err.statusCode,
     status: err.status,
+    reason: err?.reason,
     message: err.message,
     method: err.methodName,
     stack: err.stack,
   };
   console.log("Error occured during development", devErr);
+
+  return res.status(devErr.statusCode).json({
+    status: devErr.status,
+    message: devErr.message,
+  });
 };
 
-const setProdErr = (err, req, res) => {
+const setProdErr = (err, res) => {
   const prodErr = {
     statusCode: err.statusCode,
     status: err.status,
     message: err.message,
-    stack: err.stack,
   };
 
   console.log("Error occured during production", prodErr);
 
   return res.status(prodErr.statusCode).json({
     status: prodErr.status,
-    message: err.msg ? err.msg : "Something went wrong",
+    message: prodErr.message ? prodErr.message : "Something went wrong",
   });
 };
 
-module.exports = async (err, res, req, next) => {
+module.exports = async (err, req, res, next) => {
   const error = { ...err };
-  console.log("Error handling middleware...");
 
-  if (process.env.NODE_ENV === "development") setDevErr(error);
-  else setProdErr(error);
+  if (process.env.NODE_ENV === "development") setDevErr(error, res);
+  else setProdErr(error, res);
 
   next();
 };

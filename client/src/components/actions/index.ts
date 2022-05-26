@@ -9,7 +9,7 @@ export interface AdddMediaQ {
 
 export interface UserData {
   type: Types.User.user;
-  payload: User | FormDataUser;
+  payload: User | FormDataUser | null;
 }
 
 export type FormDataUser = {
@@ -24,7 +24,7 @@ export const addGlobalMediaQ = (q: Record<keyof GMQ, boolean>): AdddMediaQ => {
   };
 };
 
-export const addGlobalUser = (data: User | FormDataUser): UserData => {
+export const addGlobalUser = (data: User | FormDataUser | null): UserData => {
   return {
     type: Types.User.user,
     payload: data,

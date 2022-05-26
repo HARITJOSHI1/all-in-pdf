@@ -14,13 +14,14 @@ import { GMQ, State } from "../reducers";
 import Translator from "../Translator";
 import { User } from "firebase/auth";
 import { FormDataUser } from "../actions";
+import DisplayImg from "./DisplayImg";
 
 
 const navOpts = ["Compress", "Convert", "Merge", "Edit", "Sign"];
 
 interface Props {
   breakpoint: GMQ;
-  user: User | FormDataUser;
+  user: User | FormDataUser | null;
 }
 
 const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
@@ -67,8 +68,8 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
               >
                 <Translator />
 
-                {(desktop || tabLand) && (
-                  !(Object.keys(user).length) && <SignUpBtn 
+                {
+                  user? <DisplayImg /> : (desktop || tabLand) && <SignUpBtn 
                     text="Sign Up"
                     sx={[
                       {
@@ -89,7 +90,7 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
                       },
                     ]}
                   />
-                )}
+                }
               </Stack>
           </Toolbar>
         </Container>
@@ -101,7 +102,7 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
 const mapStateToProps = (state: State) => {
   return {
     breakpoint: state.breakpoint as GMQ,
-    user: state.user as User | FormDataUser
+    user: state.user
   };
 };
 

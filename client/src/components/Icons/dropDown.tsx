@@ -8,7 +8,7 @@ export default function DropDown(props: { tabLand: boolean }) {
 
   useEffect(() => {
     if (props.tabLand) setAccord(false);
-  }, [props.tabLand]);
+  }, [props.tabLand, setAccord]);
 
   const openDropDown = () => setAccord(!showAccord);
 
