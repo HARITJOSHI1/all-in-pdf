@@ -107,6 +107,7 @@ module.exports = class Encryption extends Security {
         name: this.fileName,
         orignalName: this.doc.originalname,
         buffer: buf,
+        size: [Buffer.byteLength(buf)],
         isEncrypted: true,
         password: pass,
         userId: this.uid,
