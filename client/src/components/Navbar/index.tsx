@@ -15,9 +15,15 @@ import Translator from "../Translator";
 import { User } from "firebase/auth";
 import { FormDataUser } from "../actions";
 import DisplayImg from "./DisplayImg";
+import { OpKeys } from "../PDFOps/Operations";
 
-
-const navOpts = ["Compress", "Convert", "Merge", "Edit", "Sign"];
+const navOpts: {name: string, link: OpKeys}[] = [
+  { name: "Compress", link: "compress-pdf" },
+  { name: "Word to PDF", link: "word-pdf" },
+  { name: "Merge", link: "merge-pdf" },
+  { name: "Edit", link: "edit-pdf" },
+  { name: "Sign", link: "esign-pdf" },
+];
 
 interface Props {
   breakpoint: GMQ;
@@ -25,7 +31,7 @@ interface Props {
 }
 
 const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
-  const { mobile, tabPort, tabLand, desktop } = breakpoint;  
+  const { mobile, tabPort, tabLand, desktop } = breakpoint;
   return (
     <>
       <AppBar
@@ -40,36 +46,43 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
             disableGutters
             sx={{ display: "flex", justifyContent: "space-between" }}
           >
-              <Box
-                sx={[
-                  { display: "flex", alignItems: "center", ml: "6rem" },
-                  (mobile || tabPort) && {
-                    width: "100%",
-                    ml: "1rem",
-                  },
-                ]}
-              >
-                <Logo />
+            <Box
+              sx={[
+                { display: "flex", alignItems: "center", ml: "6rem" },
+                (mobile || tabPort) && {
+                  width: "100%",
+                  ml: "1rem",
+                },
+              ]}
+            >
+              <Logo />
 
-                {(mobile || tabPort) && <DropDown tabLand = {tabLand}/>}
+              {(mobile || tabPort) && <DropDown tabLand={tabLand} />}
 
-                {(tabLand || desktop) && (
-                  <MenuBtn
-                    breakpoint={[mobile, tabLand, desktop]}
-                    navOpts={navOpts}
-                  />
-                )}
-              </Box>
+              {(tabLand || desktop) && (
+                <MenuBtn
+                  breakpoint={[mobile, tabLand, desktop]}
+                  navOpts={navOpts}
+                />
+              )}
+            </Box>
 
-              <Stack
-                direction="row"
-                spacing={5}
-                sx={[{ mr: "3rem" }, mobile && { mr: "1rem" }, tabPort && {mr: "1rem"}]}
-              >
-                <Translator />
+            <Stack
+              direction="row"
+              spacing={5}
+              sx={[
+                { mr: "3rem" },
+                mobile && { mr: "1rem" },
+                tabPort && { mr: "1rem" },
+              ]}
+            >
+              <Translator />
 
-                {
-                  user? <DisplayImg /> : (desktop || tabLand) && <SignUpBtn 
+              {user ? (
+                <DisplayImg />
+              ) : (
+                (desktop || tabLand) && (
+                  <SignUpBtn
                     text="Sign Up"
                     sx={[
                       {
@@ -90,8 +103,9 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
                       },
                     ]}
                   />
-                }
-              </Stack>
+                )
+              )}
+            </Stack>
           </Toolbar>
         </Container>
       </AppBar>
@@ -102,7 +116,7 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
 const mapStateToProps = (state: State) => {
   return {
     breakpoint: state.breakpoint as GMQ,
-    user: state.user
+    user: state.user,
   };
 };
 

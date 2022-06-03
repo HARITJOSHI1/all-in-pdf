@@ -20,6 +20,7 @@ exports.uploadFiles = upload.array("files", 10);
 
 exports.compress = catchAsync(async (req, res, next) => {
   console.log("File compressing ......");
+  console.log(req.files);
   const file = await CompressPDF.compress(req.files);
 
   if(!file) throw new AppError(500, "Failed to compress", ` fn upload(),  ${__dirname}`);

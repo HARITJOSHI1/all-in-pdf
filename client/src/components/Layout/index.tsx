@@ -7,7 +7,7 @@ import {
   Container,
 } from "@mui/material";
 import { createTheme, darken, ThemeProvider } from "@mui/material/styles";
-import React, { useState, createContext, useRef } from "react";
+import React, { useState, createContext, useRef, useEffect } from "react";
 import { connect } from "react-redux";
 import { NavBar } from "../Navbar";
 import Modal from "../Modal";
@@ -18,6 +18,7 @@ import SignUp from "../Entry/SignUp";
 import Login from "../Entry/Login";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "firebase/auth";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 interface ShowAccord {
   showAccord: boolean;
@@ -55,7 +56,7 @@ export const Context = createContext<contextStore>([
   { showLogin: false, setLogin: () => {} },
 ]);
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
   breakpoint: GMQ;
   children?: JSX.Element[] | null;
   user: User;
@@ -106,7 +107,16 @@ const theme = createTheme({
   },
 });
 
-const _Layout: React.FC<Props> = ({ children, breakpoint, user }) => {
+const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
+  useEffect(() => {
+    const unlisten = history.listen(() => {
+      window.scrollTo(0, 0);
+    });
+    return () => {
+      unlisten();
+    };
+  }, []);
+
   const { mobile, tabPort, tabLand, desktop } = breakpoint;
 
   const [showAccord, setAccord] = useState<boolean>(false);
@@ -137,7 +147,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user }) => {
         }}
       >
         {mNavOpt.map((ele: string, idx: number, arr: string[]) => {
-          if(idx === 5 && user) return null;
+          if (idx === 5 && user) return null;
 
           return (
             <ListItem
@@ -254,4 +264,4 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-export const Layout = connect(mapStateToProps)(_Layout);
+export const Layout = connect(mapStateToProps)(withRouter(_Layout));

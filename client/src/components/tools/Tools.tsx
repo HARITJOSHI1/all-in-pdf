@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
   alpha,
-  darken
+  darken,
 } from "@mui/material";
 import Word from "./icons/word.svg";
 import Merge from "./icons/merge.png";
@@ -18,6 +18,8 @@ import Edit from "./icons/edit.png";
 import Compress from "./icons/compress.png";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { GMQ } from "../reducers";
+import { OPERATIONS, OpKeys } from "../PDFOps/Operations";
+import { Link } from "react-router-dom";
 
 interface Tool {
   name: string;
@@ -30,99 +32,89 @@ interface Props {
   count: number;
 }
 
-const tools: Tool[] = [
-  { name: "PDF to Word", icon: Word, des: "Covert PDF into Word files easily" },
-  { name: "Merge PDF", icon: Merge, des: "Merge multiple PDF's into one" },
-  { name: "JPG to PDF", icon: Jpg, des: "Transform JPG and PNG images to PDF" },
-  {
-    name: "eSign PDF",
-    icon: eSign,
-    des: "Create your signature and sign multiple PDF's",
-  },
-  {
-    name: "Edit PDF",
-    icon: Edit,
-    des: "Add shapes, text and images to your PDF's",
-  },
-  {
-    name: "Compress PDF",
-    icon: Compress,
-    des: "Reduce the size of your PDF without loosing quality",
-  },
-];
-
 export default function Tools(props: Props) {
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
-  return (  
+  return (
     <>
-      {tools.map((t: Tool, idx: number) => {
-        if(idx === props.count) return null;
-        return (
-          <Grid key={t.name} item xs={12} sm={6} md={6} lg={4}>
-            <Box
-              sx={{
-                p: "1rem",
-                pt: "1rem",
-                height: "9rem",
-                backgroundColor: alpha("#CECFD3", 0.3),
-                borderRadius: "3px",
-                cursor: "pointer",
-                transition: ".2s",
+      {Object.keys(OPERATIONS).map((t: OpKeys | string, idx: number) => {
+        if (idx === props.count) return null;
+        else if (idx < 6) {
+          const key = t as OpKeys;
+          const obj = OPERATIONS[key];
 
-                "&:hover": {
-                    backgroundColor: alpha("#CECFD3", 0.7),
-                }
-              }}
-            >
-              <Grid container columnSpacing={2} sx= {{height: "100%"}}>
-                <Grid
-                  item
-                  xs={mobile ? 2 : 3}
+          return (
+            <Grid key={obj.name} item xs={12} sm={6} md={6} lg={4}>
+              <Link to={`operation/${key}`} style={{ textDecoration: "none" }}>
+                <Box
                   sx={{
-                    display: "flex",
-                    alignItems: "flex-start",
+                    p: "1rem",
+                    pt: "1rem",
+                    height: "9rem",
+                    backgroundColor: alpha("#CECFD3", 0.3),
+                    borderRadius: "3px",
+                    cursor: "pointer",
+                    transition: ".2s",
+
+                    "&:hover": {
+                      backgroundColor: alpha("#CECFD3", 0.7),
+                    },
                   }}
                 >
-                  <IconButton
-                    disableRipple
-                    sx={[
-                      { width: "100%", p: "0" },
-                    ]}
-                  >
-                    <Icon sx={[{ width: "100%", height: "100%" }]}>
-                      <img src={t.icon} alt="icon" style={{ width: "100%" }} />
-                    </Icon>
-                  </IconButton>
-                </Grid>
-
-                <Grid item xs={7}>
-                  <Stack spacing={1}>
-                    <Typography
-                      component="span"
+                  <Grid container columnSpacing={2} sx={{ height: "100%" }}>
+                    <Grid
+                      item
+                      xs={mobile ? 2 : 3}
                       sx={{
-                        width: "max-content",
-                        fontSize: ".9rem",
-                        fontWeight: "700",
+                        display: "flex",
+                        alignItems: "flex-start",
                       }}
                     >
-                      {" "}
-                      {t.name}
-                    </Typography>
-                    <Typography sx={{ fontSize: ".9rem" }}>{t.des}</Typography>
-                  </Stack>
-                </Grid>
+                      <IconButton
+                        disableRipple
+                        sx={[{ width: "100%", p: "0" }]}
+                      >
+                        <Icon sx={[{ width: "100%", height: "100%" }]}>
+                          <img
+                            src={obj.icon}
+                            alt="icon"
+                            style={{ width: "100%" }}
+                          />
+                        </Icon>
+                      </IconButton>
+                    </Grid>
 
-                <Grid item xs={2} sx={{ textAlign: "right" }}>
-                  <IconButton disableRipple>
-                    <Icon>
-                      <KeyboardArrowRightIcon />
-                    </Icon>
-                  </IconButton>
-                </Grid>
-              </Grid>
-            </Box>
-          </Grid>
-        );
+                    <Grid item xs={7}>
+                      <Stack spacing={1}>
+                        <Typography
+                          component="span"
+                          sx={{
+                            width: "max-content",
+                            fontSize: ".9rem",
+                            fontWeight: "700",
+                          }}
+                        >
+                          {" "}
+                          {obj.name}
+                        </Typography>
+                        <Typography sx={{ fontSize: ".9rem" }}>
+                          {obj.des}
+                        </Typography>
+                      </Stack>
+                    </Grid>
+
+                    <Grid item xs={2} sx={{ textAlign: "right" }}>
+                      <IconButton disableRipple>
+                        <Icon>
+                          <KeyboardArrowRightIcon />
+                        </Icon>
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Link>
+            </Grid>
+          );
+        }
       })}
     </>
   );
