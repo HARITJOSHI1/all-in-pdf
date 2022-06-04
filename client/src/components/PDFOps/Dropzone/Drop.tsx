@@ -2,13 +2,14 @@ import { Button, Grid, Icon, Stack, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import BackupTableIcon from "@mui/icons-material/BackupTable";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import UploadLoader from "./UploadLoader";
 import UploadBtn from "./PDFBtn";
 import { GMQ } from "../../reducers";
 import Result from "./Result/Result";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import {OPERATIONS, PDFOperations} from "../Operations";
+import {FileContext, RecievedFileData} from "./hook/useFileData";
 
 interface Props {
   breakpoint: GMQ;
@@ -18,6 +19,7 @@ interface Props {
 export default function Drop(props: Props) {
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
   const {param} = props;
+  const endPoint = param.split("-")[0];
 
   const obj = OPERATIONS[param];
 
@@ -33,6 +35,7 @@ export default function Drop(props: Props) {
   const [isUpload, setUpload] = useState<boolean>(false);
   const [isUploaded, setUploaded] = useState<boolean>(false);
   const [percentUploaded, setPercentUploaded] = useState<number>(0);
+  const [response, setResponse] = useState<RecievedFileData | null>(null);
 
   useEffect(() => {
     if (acceptedFiles.length) {
@@ -51,7 +54,7 @@ export default function Drop(props: Props) {
         allFiles.map((file: File) => fd.append("files", file));
 
         const res = await axios.post(
-          "http://localhost:5000/api/v1/pdf/compress",
+          `http://localhost:5000/api/v1/pdf/${endPoint}`,
           fd,
           {
             headers: {
@@ -68,6 +71,15 @@ export default function Drop(props: Props) {
 
         if (res.data) {
           console.log(res.data);
+
+          const response: RecievedFileData = {
+            file: res.data.zip,
+            csize: res.data.size,
+            filename: res.data.name,
+            size: res.data.size,
+          }
+
+          setResponse(response);
           setUpload(false);
           setUploaded(true);
           setAllFiles([]);
@@ -144,7 +156,14 @@ export default function Drop(props: Props) {
           </Grid>
         )}
 
-        {isUploaded && <Result breakpoint={props.breakpoint} />}
+
+        {/* {response as RecievedFileData}         */}
+                
+        {isUploaded && 
+          <FileContext.Provider value = {null}>
+            <Result breakpoint={props.breakpoint} />
+          </FileContext.Provider>
+        }
       </Grid>
     </Stack>
   );

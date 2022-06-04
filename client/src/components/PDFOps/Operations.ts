@@ -34,9 +34,9 @@ export type PDFOperations = Record<
 
 export const OPERATIONS: PDFOperations = {
   "word-pdf": {
-    bgColor: "#f72828",
-    bgDark: "#B92525",
-    border: "2px dashed #660303",
+    bgColor: "#4867f0",
+    bgDark: "#3a4ea6",
+    border: "2px dashed #051c80",
     name: "Word to PDF",
     icon: Word,
     des: "Covert PDF into Word files easily",
@@ -60,9 +60,9 @@ export const OPERATIONS: PDFOperations = {
   },
 
   "merge-pdf": {
-    bgColor: "#f72828",
-    bgDark: "#B92525",
-    border: "2px dashed #660303",
+    bgColor: "#8c5ae0",
+    bgDark: "#614394",
+    border: "2px dashed #3b098f",
     name: "Merge PDF",
     icon: Merge,
     des: "Merge multiple PDF's into one",
@@ -86,9 +86,9 @@ export const OPERATIONS: PDFOperations = {
   },
 
   "jpg-pdf": {
-    bgColor: "#f72828",
-    bgDark: "#B92525",
-    border: "2px dashed #660303",
+    bgColor: "#d2d95b",
+    bgDark: "#8a8f3b",
+    border: "2px dashed #616605",
     name: "JPG to PDF",
     icon: Jpg,
     des: "Transform JPG and PNG images to PDF",
@@ -112,8 +112,8 @@ export const OPERATIONS: PDFOperations = {
   },
 
   "esign-pdf": {
-    bgColor: "#f72828",
-    bgDark: "#B92525",
+    bgColor: "#c960e6",
+    bgDark: "#874699",
     border: "2px dashed #660303",
     name: "Esign PDF",
     icon: eSign,

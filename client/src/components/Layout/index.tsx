@@ -18,7 +18,8 @@ import SignUp from "../Entry/SignUp";
 import Login from "../Entry/Login";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "firebase/auth";
-import { withRouter, RouteComponentProps } from "react-router-dom";
+import { withRouter, RouteComponentProps, Link } from "react-router-dom";
+import { OPERATIONS } from "../PDFOps/Operations";
 
 interface ShowAccord {
   showAccord: boolean;
@@ -108,23 +109,23 @@ const theme = createTheme({
 });
 
 const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
-  useEffect(() => {
-    const unlisten = history.listen(() => {
-      window.scrollTo(0, 0);
-    });
-    return () => {
-      unlisten();
-    };
-  }, []);
-
   const { mobile, tabPort, tabLand, desktop } = breakpoint;
-
   const [showAccord, setAccord] = useState<boolean>(false);
   const [showModal, setModal] = useState<boolean>(false);
   const [isErr, setErr] = useState<{ message: string | null }>({
     message: null,
   });
   const [showLogin, setLogin] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unlisten = history.listen(() => {
+      window.scrollTo(0, 0);
+      setAccord(false);
+    });
+    return () => {
+      unlisten();
+    };
+  }, []);
 
   const ref = useRef<HTMLDivElement>(null);
   const height = ref.current?.getBoundingClientRect().height as number;
@@ -135,6 +136,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
   const value4: ShowLogin = { showLogin, setLogin };
 
   const mNavOpt = ["Compress", "Convert", "Merge", "Edit", "eSign", "Sign Up"];
+  const links = Object.keys(OPERATIONS);
 
   const NewList = () => {
     return (
@@ -150,36 +152,50 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
           if (idx === 5 && user) return null;
 
           return (
-            <ListItem
-              component={motion.div}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                ease: "easeIn",
-                duration: 0.4,
-              }}
-              exit={{ opacity: 0 }}
-              button
+            <Link
               key={idx}
-              onClick={() => setModal(true)}
-              sx={{
-                borderBottom: "1px solid #797785",
-                py: "1.5rem",
-                bgcolor: idx === arr.length - 1 ? "#6184b8" : "",
-
-                "&:hover": {
-                  bgcolor: idx === arr.length - 1 ? darken("#6184b8", 0.2) : "",
-                },
-              }}
+              to={idx <= 4 ? `/operation/${links[idx]}` : `/`}
+              style={{ textDecoration: "none" }}
             >
-              <ListItemText
-                primary={`${ele}`}
-                disableTypography
-                sx={{
-                  color: "white",
+              <ListItem
+                component={motion.div}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  ease: "easeIn",
+                  duration: 0.4,
                 }}
-              />
-            </ListItem>
+                exit={{ opacity: 0 }}
+                button
+                onClick={() => {
+                  if (idx === 5) {
+                    setModal(true);
+                  }
+                }}
+                sx={{
+                  borderBottom: "1px solid #797785",
+                  py: "1.5rem",
+                  bgcolor: idx === arr.length - 1 ? "#6184b8" : "",
+
+                  "&:hover": {
+                    bgcolor:
+                      idx === arr.length - 1 ? darken("#6184b8", 0.2) : "",
+                  },
+
+                  "&:focus, &:click": {
+                    bgcolor: darken("#6184b8", 0.2),
+                  },
+                }}
+              >
+                <ListItemText
+                  primary={`${ele}`}
+                  disableTypography
+                  sx={{
+                    color: "white",
+                  }}
+                />
+              </ListItem>
+            </Link>
           );
         })}
       </List>
