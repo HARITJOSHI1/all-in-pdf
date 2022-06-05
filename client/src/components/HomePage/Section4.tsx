@@ -18,7 +18,11 @@ export default function Section4(props: Props) {
         sx={[
           {
             px: "6rem",
-            pt: "12rem",
+            pt: "8rem",
+          },
+
+          tabLand && {
+            px: "3rem",
           },
 
           tabPort && {

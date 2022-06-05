@@ -78,7 +78,15 @@ export default function Features(props: Props) {
                 lg={6}
                 sx={{ display: "flex", justifyContent: "center" }}
               >
-                <Stack direction="column" spacing={3} justifyContent="center">
+                <Stack
+                  direction="column"
+                  spacing={3}
+                  justifyContent="center"
+                  sx={[
+                    desktop && { width: "90%" },
+                    mobile && { textAlign: "center", alignItems: "center" },
+                  ]}
+                >
                   <Typography variant="h4">{f.feature}</Typography>
 
                   <Typography sx={{ color: "secondary.dark" }}>
