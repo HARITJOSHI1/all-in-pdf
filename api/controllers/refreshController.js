@@ -1,10 +1,10 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const createRefreshTokens = require("../utils/createRefreshToken");
+const Cookie = require("../utils/classes/Cookies");
 
 const verifyToken = (t, type) => {
-  const secret =
-    type === "a" ? process.env.JWT_SECRET_A : process.env.JWT_SECRET_R;
+  const secret = process.env.JWT_SECRET_R;
   let res;
   jwt.verify(t, secret, (err, decoded) => {
     if (err) res = false;
@@ -13,47 +13,28 @@ const verifyToken = (t, type) => {
   return res;
 };
 
-exports.verifyJwtToken = (t, type) => {
-  return verifyToken;
-};
-
-const sendToken = (res, accessToken, refreshToken) => {
-  res.cookie("accessToken", accessToken, setCookieOptions());
-  res.cookie("refreshToken", refreshToken, setCookieOptions());
+const sendToken = (res, token) => {
+  new Cookie().sendCookie(res, "jwt", token);
 
   res.status(200).json({
     status: "success",
-    message: `Refresh token generated`,
+    message: `Tokens refreshed`,
+    token
   });
 };
 
-const setCookieOptions = () => {
-  return {
-    httpOnly: true,
-    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-    secure: process.env.NODE_ENV === "production" ? true : false,
-  };
-};
 
 exports.refresh = (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
-  const accessToken = req.cookies.accessToken;
+  const refreshToken = req.cookies.jwt.refreshToken;
   const r = verifyToken(refreshToken, "r");
 
-  if (r && !verifyToken(accessToken, "a")) {
+  if (r) {
     const token = createRefreshTokens(r._id, "access");
-    sendToken(res, token.accessToken, refreshToken);
+    sendToken(res, token);
   } 
   
   else {
     const token = createRefreshTokens(r._id);
-    sendToken(res, token.accessToken, token.refreshToken);
+    sendToken(res, token);
   }
-  
-//   else {
-//     res.status(400).json({
-//       status: "expired",
-//       message: `Refresh token expired`,
-//     });
-//   }
 }
