@@ -6,11 +6,12 @@ import { GMQ } from "../reducers";
 
 interface Props {
   breakpoint: GMQ;
+  on: boolean;
   children: ReactNode;
 }
 
 export default function Index(props: Props) {
-  const { showModal, setModal } = useContext(Context)[1];
+  const {setModal } = useContext(Context)[1];
   const { setLogin } = useContext(Context)[3];
 
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
@@ -25,7 +26,7 @@ export default function Index(props: Props) {
       setModal(false);
     };
 
-    if (showModal) {
+    if (props.on) {
       root.style.transition = "ease-in 0.6s";
       modal.style.transition = "ease-in 0.6s";
       root.style.filter = "blur(12px)";
@@ -48,7 +49,7 @@ export default function Index(props: Props) {
       document.body.removeEventListener("click", removeModal, true);
       setLogin(false);
     };
-  }, [showModal]);
+  }, [props.on]);
 
   return ReactDOM.createPortal(
     <>

@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { GMQ } from "../reducers";
 import Tools from "../tools/Tools";
+import { OPERATIONS, OpKeys } from "../PDFOps/Operations";
 
 interface Props {
   breakpoint: GMQ;
@@ -16,7 +17,7 @@ interface Props {
 
 export default function Section2(props: Props) {
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
-  
+
   return (
     <section
       style={{ borderBottom: "1px solid #CECFD3", paddingBottom: "2rem" }}
@@ -32,19 +33,19 @@ export default function Section2(props: Props) {
             >
               <Typography
                 variant="h2"
-                sx={[{
-                  fontSize: "3rem",
-                }, mobile && {fontSize: "2.5rem"}]}
+                sx={[
+                  {
+                    fontSize: "3rem",
+                  },
+                  mobile && { fontSize: "2.5rem" },
+                ]}
               >
                 Popular tools
               </Typography>
 
-              <Typography
-                component="span"
-                sx={{px: "1rem" }}
-              >
-                21 tools to convert, compress, and edit PDFs for free. Try it
-                out today!
+              <Typography component="span" sx={{ px: "1rem" }}>
+                {Object.keys(OPERATIONS).length} tools to convert, compress, and
+                edit PDFs for free. Try it out today!
               </Typography>
             </Stack>
           </Grid>

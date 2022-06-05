@@ -2,6 +2,7 @@ import React, { SetStateAction, useContext, useEffect } from "react";
 import { IconButton } from "@mui/material";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import { Context } from "../Layout";
+import {Link, animateScroll as scroll} from 'react-scroll';
 
 export default function DropDown(props: { tabLand: boolean }) {
   const {showAccord, setAccord} = useContext(Context)[0];
@@ -10,7 +11,10 @@ export default function DropDown(props: { tabLand: boolean }) {
     if (props.tabLand) setAccord(false);
   }, [props.tabLand, setAccord]);
 
-  const openDropDown = () => setAccord(!showAccord);
+  const openDropDown = () => {
+    scroll.scrollToTop();
+    setAccord(!showAccord);
+  }
 
   return (
     <IconButton

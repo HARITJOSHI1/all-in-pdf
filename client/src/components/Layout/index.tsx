@@ -7,7 +7,7 @@ import {
   Container,
 } from "@mui/material";
 import { createTheme, darken, ThemeProvider } from "@mui/material/styles";
-import React, { useState, createContext, useRef } from "react";
+import React, { useState, createContext, useRef, useEffect } from "react";
 import { connect } from "react-redux";
 import { NavBar } from "../Navbar";
 import Modal from "../Modal";
@@ -18,6 +18,8 @@ import SignUp from "../Entry/SignUp";
 import Login from "../Entry/Login";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "firebase/auth";
+import { withRouter, RouteComponentProps, Link } from "react-router-dom";
+import { OPERATIONS } from "../PDFOps/Operations";
 
 interface ShowAccord {
   showAccord: boolean;
@@ -55,7 +57,7 @@ export const Context = createContext<contextStore>([
   { showLogin: false, setLogin: () => {} },
 ]);
 
-interface Props {
+interface Props extends RouteComponentProps<any> {
   breakpoint: GMQ;
   children?: JSX.Element[] | null;
   user: User;
@@ -106,15 +108,24 @@ const theme = createTheme({
   },
 });
 
-const _Layout: React.FC<Props> = ({ children, breakpoint, user }) => {
+const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
   const { mobile, tabPort, tabLand, desktop } = breakpoint;
-
   const [showAccord, setAccord] = useState<boolean>(false);
   const [showModal, setModal] = useState<boolean>(false);
   const [isErr, setErr] = useState<{ message: string | null }>({
     message: null,
   });
   const [showLogin, setLogin] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unlisten = history.listen(() => {
+      window.scrollTo(0, 0);
+      setAccord(false);
+    });
+    return () => {
+      unlisten();
+    };
+  }, []);
 
   const ref = useRef<HTMLDivElement>(null);
   const height = ref.current?.getBoundingClientRect().height as number;
@@ -124,7 +135,8 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user }) => {
   const value3: AuthContextState = { isErr, setErr };
   const value4: ShowLogin = { showLogin, setLogin };
 
-  const mNavOpt = ["Compress", "Convert", "Merge", "Edit", "eSign", "Sign Up"];
+  const mNavOpt = ["Compress", "Convert", "Merge", "Edit", "eSign"];
+  const links = Object.keys(OPERATIONS);
 
   const NewList = () => {
     return (
@@ -137,41 +149,83 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user }) => {
         }}
       >
         {mNavOpt.map((ele: string, idx: number, arr: string[]) => {
-          if(idx === 5 && user) return null;
+          if (idx === 5 && user) return null;
 
           return (
-            <ListItem
-              component={motion.div}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                ease: "easeIn",
-                duration: 0.4,
-              }}
-              exit={{ opacity: 0 }}
-              button
+            <Link
               key={idx}
-              onClick={() => setModal(true)}
-              sx={{
-                borderBottom: "1px solid #797785",
-                py: "1.5rem",
-                bgcolor: idx === arr.length - 1 ? "#6184b8" : "",
-
-                "&:hover": {
-                  bgcolor: idx === arr.length - 1 ? darken("#6184b8", 0.2) : "",
-                },
-              }}
+              to={idx <= 4 ? `/operation/${links[idx]}` : `/`}
+              style={{ textDecoration: "none" }}
             >
-              <ListItemText
-                primary={`${ele}`}
-                disableTypography
-                sx={{
-                  color: "white",
+              <ListItem
+                component={motion.div}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  ease: "easeIn",
+                  duration: 0.4,
                 }}
-              />
-            </ListItem>
+                exit={{ opacity: 0 }}
+                button
+                onClick={() => {
+                  if (idx === 5) {
+                    setModal(true);
+                  }
+                }}
+                sx={{
+                  borderBottom: "1px solid #797785",
+                  py: "1.5rem",
+                  "&:focus, &:click": {
+                    bgcolor: darken("#6184b8", 0.2),
+                  },
+                }}
+              >
+                <ListItemText
+                  primary={`${ele}`}
+                  disableTypography
+                  sx={{
+                    color: "white",
+                  }}
+                />
+              </ListItem>
+            </Link>
           );
         })}
+
+        <ListItem
+          component={motion.div}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            ease: "easeIn",
+            duration: 0.4,
+          }}
+          exit={{ opacity: 0 }}
+          button
+          onClick={() => {
+            setModal(true);
+          }}
+          sx={{
+            py: "1.5rem",
+            background: "#6184b8",
+
+            "&:hover": {
+              bgcolor: darken("#6184b8", 0.2),
+            },
+
+            "&:focus, &:click": {
+              bgcolor: darken("#6184b8", 0.2),
+            },
+          }}
+        >
+          <ListItemText
+            primary="Sign Up"
+            disableTypography
+            sx={{
+              color: "white",
+            }}
+          />
+        </ListItem>
       </List>
     );
   };
@@ -184,7 +238,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user }) => {
 
           <AnimatePresence>
             {showModal && (
-              <Modal key="modal" breakpoint={breakpoint}>
+              <Modal on={showModal} key="modal" breakpoint={breakpoint}>
                 {!showLogin ? (
                   <SignUp breakpoint={breakpoint}>
                     <EntryForm
@@ -208,22 +262,20 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user }) => {
 
           <NavBar />
 
-          {
-            <Box
-              component={motion.div}
-              initial={{ height: 0 }}
-              animate={{ height: showAccord ? height : 0 }}
-              transition={{
-                ease: "easeIn",
-                duration: 0.4,
-              }}
-              sx={{
-                bgcolor: "primary.main",
-              }}
-            >
-              <NewList />
-            </Box>
-          }
+          <Box
+            component={motion.div}
+            initial={{ height: 0 }}
+            animate={{ height: showAccord ? height : 0 }}
+            transition={{
+              ease: "easeIn",
+              duration: 0.4,
+            }}
+            sx={{
+              bgcolor: "primary.main",
+            }}
+          >
+            <NewList />
+          </Box>
 
           <Container
             disableGutters
@@ -254,4 +306,4 @@ const mapStateToProps = (state: State) => {
   };
 };
 
-export const Layout = connect(mapStateToProps)(_Layout);
+export const Layout = connect(mapStateToProps)(withRouter(_Layout));
