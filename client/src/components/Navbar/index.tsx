@@ -22,7 +22,7 @@ const navOpts: {name: string, link: OpKeys}[] = [
   { name: "Word to PDF", link: "word-pdf" },
   { name: "Merge", link: "merge-pdf" },
   { name: "Edit", link: "edit-pdf" },
-  { name: "Sign", link: "esign-pdf" },
+  { name: "ESign", link: "esign-pdf" },
 ];
 
 interface Props {
@@ -36,6 +36,7 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
     <>
       <AppBar
         position="sticky"
+        id = "navbar"
         sx={{
           bgcolor: "white",
           boxShadow: 7,
@@ -49,7 +50,7 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
             <Box
               sx={[
                 { display: "flex", alignItems: "center", ml: "6rem" },
-                (mobile || tabPort) && {
+                (mobile || tabPort || tabLand) && {
                   width: "100%",
                   ml: "1rem",
                 },
@@ -74,6 +75,7 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
                 { mr: "3rem" },
                 mobile && { mr: "1rem" },
                 tabPort && { mr: "1rem" },
+                tabLand && { mr: "1rem" },
               ]}
             >
               <Translator />

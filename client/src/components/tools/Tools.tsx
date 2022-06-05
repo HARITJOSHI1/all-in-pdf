@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import React from "react";
 import {
   Box,
@@ -10,12 +11,7 @@ import {
   alpha,
   darken,
 } from "@mui/material";
-import Word from "./icons/word.svg";
-import Merge from "./icons/merge.png";
-import Jpg from "./icons/JPG.png";
-import eSign from "./icons/eSign.png";
-import Edit from "./icons/edit.png";
-import Compress from "./icons/compress.png";
+
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { GMQ } from "../reducers";
 import { OPERATIONS, OpKeys } from "../PDFOps/Operations";
@@ -44,7 +40,7 @@ export default function Tools(props: Props) {
 
           return (
             <Grid key={obj.name} item xs={12} sm={6} md={6} lg={4}>
-              <Link to={`operation/${key}`} style={{ textDecoration: "none" }}>
+              <Link to={`operation/${key}`} style={{ textDecoration: "none", color: "inherit" }}>
                 <Box
                   sx={{
                     p: "1rem",

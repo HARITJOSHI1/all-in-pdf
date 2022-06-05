@@ -16,7 +16,6 @@ import HomePage from "./HomePage";
 import { firebase } from "../firebaseInit";
 import { User } from "firebase/auth";
 import CircularProgress from "@mui/material/CircularProgress";
-import Drop from "./PDFOps/Dropzone/Drop";
 import Operation from "./PDFOps/Operation";
 
 interface Props {

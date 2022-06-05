@@ -135,7 +135,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
   const value3: AuthContextState = { isErr, setErr };
   const value4: ShowLogin = { showLogin, setLogin };
 
-  const mNavOpt = ["Compress", "Convert", "Merge", "Edit", "eSign", "Sign Up"];
+  const mNavOpt = ["Compress", "Convert", "Merge", "Edit", "eSign"];
   const links = Object.keys(OPERATIONS);
 
   const NewList = () => {
@@ -175,13 +175,6 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
                 sx={{
                   borderBottom: "1px solid #797785",
                   py: "1.5rem",
-                  bgcolor: idx === arr.length - 1 ? "#6184b8" : "",
-
-                  "&:hover": {
-                    bgcolor:
-                      idx === arr.length - 1 ? darken("#6184b8", 0.2) : "",
-                  },
-
                   "&:focus, &:click": {
                     bgcolor: darken("#6184b8", 0.2),
                   },
@@ -198,6 +191,41 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
             </Link>
           );
         })}
+
+        <ListItem
+          component={motion.div}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            ease: "easeIn",
+            duration: 0.4,
+          }}
+          exit={{ opacity: 0 }}
+          button
+          onClick={() => {
+            setModal(true);
+          }}
+          sx={{
+            py: "1.5rem",
+            background: "#6184b8",
+
+            "&:hover": {
+              bgcolor: darken("#6184b8", 0.2),
+            },
+
+            "&:focus, &:click": {
+              bgcolor: darken("#6184b8", 0.2),
+            },
+          }}
+        >
+          <ListItemText
+            primary="Sign Up"
+            disableTypography
+            sx={{
+              color: "white",
+            }}
+          />
+        </ListItem>
       </List>
     );
   };
@@ -210,7 +238,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
 
           <AnimatePresence>
             {showModal && (
-              <Modal key="modal" breakpoint={breakpoint}>
+              <Modal on={showModal} key="modal" breakpoint={breakpoint}>
                 {!showLogin ? (
                   <SignUp breakpoint={breakpoint}>
                     <EntryForm
@@ -234,22 +262,20 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
 
           <NavBar />
 
-          {
-            <Box
-              component={motion.div}
-              initial={{ height: 0 }}
-              animate={{ height: showAccord ? height : 0 }}
-              transition={{
-                ease: "easeIn",
-                duration: 0.4,
-              }}
-              sx={{
-                bgcolor: "primary.main",
-              }}
-            >
-              <NewList />
-            </Box>
-          }
+          <Box
+            component={motion.div}
+            initial={{ height: 0 }}
+            animate={{ height: showAccord ? height : 0 }}
+            transition={{
+              ease: "easeIn",
+              duration: 0.4,
+            }}
+            sx={{
+              bgcolor: "primary.main",
+            }}
+          >
+            <NewList />
+          </Box>
 
           <Container
             disableGutters

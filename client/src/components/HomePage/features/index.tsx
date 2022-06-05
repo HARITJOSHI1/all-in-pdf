@@ -1,10 +1,12 @@
 import { Grid, Stack, Typography, Box } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { GMQ } from "../../reducers";
 import F1 from "../assets/f1.png";
 import F2 from "../assets/f2.png";
 import F3 from "../assets/f2-e.png";
+import { OpKeys } from "../../PDFOps/Operations";
+import { Context } from "../../Layout";
 
 interface Props {
   breakpoint: GMQ;
@@ -15,6 +17,7 @@ type Feature = {
   feature: string;
   description: string;
   link: string;
+  path?: OpKeys;
 };
 
 const featArr: Feature[] = [
@@ -26,6 +29,7 @@ const featArr: Feature[] = [
     shapes, and freehand annotations to your documents. You can
     make use of 20 other tools to enhance your files further.`,
     link: "Visit edit PDF",
+    path: "edit-pdf",
   },
 
   {
@@ -35,6 +39,7 @@ const featArr: Feature[] = [
     Fill in forms, e-sign contracts, and close deals in a few simple steps. You can also request e-signatures and track your document every step of the way.
     `,
     link: "Visit eSign",
+    path: "esign-pdf",
   },
 
   {
@@ -48,6 +53,7 @@ const featArr: Feature[] = [
 
 export default function Features(props: Props) {
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
+  const {setModal} = useContext(Context)[1];
 
   return (
     <>
@@ -94,7 +100,8 @@ export default function Features(props: Props) {
                   </Typography>
 
                   <Link
-                    to="/"
+                    to={f.path? `/operation/${f.path}` : `/`}
+                    onClick = {() => !f.path? setModal(true): null}
                     style={{
                       display: "inline-block",
                       width: "max-content",
@@ -110,7 +117,7 @@ export default function Features(props: Props) {
                         },
                       }}
                     >
-                      {f.link}
+                        {f.link}
                     </Box>
                   </Link>
                 </Stack>
