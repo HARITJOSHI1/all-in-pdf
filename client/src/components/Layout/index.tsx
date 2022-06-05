@@ -10,16 +10,28 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import React, { useState, createContext, useRef } from "react";
 import { connect } from "react-redux";
 import { NavBar } from "../Navbar";
-// import Accordion from "@mui/material/Accordion";
-// import AccordionSummary from "@mui/material/AccordionSummary";
-// import AccordionDetails from "@mui/material/AccordionDetails";
-// import Collapse from "@mui/material/Collapse";
-// import { motion } from "framer-motion";
+import Modal from "../Modal";
 import { GMQ, State } from "../reducers";
 import Footer from "../Footer";
+import SignUp from "../Entry/SignUp";
+import { motion, AnimatePresence } from "framer-motion";
 
-type contextStore = [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-export const Context = createContext<contextStore>([false, () => {}]);
+interface ShowAccord {
+  showAccord: boolean;
+  setAccord: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+interface ShowModal {
+  showModal: boolean;
+  setModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+type contextStore = [ShowAccord, ShowModal];
+
+export const Context = createContext<contextStore>([
+  { showAccord: false, setAccord: () => {} },
+  { showModal: false, setModal: () => {} },
+]);
 
 interface Props {
   breakpoint: GMQ;
@@ -28,10 +40,31 @@ interface Props {
 
 const theme = createTheme({
   typography: {
+    h1: {
+      color: "#2D3246",
+    },
+
+    h2: {
+      color: "#2D3246",
+      fontWeight: "700",
+    },
+
+    h3: {
+      color: "#2D3246",
+      fontWeight: "700",
+    },
+
+    h4: {
+      fontWeight: "700",
+      color: "#2D3246",
+    },
+
     h5: {
       "@media (min-width: 300px)": {
         fontSize: "1.2rem",
       },
+
+      color: "#2D3246",
     },
 
     fontFamily: "Plus Jakarta Sans",
@@ -45,7 +78,7 @@ const theme = createTheme({
     secondary: {
       main: "#0044ff",
       dark: "#2D3246",
-      light: "#CECFD3"
+      light: "#CECFD3",
     },
   },
 });
@@ -53,16 +86,16 @@ const theme = createTheme({
 const _Layout: React.FC<Props> = ({ children, breakpoint }) => {
   const { mobile, tabPort, tabLand, desktop } = breakpoint;
   const [showAccord, setAccord] = useState<boolean>(false);
+  const [showModal, setModal] = useState<boolean>(false);
 
   const ref = useRef<HTMLDivElement>(null);
   const height = ref.current?.getBoundingClientRect().height as number;
 
-  const value: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = [
-    showAccord,
-    setAccord,
-  ];
+  const value1: ShowAccord = { showAccord, setAccord };
+  const value2: ShowModal = { showModal, setModal };
 
-  const mNavOpt = ["Compress", "Convert", "Merge", "Edit", "Sign"];
+  const mNavOpt = ["Compress", "Convert", "Merge", "Edit", "eSign", "Sign Up"];
+
   const NewList = () => {
     return (
       <List
@@ -73,11 +106,25 @@ const _Layout: React.FC<Props> = ({ children, breakpoint }) => {
           visibility: showAccord ? "visible" : "hidden",
         }}
       >
-        {mNavOpt.map((ele: string, idx) => (
+        {mNavOpt.map((ele: string, idx: number, arr: string[]) => (
           <ListItem
+            component={motion.div}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+              ease: "easeIn",
+              duration: 0.4,
+            }}
+            exit={{ opacity: 0 }}
             button
             key={idx}
-            sx={{ borderBottom: "1px solid #797785", py: "1.5rem" }}
+            sx={{
+              // opacity: showAccord ? 1 : 0,
+              // transition: "ease-in 0.3s",
+              borderBottom: "1px solid #797785",
+              py: "1.5rem",
+              bgcolor: idx === arr.length - 1 ? "#6184b8" : "",
+            }}
           >
             <ListItemText
               primary={`${ele}`}
@@ -94,20 +141,35 @@ const _Layout: React.FC<Props> = ({ children, breakpoint }) => {
 
   return (
     <>
-      <Context.Provider value={value}>
+      <Context.Provider value={[value1, value2]}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
+
+          <AnimatePresence>
+            {showModal && (
+              <Modal key="modal" breakpoint={breakpoint}>
+                <SignUp breakpoint={breakpoint} />
+              </Modal>
+            )}
+          </AnimatePresence>
+
           <NavBar />
+
           <Box
+            component={motion.div}
+            initial={{ height: 0 }}
+            animate={{ height: showAccord ? height : 0 }}
+            transition={{
+              ease: "easeIn",
+              duration: 0.4,
+            }}
             sx={{
-              height: showAccord ? height : 0,
               bgcolor: "primary.main",
-              visibility: showAccord ? "visible" : "hidden",
-              transition: "ease-out .4s",
             }}
           >
             <NewList />
           </Box>
+
           <Container
             disableGutters
             maxWidth="desktop"
@@ -123,7 +185,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint }) => {
           >
             {children}
           </Container>
-          <Footer breakpoint={breakpoint}/>
+          <Footer breakpoint={breakpoint} />
         </ThemeProvider>
       </Context.Provider>
     </>
@@ -132,7 +194,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint }) => {
 
 const mapStateToProps = (state: State) => {
   return {
-    breakpoint: state.breakpoint,
+    breakpoint: state.breakpoint as GMQ,
   };
 };
 

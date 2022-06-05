@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Router, Route, Switch} from "react-router-dom";
+import { Router, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { Tools } from "./tools";
 import { Layout } from "./Layout";
 import { history } from "./history";
-import { createTheme, useMediaQuery } from "@mui/material";
-import { addGlobalMediaQ, AdddMediaQ } from "./actions";
+import { createTheme, Stack, useMediaQuery } from "@mui/material";
+import {
+  addGlobalMediaQ,
+  AdddMediaQ,
+  addGlobalUser,
+  UserData,
+} from "./actions";
 import { GMQ } from "./reducers";
-import HomePage from "./Sections";
+import HomePage from "./HomePage";
+import { firebase } from "../firebaseInit";
+import { User } from "firebase/auth";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface Props {
   addGlobalMediaQ: (q: Record<keyof GMQ, boolean>) => AdddMediaQ;
+  addGlobalUser: (user: User) => UserData;
 }
 
 declare module "@mui/material/styles" {
@@ -30,6 +39,17 @@ declare module "@mui/material/styles" {
 
 const App: React.FC<Props> = (props) => {
   const [flag, setFlag] = useState<number>(0);
+  const [load, setLoad] = useState<boolean>(true);
+
+  useEffect(() => {
+    const auth = firebase.auth();
+    firebase.onAuthStateChanged(auth, (user) => {
+      if (user) {
+        props.addGlobalUser(user);
+      }
+      setLoad(false);
+    });
+  }, []);
 
   const theme = createTheme({
     breakpoints: {
@@ -70,8 +90,19 @@ const App: React.FC<Props> = (props) => {
     <>
       <Router history={history}>
         <Switch>
+          {load && (
+            <Stack
+              justifyContent="center"
+              alignItems="center"
+              sx={{ bgcolor: "white", height: "100vh"}}
+            >
+              <CircularProgress
+                sx={{ width: "5rem !important", height: "5rem !important" }}
+              />
+            </Stack>
+          )}
           <Layout>
-            <Route path = "/" exact component={HomePage} />
+            <Route path="/" exact component={HomePage} />
             <Route path="/tools" exact component={Tools} />
           </Layout>
         </Switch>
@@ -80,4 +111,4 @@ const App: React.FC<Props> = (props) => {
   );
 };
 
-export default connect(null, { addGlobalMediaQ })(App);
+export default connect(null, { addGlobalMediaQ, addGlobalUser })(App);

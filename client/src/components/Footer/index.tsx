@@ -179,10 +179,10 @@ export default function Footer(props: Props) {
   };
 
   return (
-    <Box sx={{ pt: "2rem" }}>
+    <Box sx={{ pt: "4rem" }}>
       <Stack
         sx={{
-          bgcolor: "secondary.dark",
+          bgcolor: "secondary.dark",  
           flexGrow: 1,
           py: "2rem",
           pl: mobile ? "1rem" : "4rem",

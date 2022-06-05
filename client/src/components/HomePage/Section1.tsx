@@ -13,6 +13,7 @@ interface Props {
 
 const _Home: React.FC<Props> = ({ breakpoint }) => {
   const { mobile, tabPort, tabLand, desktop } = breakpoint;
+  
   return (
     <section>
       <Stack
@@ -27,9 +28,17 @@ const _Home: React.FC<Props> = ({ breakpoint }) => {
         <Jumbotron breakpoint={{ mobile, tabPort, tabLand, desktop }} />
 
         <Stack
-          sx={[{ width: "50%", height: "20%" }, mobile && { width: "100%" }]}
+          sx={[
+            { width: "50%", height: "20%" },
+            mobile && { width: "100%" },
+            (tabPort || tabLand) && { width: "80%" },
+          ]}
         >
-          <img src={HomeIcon} alt="Home icon" />
+          <img
+            src={HomeIcon}
+            alt="Home icon"
+            style={{ pointerEvents: "none", userSelect: "none" }}
+          />
         </Stack>
       </Stack>
     </section>
@@ -38,7 +47,7 @@ const _Home: React.FC<Props> = ({ breakpoint }) => {
 
 const mapStateToProps = (state: State) => {
   return {
-    breakpoint: state.breakpoint,
+    breakpoint: state.breakpoint as GMQ,
   };
 };
 

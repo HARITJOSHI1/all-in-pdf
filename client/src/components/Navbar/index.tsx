@@ -6,22 +6,25 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import MenuBtn from "../Buttons/Menu";
 import Logo from "../Logo";
-import EditBtn from "../Buttons/Button";
+import SignUpBtn from "../Buttons/Button";
 import Container from "@mui/material/Container";
 import DropDown from "../Icons/dropDown";
 import { connect } from "react-redux";
 import { GMQ, State } from "../reducers";
 import Translator from "../Translator";
+import { User } from "firebase/auth";
 
 
 const navOpts = ["Compress", "Convert", "Merge", "Edit", "Sign"];
 
 interface Props {
   breakpoint: GMQ;
+  user: User;
 }
 
-const _NavBar: React.FC<Props> = ({ breakpoint }) => {
+const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
   const { mobile, tabPort, tabLand, desktop } = breakpoint;
+  console.log(user);
   
   return (
     <>
@@ -48,7 +51,7 @@ const _NavBar: React.FC<Props> = ({ breakpoint }) => {
               >
                 <Logo />
 
-                {(mobile || tabPort || tabLand) && <DropDown tabLand = {tabLand}/>}
+                {(mobile || tabPort) && <DropDown tabLand = {tabLand}/>}
 
                 {(tabLand || desktop) && (
                   <MenuBtn
@@ -66,8 +69,8 @@ const _NavBar: React.FC<Props> = ({ breakpoint }) => {
                 <Translator />
 
                 {!mobile && (
-                  <EditBtn
-                    text="Edit Pdf"
+                  !(user.displayName) && <SignUpBtn
+                    text="Sign Up"
                     sx={[
                       {
                         backgroundColor: "#0055FF",
@@ -98,7 +101,8 @@ const _NavBar: React.FC<Props> = ({ breakpoint }) => {
 
 const mapStateToProps = (state: State) => {
   return {
-    breakpoint: state.breakpoint,
+    breakpoint: state.breakpoint as GMQ,
+    user: state.user as User
   };
 };
 
