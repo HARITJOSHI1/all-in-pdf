@@ -1,15 +1,27 @@
-import React, { ReactNode } from "react";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import React, { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { useForm, SubmitHandler, Controller, FormState } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { Stack, TextField } from "@mui/material";
-import { width } from "@mui/system";
-import { GMQ } from "../reducers";
+import {
+  Button,
+  CardActions,
+  darken,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { padding, width } from "@mui/system";
+import { GMQ, State } from "../reducers";
 import Entry from "./index";
+import axios, { AxiosResponse } from "axios";
+import { Grid } from "react-loader-spinner";
+import { connect } from "react-redux";
+import { FormDataUser, addGlobalUser, UserData } from "../actions";
+import { log } from "console";
 
 const Schema = Yup.object().shape({
   email: Yup.string().email().required(),
-  password: Yup.string().min(6).max(6).required(),
+  password: Yup.string().min(8).max(14).required(),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required(),
@@ -17,29 +29,90 @@ const Schema = Yup.object().shape({
 
 interface Props {
   breakpoint: GMQ;
+  addGlobalUser: (user: FormDataUser) => UserData;
+  setModal: Dispatch<SetStateAction<boolean>>;
 }
 
-interface SignUpState {
+export interface SignUpState {
   email: string;
   password: string;
   confirmPassword: string;
 }
 
-export default function SignUp(props: Props) {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignUpState>({
+const SignUp: React.FC<Props> = (props: Props) => {
+  const { control, handleSubmit, formState } = useForm<SignUpState>({
     resolver: yupResolver(Schema),
   });
 
-  const onSubmit: SubmitHandler<SignUpState> = (data) => {
-    console.log(data);
+  const {mobile, tabPort, tabLand, desktop} = props.breakpoint;
+  const [isSubmit, setSubmit] = useState(false);
+
+  const onSubmit: SubmitHandler<SignUpState> = async (data: SignUpState) => {
+    if (!isSubmit) {
+      try {
+        setSubmit(true);
+        const res = await axios.post<AxiosResponse>(
+          "http://localhost:5000/api/v1/entry/signup",
+          data
+        );
+
+        if (res.data) {
+          props.addGlobalUser(data);
+          setSubmit(false);
+          props.setModal(false);
+        }
+      } catch (err: any) {
+        console.log(err.message);
+        setSubmit(false);
+      }
+    }
   };
 
-  const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
+  const createLabel = (l: string, i: number) => {
+    const newStr = l.replace(l[0], l[0].toUpperCase());
+    if (i === 2) {
+      return newStr.replace("P", " P");
+    }
 
+    return newStr.replace(l[0], l[0].toUpperCase());
+  };
+
+  const generateInputText = ({ errors }: FormState<SignUpState>) => {
+    const labels: ("email" | "password" | "confirmPassword")[] = [
+      "email",
+      "password",
+      "confirmPassword",
+    ];
+    return labels.map(
+      (l: "email" | "password" | "confirmPassword", idx: number) => {
+        return (
+          <Controller
+            name={l}
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                multiline
+                size="small"
+                sx={{ width: "100%" }}
+                label={createLabel(l, idx)}
+                error={!!errors.email}
+                FormHelperTextProps={{
+                  style: {
+                    marginTop: "0.25rem",
+                    marginBottom: "0.25rem",
+                  },
+                }}
+                helperText={errors[l] ? errors[l]?.message : " "}
+              />
+            )}
+          />
+        );
+      }
+    );
+  };
+
+  
   return (
     <Entry breakpoint={props.breakpoint}>
       <Stack
@@ -52,61 +125,47 @@ export default function SignUp(props: Props) {
         ]}
       >
         <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
-          <Controller
-            name="email"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                multiline
-                size="small"
-                sx={{ width: "100%" }}
-                label="Email"
-                error={!!errors.email}
-                inputProps={{ style: { fontSize: ".8rem" } }}
-                InputLabelProps={{ style: { fontSize: ".8rem" } }}
-                helperText={errors.email ? errors.email?.message : " "}
-              />
-            )}
-          />
+          {generateInputText(formState)}
 
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                sx={{ width: "100%" }}
-                size="small"
-                label="Password"
-                error={!!errors.password}
-                helperText={errors.password ? errors.password?.message : " "}
-                inputProps={{ style: { fontSize: ".8rem" } }}
-                InputLabelProps={{ style: { fontSize: ".8rem" } }}
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{
+              position: "relative",
+              bgcolor: "#5340FF",
+              boxShadow: "none",
+              borderRadius: "10px",
+              textTransform: "none",
+              width: "100%",
+              p: ".8rem 4rem",
+              mt: desktop || tabLand ? "1rem" : "0",
+              "&:hover": {
+                bgcolor: darken("#5340FF", 0.2),
+              },
+            }}
+          >
+            {!isSubmit ? (
+              <Typography
+                style={{
+                  fontWeight: "700",
+                  fontSize: "1rem",
+                }}
+              >
+                Submit
+              </Typography>
+            ) : (
+              <Grid
+                ariaLabel="loading-indicator"
+                color="white"
+                width="1.5rem"
+                height="1.5rem"
               />
             )}
-          />
-
-          <Controller
-            name="confirmPassword"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                sx={{ width: "100%" }}
-                size="small"
-                label="Confirm Password"
-                error={!!errors.confirmPassword}
-                inputProps={{ style: { fontSize: ".8rem" } }}
-                InputLabelProps={{ style: { fontSize: ".8rem" } }}
-                helperText={
-                  errors.confirmPassword ? errors.confirmPassword?.message : ""
-                }
-              />
-            )}
-          />
+          </Button>
         </form>
       </Stack>
     </Entry>
   );
-}
+};
+
+export default connect(null, { addGlobalUser })(SignUp);

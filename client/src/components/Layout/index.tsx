@@ -6,7 +6,7 @@ import {
   ListItemText,
   Container,
 } from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createTheme, darken, ThemeProvider } from "@mui/material/styles";
 import React, { useState, createContext, useRef } from "react";
 import { connect } from "react-redux";
 import { NavBar } from "../Navbar";
@@ -118,12 +118,15 @@ const _Layout: React.FC<Props> = ({ children, breakpoint }) => {
             exit={{ opacity: 0 }}
             button
             key={idx}
+            onClick = {() => setModal(true)}
             sx={{
-              // opacity: showAccord ? 1 : 0,
-              // transition: "ease-in 0.3s",
               borderBottom: "1px solid #797785",
               py: "1.5rem",
               bgcolor: idx === arr.length - 1 ? "#6184b8" : "",
+
+              "&:hover": {
+                bgcolor: idx === arr.length - 1 ? darken("#6184b8", .2) : "",
+              },
             }}
           >
             <ListItemText
@@ -148,7 +151,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint }) => {
           <AnimatePresence>
             {showModal && (
               <Modal key="modal" breakpoint={breakpoint}>
-                <SignUp breakpoint={breakpoint} />
+                <SignUp breakpoint={breakpoint} setModal={setModal} />
               </Modal>
             )}
           </AnimatePresence>

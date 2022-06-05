@@ -1,48 +1,79 @@
 import { Stack, Button, darken, Typography, Icon } from "@mui/material";
-import React, { Component } from "react";
+import React, { useContext } from "react";
 import { GMQ } from "../reducers";
 import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
 import { ImTwitter } from "react-icons/im";
 import { IconType } from "react-icons";
 import OAuthFlow from "../Auth/OAuth";
-import {
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  TwitterAuthProvider,
-  User,
-} from "firebase/auth";
+import { GoogleAuthProvider, FacebookAuthProvider, User } from "firebase/auth";
 
 import { connect } from "react-redux";
 import { addGlobalUser, UserData } from "../actions";
+import axios, { AxiosError, AxiosResponse } from "axios";
+
+import { Context } from "../Layout";
 
 interface Props {
   breakpoint: GMQ;
   addGlobalUser: (user: User) => UserData;
 }
 
-class OAuth extends Component<Props> {
-  callOAuth = async (to: string) => {
+interface OAuthData {
+  name?: string | null;
+  email?: string | null;
+  profilePic?: string | null;
+}
+
+const OAuth: React.FC<Props> = (props: Props) => {
+  const { showModal, setModal } = useContext(Context)[1];
+
+  const callOAuth = async (to: string) => {
     const services = to.toLowerCase();
     let user: User | null = null;
 
     switch (services) {
       case "google":
         user = await new OAuthFlow(new GoogleAuthProvider()).OAuth();
-        this.props.addGlobalUser(user);
         break;
       case "facebook":
         user = await new OAuthFlow(new FacebookAuthProvider()).OAuth();
-        this.props.addGlobalUser(user);
-        break;
-      case "twitter":
-        user = await new OAuthFlow(new TwitterAuthProvider()).OAuth();
-        this.props.addGlobalUser(user);
         break;
     }
+
+    const newUser: OAuthData = Object.assign(
+      {},
+      {
+        name: user?.displayName,
+        email: user?.email,
+        profilePic: user?.photoURL,
+      }
+    );
+
+    const ack = await sendUserInfo(newUser);
+  
+    if (ack?.code !== "ERR_NETWORK") {
+      props.addGlobalUser(user as User);
+      setModal(false);
+    }
+
+    else return;
   };
 
-  generateOAuth = () => {
+  async function sendUserInfo(user: OAuthData) {
+    try {
+      const { data } = await axios.post<AxiosResponse>(
+        "http://localhost:5000/api/v1/entry/signUp",
+        user
+      );
+
+      return data;
+    } catch (error: any) {
+      return error;
+    }
+  }
+
+  const generateOAuth = () => {
     type Ic = {
       icon: IconType;
       color?: string;
@@ -59,12 +90,6 @@ class OAuth extends Component<Props> {
         icon: FcGoogle,
         text: "Google",
       },
-
-      {
-        icon: ImTwitter,
-        color: "#1da1f2",
-        text: "Twitter",
-      },
     ];
 
     return arr.map((item: Ic, idx: number) => {
@@ -73,7 +98,7 @@ class OAuth extends Component<Props> {
           key={idx}
           variant="contained"
           color="primary"
-          onClick={() => this.callOAuth(item.text)}
+          onClick={() => callOAuth(item.text)}
           sx={{
             position: "relative",
             bgcolor: "#EFF0F4",
@@ -111,25 +136,22 @@ class OAuth extends Component<Props> {
     });
   };
 
-  render() {
-    const { tabLand, desktop } = this.props.breakpoint;
-    return (
-      <Stack
-        direction={desktop || tabLand ? "row" : "column"}
-        justifyContent="space-between"
-        spacing={2}
-        alignItems="center"
-        sx={{
-          mt: "1rem",
-          width: "100%",
-          pb: desktop || tabLand ? "2rem" : "0",
-        }}
-      >
-        {this.generateOAuth()}
-      </Stack>
-    );
-  }
-}
+  const { tabLand, desktop } = props.breakpoint;
+  return (
+    <Stack
+      direction={desktop || tabLand ? "row" : "column"}
+      justifyContent="space-between"
+      spacing={2}
+      alignItems="center"
+      sx={{
+        mt: "1rem",
+        width: "100%",
+        pb: desktop || tabLand ? "2rem" : "0",
+      }}
+    >
+      {generateOAuth()}
+    </Stack>
+  );
+};
 
-
-export default connect(null, {addGlobalUser})(OAuth);
+export default connect(null, { addGlobalUser })(OAuth);

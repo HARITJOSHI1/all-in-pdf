@@ -71,7 +71,7 @@ export default function Section6(props: Props) {
                     bottom: "-1rem",
                     bgcolor: "#0055FF",
                     textTransform: "none",
-                    width: "50%",
+                    width: (desktop || tabLand || tabPort) ? "50%" : "100%",
                     p: ".5rem 2rem",
                     "&:hover": {
                       bgcolor: darken("#0055FF", 0.2),
@@ -93,7 +93,7 @@ export default function Section6(props: Props) {
                 justifyContent="center"
                 sx={{ display: "flex" }}
               >
-                <Icon sx={{ width: desktop? "70%" : "90%", height: "auto" }}>
+                <Icon sx={{ width: desktop ? "70%" : "90%", height: "auto" }}>
                   <img
                     src={Trial}
                     alt="trial"

@@ -125,9 +125,9 @@ export default function Section5(props: Props) {
         direction="column"
         alignItems="center"
         sx={{ pt: "6rem" }}
-        spacing={mobile ? 1 : 10}
+        spacing={mobile ? 1 : 6}
       >
-        <Typography variant="h2" sx={[mobile && { fontSize: "2.5rem" }]}>
+        <Typography variant="h2" sx={[{fontSize: "3rem"}, mobile && { fontSize: "2.5rem" }]}>
           Why Choose Us ?
         </Typography>
 

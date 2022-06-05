@@ -4,7 +4,7 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { alpha, Box, darken, Icon, Stack } from "@mui/material";
+import { alpha, Box, darken, Icon, Stack, TextField } from "@mui/material";
 import { GMQ } from "../reducers";
 import EntryInfo from "./EntryInfo";
 import { motion } from "framer-motion";
@@ -95,38 +95,13 @@ export default function index(props: Props) {
 
           {props.children}
 
-          <CardActions sx={{ width: "100%", p: "0" }}>
-            <Button
-              variant="contained"
-              sx={{
-                position: "relative",
-                bgcolor: "#5340FF",
-                boxShadow: "none",
-                borderRadius: "10px",
-                textTransform: "none",
-                width: "100%",
-                p: ".8rem 4rem",
-                "&:hover": {
-                  bgcolor: darken("#5340FF", 0.2),
-                },
-              }}
-            >
-              <Typography
-                style={{
-                  fontWeight: "700",
-                  fontSize: "1rem",
-                }}
-              >
-                Submit
-              </Typography>
-            </Button>
-          </CardActions>
-
-          <Typography variant="h6" sx={{ color: "#B7B9C1", fontSize: "1rem", fontWeight: "500" }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "#B7B9C1", fontSize: "1rem", fontWeight: "500" }}
+          >
             Already have an account?{" "}
             <span style={{ color: "#5340FF", cursor: "pointer" }}>login</span>
           </Typography>
-
         </CardContent>
       </Stack>
     </Card>
