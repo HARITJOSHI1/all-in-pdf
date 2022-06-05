@@ -1,0 +1,13 @@
+const express = require("express");
+const { verifyJWT } = require("../controllers/authController");
+const router = express.Router();
+const {signUp, login, logOut} = require("../controllers/entryController");
+
+router.post("/signUp", signUp);
+router.post("/login", login);
+router.post("/logout", logOut);
+
+// for test jwt verification
+// router.get("/protect", verifyJWT, (req, res) => res.send({"protect": "true"}));
+
+module.exports = router;
