@@ -11,6 +11,9 @@ const docSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "Users",
   },
+
+  isCompressed: Boolean,
+  compressSize: [Number]
   
 });
 

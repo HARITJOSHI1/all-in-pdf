@@ -2,12 +2,10 @@ const JSZip = require("jszip");
 const fs = require("fs");
 const crypto = require("crypto");
 const zip = new JSZip();
-const Document = require("../../models/Document");
 
 module.exports = class DocSaver {
-  constructor(userId, files) {
-    this.uid = userId;
-    this.zip(files);
+  static initDoc(userId) {
+    this.prototype.uid = userId;
   }
 
   zip(files) {
@@ -26,19 +24,5 @@ module.exports = class DocSaver {
       .on("finish", function () {
         console.log("files.zip written.");
       });
-  }
-
-  async saveToDB() {
-    const metadata = {
-      name: this.fileName,
-      userId: this.uid,
-    };
-
-    await (await Document.create(metadata)).populate({
-      path: "Users",
-      select: "_id",
-    });
-    
-    console.log("saved to database");
   }
 }
