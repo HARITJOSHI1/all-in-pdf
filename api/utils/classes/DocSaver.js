@@ -3,7 +3,7 @@ const fs = require("fs");
 const crypto = require("crypto");
 const { PDFNet } = require("@pdftron/pdfnet-node");
 const Document = require("../../models/Document");
-const unzipper  = require("unzipper");
+const unzipper = require("unzipper");
 const zip = new JSZip();
 
 module.exports = class DocSaver {
@@ -27,21 +27,27 @@ module.exports = class DocSaver {
     }
   }
 
-  async unzip(path, name, outPath){
-    const zip = fs.createReadStream(path).pipe(unzipper.Parse({forceStream: true}));
-    for await (const entry of zip){
+  async unzip(path, name, outPath) {
+    const zip = fs
+      .createReadStream(path)
+      .pipe(unzipper.Parse({ forceStream: true }));
+    for await (const entry of zip) {
       const fileName = entry.path;
       console.log("Here is filename", fileName);
-      if(fileName === name){
+      if (fileName === name) {
         entry.pipe(fs.createWriteStream(`${outPath}/${fileName}`));
-      }
-      else entry.autodrain();
+      } else entry.autodrain();
     }
   }
 
   zip(files) {
     const folder = zip.folder("folder");
-    files.forEach((f) => folder.file(f.orignalName, f.buffer));
+    files.forEach((f) =>
+      folder.file(
+        f.orignalName,
+        f.buffer
+      )
+    );
     const isExists = fs.existsSync(`${__dirname}/../../data`);
     if (!isExists) fs.mkdirSync(`${__dirname}/../../data`);
 

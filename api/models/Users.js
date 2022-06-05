@@ -14,7 +14,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
     default: "anonymous@xyz.com",
-    unique: true,
     validate: [validator.isEmail, "Please enter a valid email address"],
   },
 
@@ -27,7 +26,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
     default: "0000000000",
-    unique: true,
     validate: [validator.isMobilePhone, "Please enter a valid phone number"],
     select: false
   },

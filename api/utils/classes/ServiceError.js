@@ -13,6 +13,8 @@ module.exports = class ServiceError extends Error {
   generateErrorDB = (error) => {
     if (error.code) this.handleDuplicateErrorDB(error);
     else if (error.errors) this.handleValidatorErrorDB(error.errors);
+    else 
+      this.message = "Something went wrong!" 
   };
 
   handleCastErrorDB = (e) => {

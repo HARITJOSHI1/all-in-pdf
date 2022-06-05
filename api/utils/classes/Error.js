@@ -32,7 +32,6 @@ const setProdErr = (err, res) => {
 
 module.exports = async (err, req, res, next) => {
   const error = { ...err };
-
   if (process.env.NODE_ENV === "development") setDevErr(error, res);
   else setProdErr(error, res);
 

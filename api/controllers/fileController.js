@@ -1,6 +1,7 @@
 const path = require("path");
 const multer = require("multer");
-const CompressPDF = require("../utils/classes/compressPDF");
+const CompressPDF = require("../utils/classes/CompressPDF");
+const MergePDF = require("../utils/classes/MergePDF");
 // const { WordToPDF } = require("../utils/classes/Conversion");
 const catchAsync = require("../utils/catchAsync");
 const Encryption = require("../utils/classes/Security");
@@ -19,9 +20,10 @@ exports.uploadFiles = upload.array("files", 10);
 
 exports.compress = catchAsync(async (req, res, next) => {
   console.log("File compressing ......");
+  console.log(req.files);
   const file = await CompressPDF.compress(req.files);
 
-  if(!file) throw new AppError(500, "Failed to compress", ` fn upload(),  ${__filename}`);
+  if(!file) throw new AppError(500, "Failed to compress", ` fn upload(),  ${__dirname}`);
 
   res.status(200).json({
     status: "success",
@@ -29,6 +31,18 @@ exports.compress = catchAsync(async (req, res, next) => {
   });
 });
 
+
+exports.merge = catchAsync(async (req, res, next) => {
+  console.log("File merging ......");
+  const file = await MergePDF.merge(req.files);
+
+  if(!file) throw new AppError(500, "Failed to merge", ` fn upload(),  ${__dirname}`);
+
+  res.status(200).json({
+    status: "success",
+    message: "PDF merged",
+  });
+});
 // exports.convert = async (req, res, next) => {
 //   console.log("File converting ......");
 //   WordToPDF.files(req.files);

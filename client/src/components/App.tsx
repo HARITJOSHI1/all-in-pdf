@@ -16,6 +16,7 @@ import HomePage from "./HomePage";
 import { firebase } from "../firebaseInit";
 import { User } from "firebase/auth";
 import CircularProgress from "@mui/material/CircularProgress";
+import Operation from "./PDFOps/Operation";
 
 interface Props {
   addGlobalMediaQ: (q: Record<keyof GMQ, boolean>) => AdddMediaQ;
@@ -108,6 +109,7 @@ const App: React.FC<Props> = (props) => {
           <Layout>
             <Route path="/" exact component={HomePage} />
             <Route path="/tools" exact component={Tools} />
+            <Route path="/operation/:name" exact component={Operation} />
           </Layout>
         </Switch>
       </Router>

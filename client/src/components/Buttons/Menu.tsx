@@ -2,10 +2,11 @@ import React from "react";
 import { Stack, Button } from "@mui/material";
 import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
 import { Link } from "react-router-dom";
+import {OpKeys} from "../PDFOps/Operations";
 
 interface Props {
   breakpoint: boolean[];
-  navOpts: string[];
+  navOpts: { name: string; link: OpKeys}[];
 }
 
 const MenuBtn: React.FC<Props> = ({ breakpoint, navOpts }) => {
@@ -17,7 +18,6 @@ const MenuBtn: React.FC<Props> = ({ breakpoint, navOpts }) => {
       spacing={4}
       alignItems="center"
       sx={[
-
         (tabLand || desktop) && {
           mx: "2rem",
         },
@@ -49,9 +49,9 @@ const MenuBtn: React.FC<Props> = ({ breakpoint, navOpts }) => {
           },
         ]}
       >
-        {navOpts.map((opt: string, idx: number) => {
+        {navOpts.map((opt, idx: number) => {
           return (
-            <Link key={idx} to = "/tools" style={{textDecoration: "none"}}>
+            <Link key={idx} to={`/operation/${opt.link}`} style={{ textDecoration: "none" }}>
               <Button
                 disableRipple
                 size="small"
@@ -66,7 +66,7 @@ const MenuBtn: React.FC<Props> = ({ breakpoint, navOpts }) => {
                   { textTransform: "none", px: "0", minWidth: "0" },
                 ]}
               >
-                {opt}
+                {opt.name}
               </Button>
             </Link>
           );

@@ -11,6 +11,7 @@ module.exports = class CompressPDF extends DocSaver {
     super();
     this.arr = [];
     this.compressedSizes = [];
+    this.fileSizes = [];
     files.forEach(
       async (f) =>
         await PDFNet.runWithCleanup(this.shrinkPDF.bind(this, f, files.length))
@@ -25,11 +26,13 @@ module.exports = class CompressPDF extends DocSaver {
     );
 
     this.compressedSizes.push(Buffer.byteLength(buf));
+    this.fileSizes.push(file.size);
+    
     const metadata = {
       name: this.fileName,
       orignalName: file.originalname,
       buffer: buf,
-      size: file.size,
+      size: [...this.fileSizes],
       isCompressed: true,
       compressSize: [...this.compressedSizes],
       userId: this.uid

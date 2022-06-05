@@ -12,11 +12,16 @@ const docSchema = new mongoose.Schema({
     ref: "Users",
   },
 
+  size: [Number],
   type: String,
   isCompressed: Boolean,
   compressSize: [Number],
   isEncrypted: Boolean,
-  password: String
+  filesMerged: Number,
+  password: {
+    type: String,
+    select: false
+  }
 });
 
 docSchema.pre('save', async function(next){
