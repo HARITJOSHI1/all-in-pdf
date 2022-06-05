@@ -2,7 +2,6 @@ import { UserData, FormDataUser } from './../actions/index';
 import { combineReducers } from "redux";
 import * as Types from "../actions/types";
 import { AdddMediaQ } from "../actions";
-import {reducer as FormReducer} from 'redux-form'
 import { User } from "firebase/auth";
 // eslint-disable-next-line import/no-anonymous-default-export
 
@@ -37,7 +36,7 @@ const mediaQueryReducer = (state = {}, action: AdddMediaQ) => {
   }
 };
 
-const globalUserReducer = (state = {}, action: UserData) => {
+const globalUserReducer = (state = null, action: UserData) => {
   switch (action.type) {
     case Types.User.user:
       return action.payload;
@@ -50,5 +49,4 @@ const globalUserReducer = (state = {}, action: UserData) => {
 export default combineReducers ({
   breakpoint: mediaQueryReducer,
   user: globalUserReducer,
-  signUp: FormReducer
 });

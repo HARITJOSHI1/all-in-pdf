@@ -11,7 +11,7 @@ import {
   addGlobalUser,
   UserData,
 } from "./actions";
-import { GMQ } from "./reducers";
+import { GMQ, State } from "./reducers";
 import HomePage from "./HomePage";
 import { firebase } from "../firebaseInit";
 import { User } from "firebase/auth";
@@ -19,7 +19,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 interface Props {
   addGlobalMediaQ: (q: Record<keyof GMQ, boolean>) => AdddMediaQ;
-  addGlobalUser: (user: User) => UserData;
+  addGlobalUser: (user: User | null) => UserData;
 }
 
 declare module "@mui/material/styles" {
@@ -39,19 +39,21 @@ declare module "@mui/material/styles" {
 
 const App: React.FC<Props> = (props) => {
   const [flag, setFlag] = useState<number>(0);
-  const [load, setLoad] = useState<boolean>(true);
+  let [load, setLoad] = useState<boolean>(true);
+  load && localStorage.setItem("load", "1");
 
   useEffect(() => {
     const auth = firebase.auth();
     firebase.onAuthStateChanged(auth, (user) => {
-      console.log(user);
-      
-      if (user) {
-        props.addGlobalUser(user);
+
+      if (user && Number(localStorage.getItem("load"))){  
+        props.addGlobalUser(user)
       }
+      
+      localStorage.setItem("load", "0");
       setLoad(false);
     });
-  }, []);
+  }, [load]);
 
   const theme = createTheme({
     breakpoints: {
@@ -96,7 +98,7 @@ const App: React.FC<Props> = (props) => {
             <Stack
               justifyContent="center"
               alignItems="center"
-              sx={{ bgcolor: "white", height: "100vh"}}
+              sx={{ bgcolor: "white", height: "100vh" }}
             >
               <CircularProgress
                 sx={{ width: "5rem !important", height: "5rem !important" }}

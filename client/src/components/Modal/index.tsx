@@ -11,6 +11,8 @@ interface Props {
 
 export default function Index(props: Props) {
   const { showModal, setModal } = useContext(Context)[1];
+  const { setLogin } = useContext(Context)[3];
+
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
 
   useLayoutEffect(() => {
@@ -44,6 +46,7 @@ export default function Index(props: Props) {
       root.style.filter = "blur(0px)";
       modal.style.visibility = "hidden";
       document.body.removeEventListener("click", removeModal, true);
+      setLogin(false);
     };
   }, [showModal]);
 

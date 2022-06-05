@@ -15,10 +15,7 @@ const filter = (user) => {
     "verifyEmail",
     "verifyEmailExp",
     "password",
-    "instituteAccess",
-    "instituteAccessExp",
-    "districtAdminAccess",
-    "districtAdminAccessExp",
+    "phoneNo"
   ];
 
   fields.forEach((p) => {

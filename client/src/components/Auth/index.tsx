@@ -3,20 +3,20 @@ import React, { useContext } from "react";
 import { GMQ } from "../reducers";
 import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
-import { ImTwitter } from "react-icons/im";
 import { IconType } from "react-icons";
 import OAuthFlow from "../Auth/OAuth";
 import { GoogleAuthProvider, FacebookAuthProvider, User } from "firebase/auth";
 
 import { connect } from "react-redux";
 import { addGlobalUser, UserData } from "../actions";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 
 import { Context } from "../Layout";
+import { firebase } from "../../firebaseInit";
 
 interface Props {
   breakpoint: GMQ;
-  addGlobalUser: (user: User) => UserData;
+  addGlobalUser: (user: User | null) => UserData;
 }
 
 interface OAuthData {
@@ -26,51 +26,64 @@ interface OAuthData {
 }
 
 const OAuth: React.FC<Props> = (props: Props) => {
-  const { showModal, setModal } = useContext(Context)[1];
+  const { setModal } = useContext(Context)[1];
+  const { setErr } = useContext(Context)[2];
+  const { showLogin } = useContext(Context)[3];
 
   const callOAuth = async (to: string) => {
     const services = to.toLowerCase();
     let user: User | null = null;
 
-    switch (services) {
-      case "google":
-        user = await new OAuthFlow(new GoogleAuthProvider()).OAuth();
-        break;
-      case "facebook":
-        user = await new OAuthFlow(new FacebookAuthProvider()).OAuth();
-        break;
-    }
-
-    const newUser: OAuthData = Object.assign(
-      {},
-      {
-        name: user?.displayName,
-        email: user?.email,
-        profilePic: user?.photoURL,
+    try {
+      switch (services) {
+        case "google":
+          user = await new OAuthFlow(new GoogleAuthProvider()).OAuth();
+          break;
+        case "facebook":
+          user = await new OAuthFlow(new FacebookAuthProvider()).OAuth();
+          break;
       }
-    );
 
-    const ack = await sendUserInfo(newUser);
-  
-    if (ack?.code !== "ERR_NETWORK") {
-      props.addGlobalUser(user as User);
-      setModal(false);
+      const newUser: OAuthData = Object.assign(
+        {},
+        {
+          name: user?.displayName,
+          email: user?.email,
+          profilePic: user?.photoURL,
+        }
+      );
+
+      const ack = await sendUserInfo(newUser);
+
+      if (ack.message !== "Network Error") {
+        props.addGlobalUser(user);
+        setModal(false);
+      }
+
+      // else throw new Error(ack);
+    } catch (err: any) {
+      console.log(err?.response.data || err.message);
+      const { message } = err?.response.data
+        ? err.response.data
+        : { message: "Something went wrong" };
+
+      const currentUser = firebase.auth().currentUser as User;
+      await firebase.deleteUser(currentUser).then(() => {
+        props.addGlobalUser(null);
+      });
+
+      setErr({ message });
     }
-
-    else return;
   };
 
   async function sendUserInfo(user: OAuthData) {
-    try {
-      const { data } = await axios.post<AxiosResponse>(
-        "http://localhost:5000/api/v1/entry/signUp",
-        user
-      );
+    let res: AxiosResponse | null = null;
+    res = await axios.post<AxiosResponse>(
+      "http://localhost:5000/api/v1/entry/signUp",
+      user
+    );
 
-      return data;
-    } catch (error: any) {
-      return error;
-    }
+    return res.data;
   }
 
   const generateOAuth = () => {

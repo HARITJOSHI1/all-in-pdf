@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signInWithPopup, onAuthStateChanged, deleteUser, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDnUoAlPrQEQCbKawAudmkvVrFdGfXfUEc",
@@ -16,7 +16,10 @@ const app = initializeApp(firebaseConfig);
 
 export const firebase = {
   auth: getAuth.bind(null, app),
+  deleteUser,
   onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  updateProfile,
   oAuth: {
     method: { signInWithPopup },
   },

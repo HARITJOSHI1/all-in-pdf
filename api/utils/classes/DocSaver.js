@@ -1,12 +1,10 @@
 const JSZip = require("jszip");
 const fs = require("fs");
-const { Readable } = require("stream");
 const crypto = require("crypto");
 const { PDFNet } = require("@pdftron/pdfnet-node");
 const Document = require("../../models/Document");
 const unzipper  = require("unzipper");
 const zip = new JSZip();
-const {resolve} = require("path");
 
 module.exports = class DocSaver {
   constructor() {
