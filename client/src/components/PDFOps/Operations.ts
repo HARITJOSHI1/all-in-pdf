@@ -1,4 +1,7 @@
 import { MdCompress, MdDownloadDone } from "react-icons/md";
+import {AiOutlineFileWord} from "react-icons/ai";
+import {AiOutlineFilePdf} from "react-icons/ai";
+import {AiOutlineFileJpg} from "react-icons/ai";
 import { FiLoader } from "react-icons/fi";
 import Word from "../tools/icons/word.svg";
 import Merge from "../tools/icons/merge.png";
@@ -27,6 +30,7 @@ export type PDFOperations = Record<
     des: string;
     longDes: {
       icon: IconType;
+      head: string;
       des: string;
     }[];
   }
@@ -43,18 +47,21 @@ export const OPERATIONS: PDFOperations = {
 
     longDes: [
       {
-        icon: MdCompress,
-        des: "Just drag-and-drop your PDF file in the box above, wait for the compression to complete and download your file. It's that simple.",
+        icon: AiOutlineFileWord,
+        head: "Add files",
+        des: "Just drag-and-drop your PDF file in the box above, wait for the conversion to complete and download your file. It's that simple.",
       },
 
       {
         icon: FiLoader,
-        des: "You just have to sit and relax and it will take a few seconds for our compression tool to work its magic.",
+        head: "Wait for process",
+        des: "You just have to sit and relax and it will take a few seconds for our conversion tool to work its magic.",
       },
 
       {
         icon: MdDownloadDone,
-        des: "Yozwa!! Your pdf will successfully be compressed which is perfect for uploading files to the web and through email.",
+        head: "Work done",
+        des: "Yozwa!! Your word files are successfully converted to pdf's which are perfect for uploading files to the web and through email.",
       },
     ],
   },
@@ -69,18 +76,21 @@ export const OPERATIONS: PDFOperations = {
 
     longDes: [
       {
-        icon: MdCompress,
-        des: "Just drag-and-drop your PDF file in the box above, wait for the compression to complete and download your file. It's that simple.",
+        icon: AiOutlineFilePdf,
+        head: "Add files",
+        des: "Just drag-and-drop your PDF file in the box above, wait for the merging of pdf's to complete and download your file. It's that simple.",
       },
 
       {
         icon: FiLoader,
-        des: "You just have to sit and relax and it will take a few seconds for our compression tool to work its magic.",
+        head: "Wait for process",
+        des: "You just have to sit and relax and it will take a few seconds for our merging tool to work its magic.",
       },
 
       {
         icon: MdDownloadDone,
-        des: "Yozwa!! Your pdf will successfully be compressed which is perfect for uploading files to the web and through email.",
+        head: "Work done",
+        des: "Yozwa!! Your pdf's are successfully merged which are perfect for uploading files to the web and through email.",
       },
     ],
   },
@@ -95,18 +105,21 @@ export const OPERATIONS: PDFOperations = {
 
     longDes: [
       {
-        icon: MdCompress,
-        des: "Just drag-and-drop your PDF file in the box above, wait for the compression to complete and download your file. It's that simple.",
+        icon: AiOutlineFileJpg,
+        head: "Add files",
+        des: "Just drag-and-drop your PDF file in the box above, wait for the conversion to complete and download your file. It's that simple.",
       },
 
       {
         icon: FiLoader,
-        des: "You just have to sit and relax and it will take a few seconds for our compression tool to work its magic.",
+        head: "Wait for process",
+        des: "You just have to sit and relax and it will take a few seconds for our conversion tool to work its magic.",
       },
 
       {
         icon: MdDownloadDone,
-        des: "Yozwa!! Your pdf will successfully be compressed which is perfect for uploading files to the web and through email.",
+        head: "Work done",
+        des: "Yozwa!! Your images are successfully converted to pdf's which are perfect for uploading files to the web and through email.",
       },
     ],
   },
@@ -121,18 +134,21 @@ export const OPERATIONS: PDFOperations = {
 
     longDes: [
       {
-        icon: MdCompress,
-        des: "Just drag-and-drop your PDF file in the box above, wait for the compression to complete and download your file. It's that simple.",
+        icon: AiOutlineFilePdf,
+        head: "Add files",
+        des: "Just drag-and-drop your PDF file in the box above, and after that upload your sign. It's that simple.",
       },
 
       {
         icon: FiLoader,
-        des: "You just have to sit and relax and it will take a few seconds for our compression tool to work its magic.",
+        head: "Wait for process",
+        des: "You just have to sit and relax and it will take a few seconds for our signing tool to work its magic.",
       },
 
       {
         icon: MdDownloadDone,
-        des: "Yozwa!! Your pdf will successfully be compressed which is perfect for uploading files to the web and through email.",
+        head: "Work done",
+        des: "Yozwa!! Your pdf's are successfully signed which are perfect for uploading files to the web and sharing through emails to clients.",
       },
     ],
   },
@@ -147,18 +163,21 @@ export const OPERATIONS: PDFOperations = {
 
     longDes: [
       {
-        icon: MdCompress,
-        des: "Just drag-and-drop your PDF file in the box above, wait for the compression to complete and download your file. It's that simple.",
+        icon: AiOutlineFilePdf,
+        head: "Add files",
+        des: "Just drag-and-drop your PDF file in the box above, and go to editor to add shapes and edit your pdf's. It's that simple.",
       },
 
       {
         icon: FiLoader,
-        des: "You just have to sit and relax and it will take a few seconds for our compression tool to work its magic.",
+        head: "Wait for process",
+        des: "You just have to sit and relax and it will take a few seconds for our editing tool to work its magic.",
       },
 
       {
         icon: MdDownloadDone,
-        des: "Yozwa!! Your pdf will successfully be compressed which is perfect for uploading files to the web and through email.",
+        head: "Work done",
+        des: "Yozwa!! Your pdf's are successfully edited which are perfect for uploading files to the web and through email.",
       },
     ],
   },
@@ -172,18 +191,21 @@ export const OPERATIONS: PDFOperations = {
 
     longDes: [
       {
-        icon: MdCompress,
+        icon: AiOutlineFilePdf,
+        head: "Add files",
         des: "Just drag-and-drop your PDF file in the box above, wait for the compression to complete and download your file. It's that simple.",
       },
 
       {
         icon: FiLoader,
+        head: "Wait for process",
         des: "You just have to sit and relax and it will take a few seconds for our compression tool to work its magic.",
       },
 
       {
         icon: MdDownloadDone,
-        des: "Yozwa!! Your pdf will successfully be compressed which is perfect for uploading files to the web and through email.",
+        head: "Work done",
+        des: "Yozwa!! Your pdf's are successfully compressed which are perfect for uploading files to the web and through email.",
       },
     ],
   },

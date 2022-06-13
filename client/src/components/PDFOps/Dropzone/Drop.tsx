@@ -38,9 +38,13 @@ export default function Drop(props: Props) {
   const [response, setResponse] = useState<RecievedFileData | null>(null);
 
   useEffect(() => {
-    if (acceptedFiles.length) {
-      setAllFiles([...allFiles, ...acceptedFiles]);
+    return () => {
+      setAllFiles([]);
     }
+  }, [props])
+
+  useEffect(() => {
+    if (acceptedFiles.length) setAllFiles([...allFiles, ...acceptedFiles]);
   }, [acceptedFiles.length]);
 
   const numFiles = allFiles.length;
