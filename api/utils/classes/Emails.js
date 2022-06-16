@@ -1,9 +1,10 @@
 const nodemailer = require("nodemailer");
-const pug = require('pug');
-const ht = require('html-to-text');
+const pug = require("pug");
+const ht = require("html-to-text");
+const fs = require("fs");
 
 module.exports = class Email {
-  constructor({from, to, url, message, greet, caption}) {
+  constructor({ from, to, url, message, greet = null, caption = null }) {
     this.sender = from;
     this.to = to;
     this.url = url;
@@ -26,28 +27,47 @@ module.exports = class Email {
     }
   }
 
-  async send(template, subject) {
+  async send(template, subject, docs = null) {
+    let html = "";
 
-    const html = pug.renderFile(`${__dirname}/../../views/${template}.pug`, {
-      url: this.url,
-      subject,
-      message: this.message,
-      caption: this.caption,
-      greet: this.greet
+    const attachments = docs.map((doc) => {
+      return {
+        filename: doc.name,
+        content: fs.createReadStream(`${__dirname}/../data/${doc.name}`),
+      };
     });
 
-    const mailOpt =  {
-        from: this.sender,
-        to: this.to,
-        text: ht.htmlToText(html),
-        html,
-        subject
+    if (template) {
+      html = pug.renderFile(`${__dirname}/../../views/${template}.pug`, {
+        url: this.url,
+        subject,
+        message: this.message,
+        caption: this.caption,
+        greet: this.greet,
+      });
+      u;
+    }
+
+    const mailOpt = {
+      from: this.sender,
+      to: this.to,
+      text: template ? ht.htmlToText(html) : "",
+      html,
+      subject,
+    };
+
+    if (docs.length) {
+      mailOpt.attachments = attachments;
     }
 
     this.transporter().sendMail(mailOpt);
   }
 
-  sendVerificationEmail(){
-    this.send('verify', "Verify your Email");
+  sendVerificationEmail() {
+    this.send("verify", "Verify your Email");
   }
-}
+
+  sendResponseEmail(doc) {
+    this.send(null, "Shared document", doc);
+  }
+};

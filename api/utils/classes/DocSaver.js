@@ -7,6 +7,7 @@ const unzipper = require("unzipper");
 const zip = new JSZip();
 
 module.exports = class DocSaver {
+  files = [];
   constructor() {
     let fileName = crypto.randomBytes(32).toString("hex");
     this.fileName = `${Date.now()}.${fileName}`;
@@ -22,6 +23,7 @@ module.exports = class DocSaver {
   async toSave(arr, metadata, total) {
     arr.push(metadata);
     if (arr.length === total) {
+      arr.forEach(doc => this.files.push({name: doc.name}));
       this.zip(arr);
       await this.saveToDB(metadata);
     }
@@ -70,7 +72,7 @@ module.exports = class DocSaver {
   }
 
   async saveToDB(metadata) {
-    await (
+    const doc = await (
       await Document.create(metadata)
     ).populate({
       path: "Users",
