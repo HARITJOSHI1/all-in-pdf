@@ -19,8 +19,8 @@ const multerFilter = (req, file, cb) => {
 const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 exports.uploadFiles = upload.array("files", 10);
 
-const addDocInfoCookie = (res, arr) =>
-  new Cookies().sendCookie(res, "docData", arr);
+const addDocInfoCookie = (res, doc) =>
+  new Cookies().sendCookie(res, "docData", [{name: doc}]);
 
 exports.compress = catchAsync(async (req, res, next) => {
   console.log("File compressing ......");
@@ -35,7 +35,7 @@ exports.compress = catchAsync(async (req, res, next) => {
       ` fn upload(),  ${__dirname}`
     ); 
 
-  addDocInfoCookie(res, comp.files);
+  addDocInfoCookie(res, comp.fileName);
 
   res.status(200).json({
     status: "success",

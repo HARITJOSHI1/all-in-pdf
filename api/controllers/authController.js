@@ -36,7 +36,6 @@ exports.isAvalToShare = catchAsync(async (req, res, next) => {
   req.message = message;
   req.docData = Cookies.getCookie(req, "docData");
 
-  console.log("DocData = ", req.docData);
-
+  // console.log("DocData = ", req.docData);
   next();
 });

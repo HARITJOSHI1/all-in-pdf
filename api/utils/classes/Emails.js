@@ -2,6 +2,7 @@ const nodemailer = require("nodemailer");
 const pug = require("pug");
 const ht = require("html-to-text");
 const fs = require("fs");
+const path = require("path");
 
 module.exports = class Email {
   constructor({ from, to, url, message, greet = null, caption = null }) {
@@ -33,7 +34,9 @@ module.exports = class Email {
     const attachments = docs.map((doc) => {
       return {
         filename: doc.name,
-        content: fs.createReadStream(`${__dirname}/../data/${doc.name}`),
+        content: fs.createReadStream(
+          path.resolve(__dirname, `../../data/${doc.name}.zip`)
+        ),
       };
     });
 
@@ -45,7 +48,6 @@ module.exports = class Email {
         caption: this.caption,
         greet: this.greet,
       });
-      u;
     }
 
     const mailOpt = {
@@ -58,6 +60,9 @@ module.exports = class Email {
 
     if (docs.length) {
       mailOpt.attachments = attachments;
+      // mailOpt.text = fs.createReadStream(
+      //   path.resolve(__dirname, `../../data/text.txt`)
+      // );
     }
 
     this.transporter().sendMail(mailOpt);

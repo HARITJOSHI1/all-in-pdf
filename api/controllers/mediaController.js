@@ -12,14 +12,11 @@ exports.shareMediaByEmail = catchAsync(async (req, res, next) => {
   if (!docData.length)
     throw new AppError(500, "Something went wrong", `fn sendMediaByEmail(), ${__dirname}`);
 
-  const email = await new Email({
+  await new Email({
     from: req.from,
     to: req.to,
     message: req.message ? req.message : "Documents shared using superpdf.com",
   }).sendResponseEmail(docData);
-
-  if (!email)
-    throw new AppError(500, "Something went wrong", `fn sendMediaByEmail(), ${__dirname}`);
 
   new Response(res, 200, "success",  "document shared succesfully");
 });
