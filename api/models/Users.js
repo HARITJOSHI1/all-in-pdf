@@ -97,18 +97,9 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
 
-  sendTo: {
-    type: String,
-    trim: true,
-    lowercase: true,
-    default: "sender@noreply.com",
-    validate: [validator.isEmail, "Please enter a valid email address"],
-  },
-
   message: {
     type: String,
-    trim: true,
-    default: "Some msg",
+    trim: true
   },
 });
 

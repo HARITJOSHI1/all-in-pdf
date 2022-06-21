@@ -5,6 +5,7 @@ const { PDFNet } = require("@pdftron/pdfnet-node");
 module.exports = class CompressPDF extends DocSaver {
   static async compress(files) {
     await this.prototype.init();
+    
     const compressedSizes = [];
     const fileSizes = [];
     const metadata = {
@@ -52,6 +53,7 @@ module.exports = class CompressPDF extends DocSaver {
     this.compressedSizes = compressedSizes;
     this.fileSizes = fileSizes;
     metadata.name = `${this.fileName}.zip`;
+    metadata.userId = this.uid;
 
     this.toSave(metadata);
   }

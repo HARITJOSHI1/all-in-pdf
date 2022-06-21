@@ -6,6 +6,7 @@ const Cookies = require("../utils/classes/Cookies");
 const AppError = require("../utils/classes/AppError");
 
 async function checkUserExists(Model, req) {
+  await Model.deleteOne({id: Cookies.getCookie(req, "sessionId")});
   if (await Model.findOne({ email: req.body.email })) return true;
   return false;
 }
