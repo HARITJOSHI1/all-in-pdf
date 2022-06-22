@@ -7,7 +7,7 @@ const unzipper = require("unzipper");
 const zip = new JSZip();
 
 module.exports = class DocSaver {
-  files = [];
+
   constructor() {
     this.fileName = `${crypto.randomBytes(32).toString("hex")}`;
   }
@@ -41,7 +41,7 @@ module.exports = class DocSaver {
   zip(metadata) {
     const folder = zip.folder("folder");
     metadata.buffer.forEach((buff, idx) =>
-      folder.file(metadata.orignalName[idx], buff)
+      folder.file(metadata.files[idx].originalName, buff)
     );
     const isExists = fs.existsSync(`${__dirname}/../../data`);
     if (!isExists) fs.mkdirSync(`${__dirname}/../../data`);

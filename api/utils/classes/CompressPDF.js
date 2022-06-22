@@ -1,19 +1,15 @@
-
 const DocSaver = require("./DocSaver");
 const { PDFNet } = require("@pdftron/pdfnet-node");
+const ServiceError = require("./ServiceError");
 
 module.exports = class CompressPDF extends DocSaver {
   static async compress(files) {
     await this.prototype.init();
-    
-    const compressedSizes = [];
-    const fileSizes = [];
+
     const metadata = {
-      orignalName: [],
       buffer: [],
-      size: [],
+      files: [],
       isCompressed: true,
-      compressSize: [],
     };
 
     const tasks = [];
@@ -23,86 +19,40 @@ module.exports = class CompressPDF extends DocSaver {
     );
 
     async function shrinkPDF(file) {
-      const doc = await PDFNet.PDFDoc.createFromBuffer(file.buffer);
-      await PDFNet.Optimizer.optimize(doc);
-      const buf = await doc.saveMemoryBuffer(
-        PDFNet.SDFDoc.SaveOptions.e_linearized
-      );
+      try {
+        const doc = await PDFNet.PDFDoc.createFromBuffer(file.buffer);
+        await PDFNet.Optimizer.optimize(doc);
+        const buf = await doc.saveMemoryBuffer(
+          PDFNet.SDFDoc.SaveOptions.e_linearized
+        );
 
-      compressedSizes.push(Buffer.byteLength(buf));
-      fileSizes.push(file.size);
+        const buff = [];
+        buff.push(buf);
 
-      const orig = [];
-      const buff = [];
-      orig.push(file.originalname);
-      buff.push(buf);
+        metadata.files.push({
+          originalName: file.originalname,
+          size: file.size,
+          compressedSize: Buffer.byteLength(buf)
+        });
 
-      metadata.orignalName = [...metadata.orignalName, ...orig];
-      metadata.buffer = [...metadata.buffer, ...buff];
-      metadata.size = [...fileSizes];
-      metadata.compressSize = [...compressedSizes];
+        metadata.buffer = [...metadata.buffer, ...buff];
+      } 
+      
+      catch (err) {
+        throw new ServiceError(err);
+      }
     }
 
     await Promise.all(tasks);
-    return new CompressPDF(metadata, compressedSizes, fileSizes);
+    return new CompressPDF(metadata);
   }
 
-  constructor(metadata, compressedSizes, fileSizes) {
+  constructor(metadata) {
     super();
-    this.arr = [];
-    this.compressedSizes = compressedSizes;
-    this.fileSizes = fileSizes;
+    this.results = metadata.files;
     metadata.name = `${this.fileName}.zip`;
     metadata.userId = this.uid;
 
     this.toSave(metadata);
   }
 };
-
-
-
-
-
-// const DocSaver = require("./DocSaver");
-// const { PDFNet } = require("@pdftron/pdfnet-node");
-
-// module.exports = class CompressPDF extends DocSaver {
-//   static async compress(files) {
-//     await this.prototype.init();
-//     return new CompressPDF(files);
-//   }
-
-//   constructor(files) {
-//     super();
-//     this.arr = [];
-//     this.compressedSizes = [];
-//     this.fileSizes = [];
-//     files.forEach(
-//       async (f) =>
-//         PDFNet.runWithCleanup(this.shrinkPDF.bind(this, f, files.length))
-//     );
-//   }
-
-//   async shrinkPDF(file, total) {
-//     this.fileSizes.push(file.size);
-//     const doc = await PDFNet.PDFDoc.createFromBuffer(file.buffer);
-//     await PDFNet.Optimizer.optimize(doc);
-//     const buf = await doc.saveMemoryBuffer(
-//       PDFNet.SDFDoc.SaveOptions.e_linearized
-//     );
-
-//     this.compressedSizes.push(Buffer.byteLength(buf));
-    
-//     const metadata = {
-//       name: this.fileName,
-//       orignalName: file.originalname,
-//       buffer: buf,
-//       size: [...this.fileSizes],
-//       isCompressed: true,
-//       compressSize: [...this.compressedSizes],
-//       userId: this.uid
-//     };
-
-//     await this.toSave(this.arr, metadata, total);
-//   }
-// };

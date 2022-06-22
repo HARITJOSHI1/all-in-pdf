@@ -1,6 +1,15 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
 
+const FileSchema = new mongoose.Schema({
+  originalName: String,
+  size: Number,
+  compressedSize: {
+    type: Number,
+    default: undefined
+  }
+});
+
 const docSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -12,10 +21,13 @@ const docSchema = new mongoose.Schema({
     ref: "Users",
   },
 
-  size: [Number],
+  files: [FileSchema],
   type: String,
   isCompressed: Boolean,
-  compressSize: [Number],
+  compressSize: {
+    type: [Number],
+    default: undefined
+  },
   isEncrypted: Boolean,
   filesMerged: Number,
   password: {
