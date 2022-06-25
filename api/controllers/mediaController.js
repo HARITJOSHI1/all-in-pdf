@@ -1,7 +1,5 @@
 const catchAsync = require("../utils/catchAsync");
 const Email = require("../utils/classes/Emails");
-const Cookies = require("../utils/classes/Cookies");
-const Document = require("../models/Document");
 const AppError = require("../utils/classes/AppError");
 const Response = require("../utils/Response");
 

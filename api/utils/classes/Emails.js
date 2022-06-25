@@ -30,15 +30,18 @@ module.exports = class Email {
 
   async send(template, subject, docs = null) {
     let html = "";
+    let attachments;
 
-    const attachments = docs.map((doc) => {
-      return {
-        filename: doc.name,
-        content: fs.createReadStream(
-          path.resolve(__dirname, `../../data/${doc.name}.zip`)
-        ),
-      };
-    });
+    if (docs) {
+      attachments = docs.map((doc) => {
+        return {
+          filename: doc.name,
+          content: fs.createReadStream(
+            path.resolve(__dirname, `../../data/${doc.name}.zip`)
+          ),
+        };
+      });
+    }
 
     if (template) {
       html = pug.renderFile(`${__dirname}/../../views/${template}.pug`, {
@@ -58,12 +61,7 @@ module.exports = class Email {
       subject,
     };
 
-    if (docs.length) {
-      mailOpt.attachments = attachments;
-      // mailOpt.text = fs.createReadStream(
-      //   path.resolve(__dirname, `../../data/text.txt`)
-      // );
-    }
+    if (docs && docs.length) mailOpt.attachments = attachments;
 
     this.transporter().sendMail(mailOpt);
   }
