@@ -33,13 +33,11 @@ exports.compress = catchAsync(async (req, res, next) => {
       ` fn upload(),  ${__dirname}`
     );
 
-  addDocInfoCookie(res, comp.fileName);
+  req.filename = comp.fileName;
+  req.msg = "PDF compressed";
 
-  res.status(200).json({
-    status: "success",
-    message: "PDF compressed",
-    data: comp.fileName,
-  });
+  addDocInfoCookie(res, comp.fileName);
+  next();
 });
 
 exports.merge = catchAsync(async (req, res, next) => {
@@ -49,13 +47,11 @@ exports.merge = catchAsync(async (req, res, next) => {
   if (!comp)
     throw new AppError(500, "Failed to merge", ` fn upload(),  ${__dirname}`);
 
-  addDocInfoCookie(res, comp.fileName);
+  req.filename = comp.fileName;
+  req.msg = "PDF merged";
 
-  res.status(200).json({
-    status: "success",
-    message: "PDF merged",
-    data: comp.fileName,
-  });
+  addDocInfoCookie(res, comp.fileName);
+  next();
 });
 
 // exports.convert = async (req, res, next) => {
@@ -79,11 +75,10 @@ exports.encrypt = catchAsync(async (req, res, next) => {
   await Encryption.initialize();
   const comp = new Encryption(req.files[0], rules, "owner");
   await comp.encryptViaPass(req.body.password);
+
+  req.filename = comp.fileName;
+  req.msg = "PDF encypted";
   addDocInfoCookie(res, comp.fileName);
 
-  res.status(200).json({
-    status: "success",
-    message: "encypted",
-    data: comp.fileName,
-  });
+  next();
 });
