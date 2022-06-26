@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { promisify } = require("util");
-const Documents = require("../../models/Document");
+const Documents = require("../../models/Documents");
 const Users = require("../../models/Users");
 const ServiceError = require("./ServiceError");
 
