@@ -20,6 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { User } from "firebase/auth";
 import { withRouter, RouteComponentProps, Link } from "react-router-dom";
 import { OPERATIONS } from "../PDFOps/Operations";
+import ReactGA from 'react-ga';
 
 interface ShowAccord {
   showAccord: boolean;
@@ -118,7 +119,8 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
   const [showLogin, setLogin] = useState<boolean>(false);
 
   useEffect(() => {
-    const unlisten = history.listen(() => {
+    const unlisten = history.listen((location) => {
+      ReactGA.pageview(location.pathname + location.search);
       window.scrollTo(0, 0);
       setAccord(false);
     });

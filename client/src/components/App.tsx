@@ -17,6 +17,7 @@ import { firebase } from "../firebaseInit";
 import { User } from "firebase/auth";
 import CircularProgress from "@mui/material/CircularProgress";
 import Operation from "./PDFOps/Operation";
+import ReactGA from 'react-ga';
 
 interface Props {
   addGlobalMediaQ: (q: Record<keyof GMQ, boolean>) => AdddMediaQ;
@@ -43,7 +44,10 @@ const App: React.FC<Props> = (props) => {
   let [load, setLoad] = useState<boolean>(true);
   load && localStorage.setItem("load", "1");
 
+  const googleAnalyticsInit = () => ReactGA.initialize("UA-232860806-1");
+
   useEffect(() => {
+    googleAnalyticsInit();
     const auth = firebase.auth();
     firebase.onAuthStateChanged(auth, (user) => {
 
