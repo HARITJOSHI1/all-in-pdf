@@ -2,11 +2,16 @@ const mongoose = require("mongoose");
 
 const Schema = new mongoose.Schema({
     tool: String,
-    ratings: Number,
+    rating: {
+        type: Number,
+        min: 0,
+        max: 5
+    },
     userId: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.SchemaTypes.ObjectId,
         ref: "Users"
-    }
+    },
+    userIP: String
 });
 
 module.exports = mongoose.model("Ratings", Schema);

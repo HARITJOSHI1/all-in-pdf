@@ -106,7 +106,6 @@ exports.verifyJWT = catchAsync(async (req, res, next) => {
   const secret = process.env.JWT_SECRET_A;
 
   const data = await jwt.verify(req.cookies.jwt.accessToken, secret);
-  console.log(data._id);
 
   if (!data)
     throw new AppError(
@@ -116,7 +115,7 @@ exports.verifyJWT = catchAsync(async (req, res, next) => {
       "JWT"
     );
 
-    
+
   else {
     req.uid = data._id;
     next();
