@@ -79,14 +79,10 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 
-exports.logOut = catchAsync((req, res) => {
-  if(Cookies.getCookie(req, 'refreshToken') && Cookies.getCookie(req, 'accessToken')){
+exports.logOut = catchAsync(async (req, res) => {
     new Cookies().sendCookie(res, 'jwt', "");
-    res.status(404).json({
+    res.status(200).json({
       status: "success",
       message: "Logged out"
     });
-  }
-
-  else throw new AppError(404, "Cookie doesn't exist or expired", `fn logOut(), ${__dirname}`);
 });

@@ -13,6 +13,7 @@ module.exports = class ServiceError extends Error {
   generateErrorDB = (error) => {
     if (error.code) this.handleDuplicateErrorDB(error);
     else if (error.errors) this.handleValidatorErrorDB(error.errors);
+    else if (error.expiredAt) this.handleJWT(error);
     else 
       this.message = "Something went wrong!" 
   };
@@ -32,5 +33,10 @@ module.exports = class ServiceError extends Error {
     this.message = `${Object.keys(error.keyValue)[0]} field is duplicate`,
     this.statusCode = 409;
   };
+
+  handleJWT(error){
+    this.message = this.reason,
+    this.statusCode = 500;
+  }
 
 };
