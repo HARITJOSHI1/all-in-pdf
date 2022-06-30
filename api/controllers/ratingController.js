@@ -6,6 +6,7 @@ const AppError = require("../utils/classes/AppError");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const address = require("address");
+const { log } = require("console");
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -16,8 +17,11 @@ async function isAlreadyRated(req, tool) {
   const id = req.uid;
   let res = false;
 
-  if (await Ratings.findOne({ userId: new ObjectId(id),
-    tool}) || await Ratings.findOne({userIP, tool})) res = true;
+  if (
+    (await Ratings.findOne({ userId: new ObjectId(id), tool })) ||
+    (await Ratings.findOne({ userIP, tool }))
+  )
+    res = true;
 
   return res;
 }
@@ -40,8 +44,44 @@ exports.postRatings = catchAsync(async (req, res, next) => {
 });
 
 exports.getRatings = catchAsync(async (req, res, next) => {
-  // TODO
+  const rateByUser = req.query.rate;
+  const tool = req.query.tool;
 
-  
-  res.end("Ratings");
+  const stats = await Ratings.aggregate([
+    {
+      $group: {
+        _id: {
+          tool: "$tool",
+          ratings: "$rating",
+        },
+
+        total: { $sum: 1 },
+      },
+    },
+
+    {
+      $group: {
+        _id: {
+          tool: "$_id.tool",
+        },
+
+        tool: {
+          $first: "$_id.tool",
+        },
+
+        ratingsData: {
+          $addToSet: { ratings: "$_id.ratings", total: "$total" },
+        },
+
+        toolUsedBy: { $sum: 1 },
+      },
+    },
+
+    {
+      $unset: ["_id"],
+    },
+  ]);
+
+  const finalData = stats.filter((d) => (d.tool === tool));
+  new Response(res, 200, "success", undefined, finalData);
 });
