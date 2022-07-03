@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
-const testRoute = require('./routes/pdfRoutes');
+const PDFRoute = require('./routes/pdfRoutes');
 const cookieParser = require('cookie-parser');
 const {createUser} = require('./utils/createUser');
 const {sessionUrl} = require("./server");
@@ -39,7 +39,7 @@ app.use(session({
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, '/views'));
 
-app.use('/api/v1/pdf', createUser, testRoute);
+app.use('/api/v1/pdf', createUser, PDFRoute);
 app.use('/api/v1/entry', entryRoute);
 app.use('/api/v1/token', refreshRoute);
 app.use('/api/v1/media/share', mediaRoute);
