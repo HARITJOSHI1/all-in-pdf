@@ -2,7 +2,7 @@ const path = require("path");
 const multer = require("multer");
 const CompressPDF = require("../utils/classes/CompressPDF");
 const MergePDF = require("../utils/classes/MergePDF");
-// const { WordToPDF } = require("../utils/classes/Conversion");
+const { WordToPDF } = require("../utils/classes/Conversion");
 const catchAsync = require("../utils/catchAsync");
 const Encryption = require("../utils/classes/Security");
 const AppError = require("../utils/classes/AppError");
@@ -58,16 +58,21 @@ exports.merge = catchAsync(async (req, res, next) => {
   });
 });
 
-// exports.convert = async (req, res, next) => {
-//   console.log("File converting ......");
-//   WordToPDF.files(req.files);
+exports.wordToPDF = async (req, res, next) => {
+  console.log("File converting ......");
+  const comp = await WordToPDF.convert(req.files);
 
-//   res.status(200).json({
-//     status: "success",
-// message: "converted",
-// data: comp.fileName
-//   });
-// };
+  if (!comp)
+    throw new AppError(500, "Failed to convert", ` fn upload(),  ${__dirname}`);
+
+  addDocInfoCookie(res, comp.fileName);
+
+  res.status(200).json({
+    status: "success",
+    message: "converted",
+    data: comp.fileName,
+  });
+};
 
 exports.encrypt = catchAsync(async (req, res, next) => {
   console.log("File encrypting ......");
