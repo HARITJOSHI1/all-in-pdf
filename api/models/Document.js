@@ -7,7 +7,18 @@ const FileSchema = new mongoose.Schema({
   compressedSize: {
     type: Number,
     default: undefined
-  }
+  },
+
+  degreeRotated: {
+    type: String,
+    default: undefined
+  },
+
+  orientation: {
+    type: String,
+    default: undefined
+  },
+
 });
 
 const docSchema = new mongoose.Schema({
@@ -24,11 +35,12 @@ const docSchema = new mongoose.Schema({
   files: [FileSchema],
   type: String,
   isCompressed: Boolean,
+  isRotated: Boolean,
+  isEncrypted: Boolean,
   compressSize: {
     type: [Number],
     default: undefined
   },
-  isEncrypted: Boolean,
   filesMerged: Number,
   password: {
     type: String,

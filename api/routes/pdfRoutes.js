@@ -5,7 +5,8 @@ const {
   compress,
   wordToPDF,
   encrypt,
-  merge
+  merge,
+  rotate
 } = require("../controllers/fileController");
 
 
@@ -14,5 +15,6 @@ Router.post("/compress", uploadFiles, compress);
 Router.post("/encrypt", uploadFiles, encrypt);
 Router.post("/merge", uploadFiles, merge);
 Router.post("/word-to-pdf", uploadFiles, wordToPDF);
+Router.post("/rotate", uploadFiles, rotate);
 
 module.exports = Router;

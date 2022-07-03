@@ -2,6 +2,7 @@ const path = require("path");
 const multer = require("multer");
 const CompressPDF = require("../utils/classes/CompressPDF");
 const MergePDF = require("../utils/classes/MergePDF");
+const RotatePDF = require("../utils/classes/Rotation");
 const { WordToPDF } = require("../utils/classes/Conversion");
 const catchAsync = require("../utils/catchAsync");
 const Encryption = require("../utils/classes/Security");
@@ -54,6 +55,25 @@ exports.merge = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "PDF merged",
+    data: comp.fileName,
+  });
+});
+
+
+exports.rotate = catchAsync(async (req, res, next) => {
+  console.log("File rotating ......");
+
+  const {type} = req.query;
+  const comp = await RotatePDF.rotate(req.files, type);
+
+  if (!comp)
+    throw new AppError(500, "Failed to rotate", ` fn upload(),  ${__dirname}`);
+
+  addDocInfoCookie(res, comp.fileName);
+
+  res.status(200).json({
+    status: "success",
+    message: "PDF rotated",
     data: comp.fileName,
   });
 });
