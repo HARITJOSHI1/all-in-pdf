@@ -4,6 +4,7 @@ const AppError = require("../utils/classes/AppError");
 const Users = require("../models/Users");
 const Cookies = require("../utils/classes/Cookies");
 const crypto = require("crypto");
+const HasAccount = require("../utils/HasAccount");
 
 
 class AuthUser {
@@ -97,11 +98,6 @@ exports.authenticateViaEmail = catchAsync(async (req, res) => {
   }
 });
 
-const HasAccount = async (email) => {
-  const user = await Users.findOne({ email });
-  if (!user) return null;
-  return user;
-};
 
 exports.verifyJWT = catchAsync(async (req, res, next) => {
   const secret = process.env.JWT_SECRET_A;
