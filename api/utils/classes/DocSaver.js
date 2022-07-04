@@ -7,10 +7,11 @@ const unzipper = require("unzipper");
 const zip = new JSZip();
 
 module.exports = class DocSaver {
+
   constructor() {
-    let fileName = crypto.randomBytes(32).toString("hex");
-    this.fileName = `${Date.now()}.${fileName}`;
+    this.fileName = `${crypto.randomBytes(32).toString("hex")}`;
   }
+
   async init() {
     await PDFNet.initialize(process.env.PDFTRON_INIT);
   }
@@ -19,12 +20,9 @@ module.exports = class DocSaver {
     this.prototype.uid = userId;
   }
 
-  async toSave(arr, metadata, total) {
-    arr.push(metadata);
-    if (arr.length === total) {
-      this.zip(arr);
-      await this.saveToDB(metadata);
-    }
+  async toSave(metadata) {
+    this.zip(metadata);
+    await this.saveToDB(metadata);
   }
 
   async unzip(path, name, outPath) {
@@ -40,13 +38,10 @@ module.exports = class DocSaver {
     }
   }
 
-  zip(files) {
+  zip(metadata) {
     const folder = zip.folder("folder");
-    files.forEach((f) =>
-      folder.file(
-        f.orignalName,
-        f.buffer
-      )
+    metadata.buffer.forEach((buff, idx) =>
+      folder.file(metadata.files[idx].originalName, buff)
     );
     const isExists = fs.existsSync(`${__dirname}/../../data`);
     if (!isExists) fs.mkdirSync(`${__dirname}/../../data`);

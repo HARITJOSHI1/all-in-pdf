@@ -25,8 +25,8 @@ const userSchema = new mongoose.Schema({
   phoneNo: {
     type: String,
     trim: true,
-    default: "0000000000",
-    validate: [validator.isMobilePhone, "Please enter a valid phone number"],
+    default: undefined,
+    // validate: [validator.isMobilePhone, "Please enter a valid phone number"],
     select: false
   },
 
@@ -97,18 +97,9 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
 
-  sendTo: {
-    type: String,
-    trim: true,
-    lowercase: true,
-    default: "sender@noreply.com",
-    validate: [validator.isEmail, "Please enter a valid email address"],
-  },
-
   message: {
     type: String,
-    trim: true,
-    default: "Some msg",
+    trim: true
   },
 });
 
@@ -155,7 +146,7 @@ userSchema.methods.verifyEmailToken = function () {
   const VT = crypto.randomBytes(32).toString("hex");
   const token = saveToken(VT);
   this.verifyEmail = token;
-  this.verifyEmailExp = Date.now() + 24 * 60 * 60 * 1000;
+  this.verifyEmailExp = Date.now() + 10 * 60 * 1000;
   return VT;
 };
 
