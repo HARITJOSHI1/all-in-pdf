@@ -2,26 +2,44 @@ const DocSaver = require("./DocSaver");
 const { PDFNet } = require("@pdftron/pdfnet-node");
 const ServiceError = require("./ServiceError");
 
-module.exports = class CompressPDF extends DocSaver {
-  static async compress(files) {
+module.exports = class RotatePDF extends DocSaver {
+  static async rotate(files, type) {
     await this.prototype.init();
 
     const metadata = {
       buffer: [],
       files: [],
-      isCompressed: true,
+      isRotated: true,
     };
 
     const tasks = [];
 
     files.forEach((f) =>
-      tasks.push(PDFNet.runWithCleanup(shrinkPDF.bind(this, f)))
+      tasks.push(PDFNet.runWithCleanup(_rotate.bind(this, f, type)))
     );
 
-    async function shrinkPDF(file) {
+    async function _rotate(file, type) {
       try {
         const doc = await PDFNet.PDFDoc.createFromBuffer(file.buffer);
-        await PDFNet.Optimizer.optimize(doc);
+        const totalPages = await doc.getPageCount();
+
+        for (let i = 1; i <= totalPages; i++) {
+            const page = await doc.getPage(i);
+            let rotation;
+
+            switch(type){
+                case "right":
+                    rotation = PDFNet.Page.Rotate.e_90;
+                    break;
+
+                case "left":
+                    rotation = PDFNet.Page.Rotate.e_270;
+                    break;  
+            }
+
+            await page.setRotation(rotation);
+        }
+
         const buf = await doc.saveMemoryBuffer(
           PDFNet.SDFDoc.SaveOptions.e_linearized
         );
@@ -32,7 +50,8 @@ module.exports = class CompressPDF extends DocSaver {
         metadata.files.push({
           originalName: file.originalname,
           size: file.size,
-          compressedSize: Buffer.byteLength(buf)
+          orientation: type,
+          degreeRotated: (type=== "left"? "270deg" : "90deg")
         });
 
         metadata.buffer = [...metadata.buffer, ...buff];
@@ -44,7 +63,7 @@ module.exports = class CompressPDF extends DocSaver {
     }
 
     await Promise.all(tasks);
-    return new CompressPDF(metadata);
+    return new RotatePDF(metadata);
   }
 
   constructor(metadata) {

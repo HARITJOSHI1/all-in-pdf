@@ -2,13 +2,13 @@ const { PDFNet } = require("@pdftron/pdfnet-node");
 const DocSaver = require("./DocSaver");
 const fs = require("fs");
 const { resolve } = require("path");
+const ServiceError = require("../classes/ServiceError");
 
 class Security extends DocSaver {
-  constructor(doc, uid, rules, role = "user") {
+  constructor(doc, rules, role = "user") {
     super();
     this.rules = rules;
     this.doc = doc;
-    this.userId = uid;
     this.role = role;
     this.isEncrypted = false;
   }
@@ -24,9 +24,7 @@ class Security extends DocSaver {
         PDFNet.SecurityHandler.Permission.e_owner,
         true
       );
-    } 
-    
-    else {
+    } else {
       for (let R in rules)
         await handler.setPermission(
           PDFNet.SecurityHandler.Permission[R],
@@ -37,33 +35,32 @@ class Security extends DocSaver {
 }
 
 class Decryption extends Security {
-  static async decrypt(path, pass, doc) {
+  static async initialize(path, pass, doc) {
     await this.prototype.init();
-    return new Decryption(path, pass, doc);
   }
 
   constructor(path, pass, doc) {
-    const arr = [];
     super(doc);
     path = resolve(`${__dirname}`, `../../${path}`);
-    this.internalDecrypt(path, pass).then((res) => {
-      if (!res) throw new Error("Password is wrong");
+    this._decrypt(path, pass).then((res) => {
+      if (!res) throw new ServiceError("Password is wrong");
       else {
         const metadata = {
           name: this.fileName,
-          orignalName: this.doc.originalname,
+          originalName: [this.doc.originalname],
           buffer: this.docBuff,
+          size: [Buffer.byteLength(buf)],
           isEncrypted: false,
           userId: this.uid,
-          type: "pdf",
         };
 
-        this.toSave(arr, metadata, 1);
+        this.results = this.addFiles(metadata.size, metadata.originalName);
+        this.toSave(metadata);
       }
     });
   }
 
-  async internalDecrypt(path, pass) {
+  async _decrypt(path, pass) {
     const outPath = resolve(`${__dirname}`, `../../data`);
     await this.unzip(path, this.doc.originalname, outPath);
     this.docBuff = fs.readFileSync(`${outPath}/${this.doc.originalname}`);
@@ -78,43 +75,55 @@ class Decryption extends Security {
 }
 
 module.exports = class Encryption extends Security {
-  static async secure(doc, rules, role, uid) {
+  static async initialize() {
     await this.prototype.init();
-    return new Encryption(doc, rules, role, uid);
   }
 
-  constructor(doc, rules, role, uid) {
-    super(doc, uid, rules, role);
-    this.arr = [];
+  constructor(doc, rules, role) {
+    super(doc, rules, role);
     this.secureInit().then((res) => (this.handler = res));
   }
 
   async encryptViaPass(pass) {
-    await PDFNet.runWithCleanup(async () => {
-      const pdfDoc = await PDFNet.PDFDoc.createFromBuffer(this.doc.buffer);
-      await pdfDoc.initSecurityHandler(); // doubt
-      // const path = `/data/${this.fileName}.zip`;
+    return await PDFNet.runWithCleanup(async () => {
+      try {
+        const pdfDoc = await PDFNet.PDFDoc.createFromBuffer(this.doc.buffer);
+        await pdfDoc.initSecurityHandler(); // doubt
+        // const path = `/data/${this.fileName}.zip`;
 
-      await this.handler.changeUserPasswordUString(pass);
-      await this.setSecurityRules(this.rules, this.handler);
-      await pdfDoc.setSecurityHandler(this.handler);
+        await this.handler.changeUserPasswordUString(pass);
+        await this.setSecurityRules(this.rules, this.handler);
 
-      const buf = await pdfDoc.saveMemoryBuffer(
-        PDFNet.SDFDoc.SaveOptions.e_linearized
-      );
+        await pdfDoc.setSecurityHandler(this.handler);
 
-      const metadata = {
-        name: this.fileName,
-        orignalName: this.doc.originalname,
-        buffer: buf,
-        size: [Buffer.byteLength(buf)],
-        isEncrypted: true,
-        password: pass,
-        userId: this.uid,
-        type: "pdf",
-      };
+        const buf = await pdfDoc.saveMemoryBuffer(
+          PDFNet.SDFDoc.SaveOptions.e_linearized
+        );
 
-      await this.toSave(this.arr, metadata, 1);
+        const metadata = {
+          name: this.fileName,
+          files: [
+            {
+              originalName: this.doc.originalname,
+              size: Buffer.byteLength(buf),
+            },
+          ],
+          buffer: [buf],
+          isEncrypted: true,
+          password: pass,
+          userId: this.uid,
+        };
+
+        this.results = {
+          originalName: metadata.originalName,
+          size: metadata.size,
+        };
+
+        this.isEncrypted = true;
+        await this.toSave(metadata);
+      } catch (err) {
+        new ServiceError(err);
+      }
     });
   }
 };

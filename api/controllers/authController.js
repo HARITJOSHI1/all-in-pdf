@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const AppError = require("../utils/classes/AppError");
 const Users = require("../models/Users");
 const Cookies = require("../utils/classes/Cookies");
+const crypto = require("crypto");
 
 const HasAccount = async (email) => {
   const user = await Users.findOne({ email });

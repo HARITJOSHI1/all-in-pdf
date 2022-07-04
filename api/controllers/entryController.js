@@ -6,7 +6,7 @@ const Cookies = require("../utils/classes/Cookies");
 const AppError = require("../utils/classes/AppError");
 
 async function checkUserExists(Model, req) {
-  await Model.deleteOne({id: Cookies.getCookie(req, "sessionId")});
+  await Model.findByIdAndDelete(Cookies.getCookie(req, "sessionId"));
   if (await Model.findOne({ email: req.body.email })) return true;
   return false;
 }
@@ -54,6 +54,7 @@ exports.signUp = catchAsync(async (req, res) => {
 
 
 exports.login = catchAsync(async (req, res, next) => {
+  await Users.findByIdAndDelete(Cookies.getCookie(req, "sessionId"));
   // 1. check whether email and password are provided by the user or not
   const { email, password } = req.body;
 

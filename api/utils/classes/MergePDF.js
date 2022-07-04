@@ -5,60 +5,66 @@ const ServiceError = require("./ServiceError");
 module.exports = class MergePDF extends DocSaver {
   static async merge(files) {
     await this.prototype.init();
-    const Doc = await PDFNet.PDFDoc.create();
-    Doc.initSecurityHandler();
-    return new MergePDF(files, Doc);
-  }
+    const metadata = {
+      buffer: [],
+      files: [],
+      filesMerged: 0,
+    };
 
-  constructor(files, Doc) {
-    super();
-    this.newDoc = Doc;
-    this.count = files.length;
-    this.arr = [];
-    PDFNet.runWithCleanup(this._merge.bind(this, files, files.length));
-  }
+    const newDoc = await PDFNet.PDFDoc.create();
+    const tasks = [];
 
-  async _merge(files, total) {
-    try {
-      files.forEach(async (file, idx) => {
+    files.forEach((f, idx) =>
+      tasks.push(PDFNet.runWithCleanup(_merge.bind(this, f, idx)))
+    );
+
+    async function _merge(file, idx) {
+      try {
         const curDoc = await PDFNet.PDFDoc.createFromBuffer(file.buffer);
         const srcPg = await curDoc.getPageCount();
-        const destPg = await this.newDoc.getPageCount();
+        const destPg = await newDoc.getPageCount();
 
-        await this.newDoc.insertPages(
-          (idx === 0 ? 1 : destPg + 1),
+        await newDoc.insertPages(
+          idx === 0 ? 1 : destPg + 1,
           curDoc,
           1,
           srcPg,
           PDFNet.PDFDoc.InsertFlag.e_none
         );
 
-        this.count -= 1;
+        metadata.files.push({
+          originalName: file.originalname,
+          size: file.size,
+        });
 
-        if (idx === 0) {
-          this.metadata = {
-            name: this.fileName,
-            orignalName: "Merge.pdf",
-            filesMerged: total,
-            userId: this.uid,
-          };
-        }
-
-        if (this.count === 0) await this._save(this.arr, 1);
-      });
-    } catch (err) {
-      throw new ServiceError(err);
+        metadata.filesMerged = idx + 1;
+      } catch (err) {
+        throw new ServiceError(err);
+      }
     }
-  }
 
-  async _save(arr, total) {
-    const buf = await this.newDoc.saveMemoryBuffer(
+    await Promise.all(tasks);
+    const buff = await newDoc.saveMemoryBuffer(
       PDFNet.SDFDoc.SaveOptions.e_linearized
     );
+    metadata.buffer.push(buff);
 
-    this.metadata.buffer = buf;
-    this.metadata.size = [Buffer.byteLength(buf)];
+    metadata.files.unshift({
+      originalName: `merged(${metadata.filesMerged}).pdf`,
+      size: Buffer.byteLength(buff),
+    });
 
-    await this.toSave(arr, this.metadata, total);
+    return new MergePDF(metadata);
+  }
+
+  constructor(metadata) {
+    super();
+    this.filesMerged = metadata.filesMerged;
+    this.results = metadata.files;
+
+    metadata.name = `${this.fileName}.zip`;
+    metadata.userId = this.uid;
+
+    this.toSave(metadata);
   }
 };

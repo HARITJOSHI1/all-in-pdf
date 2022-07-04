@@ -1,6 +1,26 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
 
+const FileSchema = new mongoose.Schema({
+  originalName: String,
+  size: Number,
+  compressedSize: {
+    type: Number,
+    default: undefined
+  },
+
+  degreeRotated: {
+    type: String,
+    default: undefined
+  },
+
+  orientation: {
+    type: String,
+    default: undefined
+  },
+
+});
+
 const docSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -12,11 +32,15 @@ const docSchema = new mongoose.Schema({
     ref: "Users",
   },
 
-  size: [Number],
+  files: [FileSchema],
   type: String,
   isCompressed: Boolean,
-  compressSize: [Number],
+  isRotated: Boolean,
   isEncrypted: Boolean,
+  compressSize: {
+    type: [Number],
+    default: undefined
+  },
   filesMerged: Number,
   password: {
     type: String,
