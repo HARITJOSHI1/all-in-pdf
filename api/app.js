@@ -12,6 +12,7 @@ const {sessionUrl} = require("./server");
 const AppError  = require("./utils/classes/AppError");
 const entryRoute = require("./routes/entryRoute");
 const refreshRoute = require("./routes/refreshRoute"); 
+const ratingRoute = require("./routes/ratingRoute");
 const mediaRoute = require("./routes/mediaRoute");
 const errorMiddleware = require("./utils/classes/Error");
 
@@ -43,6 +44,7 @@ app.use('/api/v1/pdf', createUser, testRoute);
 app.use('/api/v1/entry', entryRoute);
 app.use('/api/v1/token', refreshRoute);
 app.use('/api/v1/media/share', mediaRoute);
+app.use('/api/v1/rate', ratingRoute);
 
 app.all("*", (req, res, next) => {
     next(new AppError(404, "Page is not found"));

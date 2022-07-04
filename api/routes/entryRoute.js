@@ -1,5 +1,5 @@
 const express = require("express");
-const { authenticateViaEmail } = require("../controllers/authController");
+const { authenticateViaEmail, verifyJWT } = require("../controllers/authController");
 const router = express.Router();
 const {signUp, login, logOut} = require("../controllers/entryController");
 

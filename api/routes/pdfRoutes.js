@@ -9,16 +9,15 @@ const {
 } = require("../controllers/fileController");
 
 const {scheduleDelete} = require("../utils/deleteUnusedFiles");
+const {verifyJWT} = require("../controllers/authController");
 
-// Router.post('/save', uploadFiles, save);
 Router.use(uploadFiles);
 
 Router.post("/compress", compress);
 Router.post("/encrypt", encrypt);
 Router.post("/merge", merge);
+// Router.post("/word-to-pdf", uploadFiles, convert);
 
 Router.use(scheduleDelete);
-
-// Router.post("/word-to-pdf", uploadFiles, convert);
 
 module.exports = Router;

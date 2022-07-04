@@ -2,7 +2,7 @@ const JSZip = require("jszip");
 const fs = require("fs");
 const crypto = require("crypto");
 const { PDFNet } = require("@pdftron/pdfnet-node");
-const Document = require("../../models/Document");
+const Document = require("../../models/Documents");
 const unzipper = require("unzipper");
 const zip = new JSZip();
 
