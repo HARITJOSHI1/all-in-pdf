@@ -4,15 +4,16 @@ const catchAsync = require("./catchAsync");
 const Cleaner = require("./classes/Cleaner");
 const Cookies = require("../utils/classes/Cookies");
 const Response = require("./Response");
-const {client} = require("./initRedis");
+// const {client} = require("./initRedis");
 
-const { promisify } = require("util");
-client.get = promisify(client.get);
+// const { promisify } = require("util");
+// client.get = promisify(client.get);
 
 const events = new EventEmitter();
 
 exports.scheduleDelete = catchAsync(async (req, res, next) => {
-  if (!Cookies.getCookie(req, "jwt") || await client.get("userId")) {
+  
+  if (!Cookies.getCookie(req, "jwt")) {
     const { userId } = req.session;
     const scheduleTimer = "*/60 * * * *";
     let allClean = false;
@@ -33,9 +34,10 @@ exports.scheduleDelete = catchAsync(async (req, res, next) => {
     events.on("cleanup-complete", async (allClean) => {
       allClean ? task.stop() : null;
       events.removeAllListeners();
-      await client.del("userId");
+      // await client.del("userId");
     });
   }
 
+  // console.log("scheduleDelete called ......");
   new Response(res, 200, "success", req.msg, req.filename);
 });

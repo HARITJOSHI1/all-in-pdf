@@ -6,7 +6,8 @@ const {
   wordToPDF,
   encrypt,
   merge,
-  rotate
+  rotate,
+  deletePages
 } = require("../controllers/fileController");
 
 const {scheduleDelete} = require("../utils/deleteUnusedFiles");
@@ -17,8 +18,9 @@ Router.use(uploadFiles);
 Router.post("/compress", compress);
 Router.post("/encrypt", encrypt);
 Router.post("/merge", merge);
-Router.post("/rotate", rotate);
 Router.post("/word-to-pdf", uploadFiles, wordToPDF);
+Router.post("/rotate", rotate);
+Router.post("/deletePages", deletePages);
 
 Router.use(scheduleDelete);
 

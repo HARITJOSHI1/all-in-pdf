@@ -28,21 +28,32 @@ const docSchema = new mongoose.Schema({
   userId: {
     type: mongoose.SchemaTypes.ObjectId,
     ref: "Users",
+    required: [true, "Please provide user for the document"],
   },
 
   files: [FileSchema],
-  type: String,
   isCompressed: Boolean,
   isRotated: Boolean,
   compressSize: {
     type: [Number],
     default: undefined
   },
+
+  deletedPages: {
+    type: [Number],
+    default: undefined
+  },
+
   isEncrypted: Boolean,
-  filesMerged: Number,
+  filesMerged: {
+    type: Number,
+    default: undefined
+  },
+
   password: {
     type: String,
-    select: false
+    select: false,
+    default: undefined
   }
 });
 

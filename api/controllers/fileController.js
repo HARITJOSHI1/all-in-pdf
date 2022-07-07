@@ -4,6 +4,7 @@ const CompressPDF = require("../utils/classes/CompressPDF");
 const MergePDF = require("../utils/classes/MergePDF");
 const { WordToPDF } = require("../utils/classes/Conversion");
 const RotatePDF = require("../utils/classes/Rotation");
+const DeletePages = require("../utils/classes/DeletePages");
 const catchAsync = require("../utils/catchAsync");
 const Encryption = require("../utils/classes/Security");
 const AppError = require("../utils/classes/AppError");
@@ -31,7 +32,7 @@ exports.compress = catchAsync(async (req, res, next) => {
     throw new AppError(
       500,
       "Failed to compress",
-      ` fn upload(),  ${__dirname}`
+      ` fn compress(),  ${__dirname}`
     );
 
   req.filename = comp.fileName;
@@ -46,7 +47,7 @@ exports.merge = catchAsync(async (req, res, next) => {
   const comp = await MergePDF.merge(req.files);
 
   if (!comp)
-    throw new AppError(500, "Failed to merge", ` fn upload(),  ${__dirname}`);
+    throw new AppError(500, "Failed to merge", ` fn merge(),  ${__dirname}`);
 
   req.filename = comp.fileName;
   req.msg = "PDF merged";
@@ -60,10 +61,25 @@ exports.wordToPDF = async (req, res, next) => {
   const comp = await WordToPDF.convert(req.files);
 
   if (!comp)
-    throw new AppError(500, "Failed to convert", ` fn upload(),  ${__dirname}`);
+    throw new AppError(500, "Failed to convert", ` fn wordToPDF(),  ${__dirname}`);
 
   req.filename = comp.fileName;
   req.msg = "PDF converted";
+
+  addDocInfoCookie(res, comp.fileName);
+  next();
+};
+
+exports.deletePages = async (req, res, next) => {
+  console.log("Pages deleting ......");
+  const pages = req.query.pages.split(",");
+  const comp = await DeletePages.delete(req.files, pages);
+
+  if (!comp)
+    throw new AppError(500, "Failed to delete pages", ` fn deletePages(),  ${__dirname}`);
+
+  req.filename = comp.fileName;
+  req.msg = `Pages ${pages} deleted`;
 
   addDocInfoCookie(res, comp.fileName);
   next();
@@ -76,7 +92,7 @@ exports.rotate = catchAsync(async (req, res, next) => {
   const comp = await RotatePDF.rotate(req.files, type);
 
   if (!comp)
-    throw new AppError(500, "Failed to rotate", ` fn upload(),  ${__dirname}`);
+    throw new AppError(500, "Failed to rotate", ` fn rotate(),  ${__dirname}`);
     
   req.filename = comp.fileName;
   req.msg = "PDF rotated";
@@ -95,6 +111,9 @@ exports.encrypt = catchAsync(async (req, res, next) => {
   await Encryption.initialize();
   const comp = new Encryption(req.files[0], rules, "owner");
   await comp.encryptViaPass(req.body.password);
+
+  if (!comp)
+    throw new AppError(500, "Failed to encrypt", ` fn encrypt(),  ${__dirname}`);
 
   req.filename = comp.fileName;
   req.msg = "PDF encypted";
