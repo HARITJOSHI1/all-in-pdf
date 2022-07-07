@@ -57,7 +57,7 @@ const userSchema = new mongoose.Schema({
 
   type: {
     type: String,
-    enum: ["normal", "trial", "premium", "anonymous"],
+    enum: ["signed", "trial", "premium", "anonymous"],
     default: "anonymous",
   },
 

@@ -31,6 +31,7 @@ exports.signUp = catchAsync(async (req, res) => {
     throw new AppError(409, `User with ${req.body.email} already exists`, `fn signUp(), ${__dirname}`);
   }
 
+  req.body.type = "signed";
   const newUser = await Users.create(req.body);
   await new VerificationEmail(newUser, req).send(req.body.email);
 
@@ -38,6 +39,7 @@ exports.signUp = catchAsync(async (req, res) => {
   const token = createRefreshToken(newUser._id);
 
   if (token) {
+    req.session.destroy();
     new Cookies().sendCookie(res, "jwt", token);
   }
 
@@ -55,6 +57,7 @@ exports.signUp = catchAsync(async (req, res) => {
 
 exports.login = catchAsync(async (req, res, next) => {
   // 1. check whether email and password are provided by the user or not
+  await Users.findByIdAndDelete(Cookies.getCookie(req, "sessionId"));
   const { email, password } = req.body;
 
   if (!email || !password)
@@ -66,10 +69,14 @@ exports.login = catchAsync(async (req, res, next) => {
 
   if (!user || !await user.correctPassword(password, user.password)){
     throw new AppError(401, 'Incorrect email or password', `fn login(), ${__dirname}`);}
-
+  
+  await Users.findByIdAndUpdate(user.id, {type: "signed"}, {runValidators: false, new: true}); 
+   
   // 3. create token
   const token = createRefreshToken(user._id);
+  req.session.destroy();
   new Cookies().sendCookie(res, "jwt", token);
+
 
   // 4. Send response
   res.status(200).json({
@@ -81,6 +88,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.logOut = catchAsync(async (req, res) => {
     new Cookies().sendCookie(res, 'jwt', "");
+    req.session.destroy();
     res.status(200).json({
       status: "success",
       message: "Logged out"

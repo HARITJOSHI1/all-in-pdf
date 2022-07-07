@@ -3,9 +3,10 @@ const Router = express.Router();
 const {
   uploadFiles,
   compress,
-  convert,
+  wordToPDF,
   encrypt,
-  merge
+  merge,
+  rotate
 } = require("../controllers/fileController");
 
 const {scheduleDelete} = require("../utils/deleteUnusedFiles");
@@ -16,7 +17,8 @@ Router.use(uploadFiles);
 Router.post("/compress", compress);
 Router.post("/encrypt", encrypt);
 Router.post("/merge", merge);
-// Router.post("/word-to-pdf", uploadFiles, convert);
+Router.post("/rotate", rotate);
+Router.post("/word-to-pdf", uploadFiles, wordToPDF);
 
 Router.use(scheduleDelete);
 

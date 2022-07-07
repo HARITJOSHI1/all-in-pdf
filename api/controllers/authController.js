@@ -115,9 +115,8 @@ exports.verifyJWT = catchAsync(async (req, res, next) => {
       "JWT"
     );
 
-
   else {
-    req.uid = data._id;
+    req.userId = data._id;
     next();
   }
 });

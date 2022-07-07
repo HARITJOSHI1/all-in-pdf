@@ -7,6 +7,15 @@ const FileSchema = new mongoose.Schema({
   compressedSize: {
     type: Number,
     default: undefined
+  },
+  rotateOrientation: {
+    type: String,
+    default: undefined
+  },
+  
+  deg: {
+    type: String,
+    default: undefined
   }
 });
 
@@ -24,6 +33,7 @@ const docSchema = new mongoose.Schema({
   files: [FileSchema],
   type: String,
   isCompressed: Boolean,
+  isRotated: Boolean,
   compressSize: {
     type: [Number],
     default: undefined
