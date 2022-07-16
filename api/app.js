@@ -15,6 +15,7 @@ const refreshRoute = require("./routes/refreshRoute");
 const ratingRoute = require("./routes/ratingRoute");
 const mediaRoute = require("./routes/mediaRoute");
 const errorMiddleware = require("./utils/classes/Error");
+const trialController = require("./controllers/trialController");
 const {isAuth} = require("./utils/isAuth");
 const { verifyJWT } = require('./controllers/authController');
 
@@ -46,7 +47,7 @@ app.use('/api/v1/pdf', isAuth, createUser, PDFRoute);
 app.use('/api/v1/entry', entryRoute);
 app.use('/api/v1/token', refreshRoute);
 app.use('/api/v1/media/share', mediaRoute);
-app.use('/api/v1/superpdf/trial', verifyJWT, trialController);
+app.use('/api/v1/superpdf/payment/charge', verifyJWT, trialController);
 app.use('/api/v1/rate', ratingRoute);
 
 app.all("*", (req, res, next) => {

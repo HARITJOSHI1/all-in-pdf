@@ -205,18 +205,31 @@ export default function CheckOut(props: Props) {
         },
       });
 
-      const res = await axios.post(
-        "http: localhost:5000/api/paymemt/charge",
+      const payment_intent = await axios.post(
+        "http:localhost:5000/api/v1/superpdf/payment/charge",
         { payment_method: result, email: props.user.email! },
         {
           params: {
             method: "subscription",
+            mode: "trial"
           },
         }
       );
 
-      if (res) setSubmit(false);
-    } catch (err: any) {
+      if (payment_intent) {
+        const {client_secret, status} = payment_intent.data;
+        if(status === "requires_action"){
+          const result = await stripe.confirmCardPayment(client_secret);
+          if(result.error) throw new Error(result.error.message);
+        }
+
+        alert("Success Subscribed");
+        setSubmit(false);
+      }
+
+    } 
+    
+    catch (err: any) {
       console.log(err?.response.data || err.message);
       const { message } = err?.response.data
         ? err.response.data
