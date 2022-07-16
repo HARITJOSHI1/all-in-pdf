@@ -232,11 +232,14 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
     );
   };
 
+
+  console.log("re-rendered");
+
   return (
     <>
       <Context.Provider value={[value1, value2, value3, value4]}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
 
           <AnimatePresence>
             {showModal && (

@@ -4,7 +4,13 @@ import { connect } from "react-redux";
 import { Tools } from "./tools";
 import { Layout } from "./Layout";
 import { history } from "./history";
-import { createTheme, Stack, useMediaQuery } from "@mui/material";
+import {
+  createTheme,
+  CssBaseline,
+  Stack,
+  ThemeProvider,
+  useMediaQuery,
+} from "@mui/material";
 import {
   addGlobalMediaQ,
   AdddMediaQ,
@@ -17,7 +23,13 @@ import { firebase } from "../firebaseInit";
 import { User } from "firebase/auth";
 import CircularProgress from "@mui/material/CircularProgress";
 import Operation from "./PDFOps/Operation";
-import ReactGA from 'react-ga';
+import Trial from "./Trial";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+
+const stripePromise = loadStripe(
+  "pk_live_51LJxnCSDlhCRlZPccMm1Rh5DXlIqZmjq3QJbAlbW1QZra9HD9zqLzAZSKVQRZ73fHGiNXWTOCg10srEwW1vV0yuj009Bjf5Onl"
+);
 
 interface Props {
   addGlobalMediaQ: (q: Record<keyof GMQ, boolean>) => AdddMediaQ;
@@ -44,21 +56,62 @@ const App: React.FC<Props> = (props) => {
   let [load, setLoad] = useState<boolean>(true);
   load && localStorage.setItem("load", "1");
 
-  const googleAnalyticsInit = () => ReactGA.initialize("UA-232860806-1");
-
   useEffect(() => {
-    googleAnalyticsInit();
     const auth = firebase.auth();
     firebase.onAuthStateChanged(auth, (user) => {
-
-      if (user && Number(localStorage.getItem("load"))){  
-        props.addGlobalUser(user)
+      if (user && Number(localStorage.getItem("load"))) {
+        props.addGlobalUser(user);
       }
-      
+
       localStorage.setItem("load", "0");
       setLoad(false);
     });
   }, [load]);
+
+  const AppTheme = createTheme({
+    typography: {
+      h1: {
+        color: "#2D3246",
+      },
+
+      h2: {
+        color: "#2D3246",
+        fontWeight: "700",
+      },
+
+      h3: {
+        color: "#2D3246",
+        fontWeight: "700",
+      },
+
+      h4: {
+        fontWeight: "700",
+        color: "#2D3246",
+      },
+
+      h5: {
+        "@media (min-width: 300px)": {
+          fontSize: "1.2rem",
+        },
+
+        color: "#2D3246",
+      },
+
+      fontFamily: "Plus Jakarta Sans",
+    },
+
+    palette: {
+      primary: {
+        main: "#3b4252",
+      },
+
+      secondary: {
+        main: "#0044ff",
+        dark: "#2D3246",
+        light: "#CECFD3",
+      },
+    },
+  });
 
   const theme = createTheme({
     breakpoints: {
@@ -97,26 +150,41 @@ const App: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Router history={history}>
-        <Switch>
-          {load && (
-            <Stack
-              justifyContent="center"
-              alignItems="center"
-              sx={{ bgcolor: "white", height: "100vh" }}
-            >
-              <CircularProgress
-                sx={{ width: "5rem !important", height: "5rem !important" }}
-              />
-            </Stack>
-          )}
-          <Layout>
-            <Route path="/" exact component={HomePage} />
-            <Route path="/tools" exact component={Tools} />
-            <Route path="/operation/:name" exact component={Operation} />
-          </Layout>
-        </Switch>
-      </Router>
+      <Elements
+        stripe={stripePromise}
+        options={{
+          fonts: [
+            {
+              cssSrc:
+                "https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap",
+            },
+          ],
+        }}
+      >
+        <Router history={history}>
+          <Switch>
+            {load && (
+              <Stack
+                justifyContent="center"
+                alignItems="center"
+                sx={{ bgcolor: "white", height: "100vh" }}
+              >
+                <CircularProgress
+                  sx={{ width: "5rem !important", height: "5rem !important" }}
+                />
+              </Stack>
+            )}
+
+            <Route path="/superpdf/trial/7" exact component={Trial} />
+
+            <Layout>
+              <Route path="/" exact component={HomePage} />
+              <Route path="/tools" exact component={Tools} />
+              <Route path="/operation/:name" exact component={Operation} />
+            </Layout>
+          </Switch>
+        </Router>
+      </Elements>
     </>
   );
 };

@@ -17,6 +17,7 @@ export interface State {
   user: User | FormDataUser | null;
 }
 
+
 const globalMedia: GMQ = {
   mobile: false,
   tabPort: false,

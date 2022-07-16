@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { GMQ } from "../reducers";
 import Trial from "./assets/trial.png";
+import { Link } from "react-router-dom";
 
 interface Props {
   breakpoint: GMQ;
@@ -64,24 +65,26 @@ export default function Section6(props: Props) {
                   superpdf tools to convert, compress, e-sign, and more.
                 </Typography>
 
-                <Button
-                  variant="contained"
-                  sx={{
-                    position: "relative",
-                    bottom: "-1rem",
-                    bgcolor: "#0055FF",
-                    textTransform: "none",
-                    width: (desktop || tabLand || tabPort) ? "50%" : "100%",
-                    p: ".5rem 2rem",
-                    "&:hover": {
-                      bgcolor: darken("#0055FF", 0.2),
-                    },
-                  }}
-                >
-                  <Typography style={{ fontWeight: "700" }}>
-                    Start Free Trial
-                  </Typography>
-                </Button>
+                <Link to="/superpdf/trial/7" style={{ textTransform: "none", textDecoration: "none" }}>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      position: "relative",
+                      bottom: "-1rem",
+                      bgcolor: "#0055FF",
+                      textTransform: "none",
+                      width: desktop ? "50%" : "100%",
+                      p: ".5rem 2rem",
+                      "&:hover": {
+                        bgcolor: darken("#0055FF", 0.2),
+                      },
+                    }}
+                  >
+                    <Typography style={{ fontWeight: "700" }}>
+                      Start Free Trial
+                    </Typography>
+                  </Button>
+                </Link>
               </Stack>
             </Grid>
             {(desktop || tabLand) && (
