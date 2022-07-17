@@ -15,8 +15,10 @@ import { User } from "firebase/auth";
 const Schema = Yup.object().shape({
   email: Yup.string().email().required(),
   password: Yup.string().min(8).max(14).required(),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Passwords must match")
+  confirmPassword: Yup.string().oneOf(
+    [Yup.ref("password"), null],
+    "Passwords must match"
+  ),
 });
 
 interface Props {
@@ -44,26 +46,32 @@ const SignUp: React.FC<Props> = (props: Props) => {
   const [isSubmit, setSubmit] = useState(false);
 
   const onSubmit: SubmitHandler<SignUpState> = async (data: SignUpState) => {
-
     if (!isSubmit) {
       let res: AxiosResponse | null = null;
 
       try {
         setSubmit(true);
+
+        console.log(showLogin);
+
         switch (showLogin) {
           case false:
             res = await axios.post<AxiosResponse>(
               "http://localhost:5000/api/v1/entry/signup",
-              data
+              data,
+              { withCredentials: true }
             );
             break;
 
           default:
             res = await axios.post<AxiosResponse>(
               "http://localhost:5000/api/v1/entry/login",
-              data
+              data,
+              { withCredentials: true }
             );
         }
+
+        console.log(res);
 
         if (res.data) {
           const auth = firebase.auth();
@@ -73,20 +81,24 @@ const SignUp: React.FC<Props> = (props: Props) => {
             data.password
           );
 
-          await firebase.updateProfile(user, {photoURL: "https://www.gravatar.com/avatar/?d=mp"});
-          
+          console.log(user);
+
+          await firebase.updateProfile(user, {
+            photoURL: "https://www.gravatar.com/avatar/?d=mp",
+          });
+
           props.addGlobalUser(user);
           setSubmit(false);
           props.setModal(false);
         }
-      } 
-      
-      catch (err: any) {
-        console.log(err?.response.data || err.message);
+        setSubmit(false);
+      } catch (err: any) {
+        console.log(err?.response?.data || err.message);
         const { message } = err?.response.data
           ? err.response.data
           : { message: "Something went wrong" };
         setErr({ message });
+
         setSubmit(false);
       }
     }

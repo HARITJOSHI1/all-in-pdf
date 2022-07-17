@@ -26,12 +26,12 @@ import {
   StripeElementChangeEvent,
   StripeElementType,
 } from "@stripe/stripe-js";
-import valid from "card-validator";
+import { Grid as Loader } from "react-loader-spinner";
 import { IoLockClosed } from "react-icons/io5";
 import { darken } from "@material-ui/core/styles";
 import { User } from "firebase/auth";
 import { FormDataUser } from "../actions";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 const ContactTextField = styled(TextField)({
   "& label.Mui-focused": {
@@ -132,6 +132,7 @@ export default function CheckOut(props: Props) {
   };
 
   const getAddress = async () => {
+   try{
     const { coords } = await getLatLng();
     const res = await axios.get(
       "http://api.openweathermap.org/geo/1.0/reverse",
@@ -145,9 +146,15 @@ export default function CheckOut(props: Props) {
     );
 
     return res;
+   }
+
+   catch (error: any) {
+    return error as AxiosResponse;
+   }
   };
 
   useEffect(() => {
+    console.log(props.user)
     getAddress().then(({ data }) => {
       if (data) {
         const obj = {
@@ -176,7 +183,7 @@ export default function CheckOut(props: Props) {
   const stripe = useStripe();
   const elements = useElements();
 
-  console.log(formState.errors);
+  // console.log(formState.errors);
 
   const submitPayment: SubmitHandler<AddDetails> = async (data) => {
     if (!stripe || !elements) return;
@@ -206,35 +213,33 @@ export default function CheckOut(props: Props) {
       });
 
       const payment_intent = await axios.post(
-        "http:localhost:5000/api/v1/superpdf/payment/charge",
+        "http://localhost:5000/api/v1/superpdf/payment/charge",
         { payment_method: result, email: props.user.email! },
         {
           params: {
             method: "subscription",
-            mode: "trial"
+            mode: "trial",
           },
+          withCredentials: true
         }
       );
 
       if (payment_intent) {
-        const {client_secret, status} = payment_intent.data;
-        if(status === "requires_action"){
+        const { client_secret, status } = payment_intent.data;
+        if (status === "requires_action") {
           const result = await stripe.confirmCardPayment(client_secret);
-          if(result.error) throw new Error(result.error.message);
+          if (result.error) throw new Error(result.error.message);
         }
 
         alert("Success Subscribed");
         setSubmit(false);
       }
-
-    } 
-    
-    catch (err: any) {
-      console.log(err?.response.data || err.message);
+    } catch (err: any) {
+      console.log(err?.response?.data || err.message);
       const { message } = err?.response.data
         ? err.response.data
         : { message: "Something went wrong" };
-        
+
       setSubmit(false);
     }
   };
@@ -403,7 +408,7 @@ export default function CheckOut(props: Props) {
             key={5}
             control={control}
             render={({ field }) => (
-              <Stack direction="column" spacing={1} sx={{ mb: "2rem" }}>
+              <Stack direction="column" spacing={1}>
                 <Typography
                   component="span"
                   sx={{
@@ -418,7 +423,7 @@ export default function CheckOut(props: Props) {
                 <ContactTextField
                   {...field}
                   required
-                  placeholder="110007"
+                  placeholder="Name"
                   multiline
                   maxRows={4}
                   error={!!formState.errors.zip}
@@ -569,14 +574,29 @@ export default function CheckOut(props: Props) {
             justifyContent: "center",
           }}
         >
-          <Icon sx={{ width: "2rem", height: "2rem", mr: ".5rem" }}>
-            <IoLockClosed width="100%" height="100%" />
-          </Icon>
+          {!isSubmit ? (
+            <>
+              <Icon sx={{ width: "2rem", height: "2rem", mr: ".5rem" }}>
+                <IoLockClosed width="100%" height="100%" />
+              </Icon>
 
-          <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-            {" "}
-            Pay $ 0.00
-          </span>
+              <Typography
+                sx={{
+                  fontSize: "1.2rem",
+                  fontWeight: "bold",
+                }}
+              >
+                Pay $ 0.00
+              </Typography>
+            </>
+          ) : (
+            <Loader
+              ariaLabel="loading-indicator"
+              color="white"
+              width="1.8rem"
+              height="1.8rem"
+            />
+          )}
         </Typography>
       </Button>
     </form>

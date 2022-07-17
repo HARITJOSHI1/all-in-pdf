@@ -194,7 +194,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
           );
         })}
 
-        <ListItem
+        {!user && <ListItem
           component={motion.div}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -227,7 +227,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
               color: "white",
             }}
           />
-        </ListItem>
+        </ListItem>}
       </List>
     );
   };

@@ -78,10 +78,19 @@ const OAuth: React.FC<Props> = (props: Props) => {
 
   async function sendUserInfo(user: OAuthData) {
     let res: AxiosResponse | null = null;
-    res = await axios.post<AxiosResponse>(
-      "http://localhost:5000/api/v1/entry/signUp",
-      user
-    );
+    if (showLogin) {
+      res = await axios.post<AxiosResponse>(
+        "http://localhost:5000/api/v1/entry/login",
+        user,
+        { withCredentials: true }
+      );
+    } else {
+      res = await axios.post<AxiosResponse>(
+        "http://localhost:5000/api/v1/entry/signUp",
+        user,
+        { withCredentials: true }
+      );
+    }
 
     return res.data;
   }
