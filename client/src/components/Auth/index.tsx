@@ -1,18 +1,18 @@
-import { Stack, Button, darken, Typography, Icon } from "@mui/material";
-import React, { useContext } from "react";
-import { GMQ } from "../reducers";
-import { FcGoogle } from "react-icons/fc";
-import { BsFacebook } from "react-icons/bs";
-import { IconType } from "react-icons";
-import OAuthFlow from "../Auth/OAuth";
-import { GoogleAuthProvider, FacebookAuthProvider, User } from "firebase/auth";
+import { Stack, Button, darken, Typography, Icon } from '@mui/material';
+import React, { useContext } from 'react';
+import { GMQ } from '../reducers';
+import { FcGoogle } from 'react-icons/fc';
+import { BsFacebook } from 'react-icons/bs';
+import { IconType } from 'react-icons';
+import OAuthFlow from '../Auth/OAuth';
+import { GoogleAuthProvider, FacebookAuthProvider, User } from 'firebase/auth';
 
-import { connect } from "react-redux";
-import { addGlobalUser, UserData } from "../actions";
-import axios, { AxiosResponse } from "axios";
+import { connect } from 'react-redux';
+import { addGlobalUser, UserData } from '../actions';
+import axios, { AxiosResponse } from 'axios';
 
-import { Context } from "../Layout";
-import { firebase } from "../../firebaseInit";
+import { Context } from '../Layout';
+import { firebase } from '../../firebaseInit';
 
 interface Props {
   breakpoint: GMQ;
@@ -36,10 +36,10 @@ const OAuth: React.FC<Props> = (props: Props) => {
 
     try {
       switch (services) {
-        case "google":
+        case 'google':
           user = await new OAuthFlow(new GoogleAuthProvider()).OAuth();
           break;
-        case "facebook":
+        case 'facebook':
           user = await new OAuthFlow(new FacebookAuthProvider()).OAuth();
           break;
       }
@@ -55,7 +55,7 @@ const OAuth: React.FC<Props> = (props: Props) => {
 
       const ack = await sendUserInfo(newUser);
 
-      if (ack.message !== "Network Error") {
+      if (ack.message !== 'Network Error') {
         props.addGlobalUser(user);
         setModal(false);
       }
@@ -65,7 +65,7 @@ const OAuth: React.FC<Props> = (props: Props) => {
       console.log(err?.response.data || err.message);
       const { message } = err?.response.data
         ? err.response.data
-        : { message: "Something went wrong" };
+        : { message: 'Something went wrong' };
 
       const currentUser = firebase.auth().currentUser as User;
       await firebase.deleteUser(currentUser).then(() => {
@@ -79,17 +79,13 @@ const OAuth: React.FC<Props> = (props: Props) => {
   async function sendUserInfo(user: OAuthData) {
     let res: AxiosResponse | null = null;
     if (showLogin) {
-      res = await axios.post<AxiosResponse>(
-        "http://localhost:5000/api/v1/entry/login",
-        user,
-        { withCredentials: true }
-      );
+      res = await axios.post<AxiosResponse>('/api/v1/entry/login', user, {
+        withCredentials: true,
+      });
     } else {
-      res = await axios.post<AxiosResponse>(
-        "http://localhost:5000/api/v1/entry/signUp",
-        user,
-        { withCredentials: true }
-      );
+      res = await axios.post<AxiosResponse>('/api/v1/entry/signUp', user, {
+        withCredentials: true,
+      });
     }
 
     return res.data;
@@ -105,12 +101,12 @@ const OAuth: React.FC<Props> = (props: Props) => {
     const arr: Ic[] = [
       {
         icon: BsFacebook,
-        color: "#3b5998",
-        text: "Facebook",
+        color: '#3b5998',
+        text: 'Facebook',
       },
       {
         icon: FcGoogle,
-        text: "Google",
+        text: 'Google',
       },
     ];
 
@@ -122,17 +118,17 @@ const OAuth: React.FC<Props> = (props: Props) => {
           color="primary"
           onClick={() => callOAuth(item.text)}
           sx={{
-            position: "relative",
-            bgcolor: "#EFF0F4",
-            boxShadow: "none",
-            borderRadius: "10px",
-            textTransform: "none",
-            width: "100%",
-            color: "black",
+            position: 'relative',
+            bgcolor: '#EFF0F4',
+            boxShadow: 'none',
+            borderRadius: '10px',
+            textTransform: 'none',
+            width: '100%',
+            color: 'black',
 
-            "&:hover": {
-              backgroundColor: darken("#EFF0F4", 0.1),
-              boxShadow: "none",
+            '&:hover': {
+              backgroundColor: darken('#EFF0F4', 0.1),
+              boxShadow: 'none',
             },
           }}
         >
@@ -140,16 +136,16 @@ const OAuth: React.FC<Props> = (props: Props) => {
             <Icon
               sx={{
                 color: item?.color,
-                width: "auto",
-                height: "auto",
-                alignSelf: "stretch",
-                fontSize: "1.2rem",
+                width: 'auto',
+                height: 'auto',
+                alignSelf: 'stretch',
+                fontSize: '1.2rem',
               }}
             >
-              <item.icon style={{ width: "100%", height: "100%" }} />
+              <item.icon style={{ width: '100%', height: '100%' }} />
             </Icon>
 
-            <Typography variant="h6" sx={{ fontSize: ".9rem" }}>
+            <Typography variant="h6" sx={{ fontSize: '.9rem' }}>
               {item.text}
             </Typography>
           </Stack>
@@ -161,14 +157,14 @@ const OAuth: React.FC<Props> = (props: Props) => {
   const { tabLand, desktop } = props.breakpoint;
   return (
     <Stack
-      direction={desktop || tabLand ? "row" : "column"}
+      direction={desktop || tabLand ? 'row' : 'column'}
       justifyContent="space-between"
       spacing={2}
       alignItems="center"
       sx={{
-        mt: "1rem",
-        width: "100%",
-        pb: desktop || tabLand ? "2rem" : "0",
+        mt: '1rem',
+        width: '100%',
+        pb: desktop || tabLand ? '2rem' : '0',
       }}
     >
       {generateOAuth()}

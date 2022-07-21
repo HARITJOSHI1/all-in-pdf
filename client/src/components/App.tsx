@@ -1,34 +1,38 @@
-import React, { useEffect, useState } from "react";
-import { Router, Route, Switch } from "react-router-dom";
-import { connect } from "react-redux";
-import { Tools } from "./tools";
-import { Layout } from "./Layout";
-import { history } from "./history";
+import React, { useEffect, useState } from 'react';
+import { Router, Route, Switch } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Tools } from './tools';
+import { Layout } from './Layout';
+import { history } from './history';
 import {
   createTheme,
   CssBaseline,
   Stack,
   ThemeProvider,
   useMediaQuery,
-} from "@mui/material";
+} from '@mui/material';
 import {
   addGlobalMediaQ,
   AdddMediaQ,
   addGlobalUser,
   UserData,
-} from "./actions";
-import { GMQ, State } from "./reducers";
-import HomePage from "./HomePage";
-import { firebase } from "../firebaseInit";
-import { User } from "firebase/auth";
-import CircularProgress from "@mui/material/CircularProgress";
-import Operation from "./PDFOps/Operation";
-import Trial from "./Trial";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
+} from './actions';
+import { GMQ, State } from './reducers';
+import HomePage from './HomePage';
+import { firebase } from '../firebaseInit';
+import { User } from 'firebase/auth';
+import CircularProgress from '@mui/material/CircularProgress';
+import Operation from './PDFOps/Operation';
+import Trial from './Trial';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { SWRConfig } from 'swr';
+
+axios.defaults.baseURL = 'http://localhost:5000';
 
 const stripePromise = loadStripe(
-  "pk_live_51LJxnCSDlhCRlZPccMm1Rh5DXlIqZmjq3QJbAlbW1QZra9HD9zqLzAZSKVQRZ73fHGiNXWTOCg10srEwW1vV0yuj009Bjf5Onl"
+  'pk_live_51LJxnCSDlhCRlZPccMm1Rh5DXlIqZmjq3QJbAlbW1QZra9HD9zqLzAZSKVQRZ73fHGiNXWTOCg10srEwW1vV0yuj009Bjf5Onl'
 );
 
 interface Props {
@@ -36,7 +40,7 @@ interface Props {
   addGlobalUser: (user: User | null) => UserData;
 }
 
-declare module "@mui/material/styles" {
+declare module '@mui/material/styles' {
   interface BreakpointOverrides {
     xs: false;
     sm: false;
@@ -54,16 +58,16 @@ declare module "@mui/material/styles" {
 const App: React.FC<Props> = (props) => {
   const [flag, setFlag] = useState<number>(0);
   let [load, setLoad] = useState<boolean>(true);
-  load && localStorage.setItem("load", "1");
+  load && localStorage.setItem('load', '1');
 
   useEffect(() => {
     const auth = firebase.auth();
     firebase.onAuthStateChanged(auth, (user) => {
-      if (user && Number(localStorage.getItem("load"))) {
+      if (user && Number(localStorage.getItem('load'))) {
         props.addGlobalUser(user);
       }
 
-      localStorage.setItem("load", "0");
+      localStorage.setItem('load', '0');
       setLoad(false);
     });
   }, [load]);
@@ -71,44 +75,44 @@ const App: React.FC<Props> = (props) => {
   const AppTheme = createTheme({
     typography: {
       h1: {
-        color: "#2D3246",
+        color: '#2D3246',
       },
 
       h2: {
-        color: "#2D3246",
-        fontWeight: "700",
+        color: '#2D3246',
+        fontWeight: '700',
       },
 
       h3: {
-        color: "#2D3246",
-        fontWeight: "700",
+        color: '#2D3246',
+        fontWeight: '700',
       },
 
       h4: {
-        fontWeight: "700",
-        color: "#2D3246",
+        fontWeight: '700',
+        color: '#2D3246',
       },
 
       h5: {
-        "@media (min-width: 300px)": {
-          fontSize: "1.2rem",
+        '@media (min-width: 300px)': {
+          fontSize: '1.2rem',
         },
 
-        color: "#2D3246",
+        color: '#2D3246',
       },
 
-      fontFamily: "Plus Jakarta Sans",
+      fontFamily: 'Plus Jakarta Sans',
     },
 
     palette: {
       primary: {
-        main: "#3b4252",
+        main: '#3b4252',
       },
 
       secondary: {
-        main: "#0044ff",
-        dark: "#2D3246",
-        light: "#CECFD3",
+        main: '#0044ff',
+        dark: '#2D3246',
+        light: '#CECFD3',
       },
     },
   });
@@ -125,12 +129,12 @@ const App: React.FC<Props> = (props) => {
     },
   });
 
-  const mobile = useMediaQuery(theme.breakpoints.up("mobile"));
-  const tabPort = useMediaQuery(theme.breakpoints.up("tabPort"));
-  const tabLand = useMediaQuery(theme.breakpoints.up("tabLand"));
-  const desktop = useMediaQuery(theme.breakpoints.up("laptop"));
+  const mobile = useMediaQuery(theme.breakpoints.up('mobile'));
+  const tabPort = useMediaQuery(theme.breakpoints.up('tabPort'));
+  const tabLand = useMediaQuery(theme.breakpoints.up('tabLand'));
+  const desktop = useMediaQuery(theme.breakpoints.up('laptop'));
 
-  const mediaArr = ["mobile", "tabPort", "tabLand", "desktop"];
+  const mediaArr = ['mobile', 'tabPort', 'tabLand', 'desktop'];
 
   const mediaObj: Record<number, Record<string, boolean>> = {};
   mediaArr.forEach((s: string, idx: number) => {
@@ -150,41 +154,48 @@ const App: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Elements
-        stripe={stripePromise}
-        options={{
-          fonts: [
-            {
-              cssSrc:
-                "https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap",
-            },
-          ],
+      <SWRConfig
+        value={{
+          fetcher: async (url: string, ...args) =>
+            await axios.get(url, { withCredentials: true}),
         }}
       >
-        <Router history={history}>
-          <Switch>
-            {load && (
-              <Stack
-                justifyContent="center"
-                alignItems="center"
-                sx={{ bgcolor: "white", height: "100vh" }}
-              >
-                <CircularProgress
-                  sx={{ width: "5rem !important", height: "5rem !important" }}
-                />
-              </Stack>
-            )}
+        <Elements
+          stripe={stripePromise}
+          options={{
+            fonts: [
+              {
+                cssSrc:
+                  'https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap',
+              },
+            ],
+          }}
+        >
+          <Router history={history}>
+            <Switch>
+              {load && (
+                <Stack
+                  justifyContent="center"
+                  alignItems="center"
+                  sx={{ bgcolor: 'white', height: '100vh' }}
+                >
+                  <CircularProgress
+                    sx={{ width: '5rem !important', height: '5rem !important' }}
+                  />
+                </Stack>
+              )}
 
-            <Route path="/superpdf/trial/7" exact component={Trial} />
+              <Route path="/superpdf/trial/7" exact component={Trial} />
 
-            <Layout>
-              <Route path="/" exact component={HomePage} />
-              <Route path="/tools" exact component={Tools} />
-              <Route path="/operation/:name" exact component={Operation} />
-            </Layout>
-          </Switch>
-        </Router>
-      </Elements>
+              <Layout>
+                <Route path="/" exact component={HomePage} />
+                <Route path="/tools" exact component={Tools} />
+                <Route path="/operation/:name" exact component={Operation} />
+              </Layout>
+            </Switch>
+          </Router>
+        </Elements>
+      </SWRConfig>
     </>
   );
 };

@@ -20,9 +20,7 @@ import { useForm, SubmitHandler, Controller, FormState } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import {
-  Address,
   StripeCardElementOptions,
-  StripeCardNumberElementChangeEvent,
   StripeElementChangeEvent,
   StripeElementType,
 } from "@stripe/stripe-js";
@@ -213,7 +211,7 @@ export default function CheckOut(props: Props) {
       });
 
       const payment_intent = await axios.post(
-        "http://localhost:5000/api/v1/superpdf/payment/charge",
+        "/charge",
         { payment_method: result, email: props.user.email! },
         {
           params: {

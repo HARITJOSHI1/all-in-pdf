@@ -9,6 +9,6 @@ router.post("/logout", logOut);
 router.post("/verify/:id", authenticateViaEmail);
 
 // for test jwt verification
-// router.get("/protect", verifyJWT, (req, res) => res.send({"protect": "true"}));
+router.get("/protect", verifyJWT, (req, res) => res.send({"protect": "true", "love": "true"}));
 
 module.exports = router;

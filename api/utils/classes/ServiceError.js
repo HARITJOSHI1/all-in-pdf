@@ -1,21 +1,21 @@
-const AppError = require("./AppError");
+const AppError = require('./AppError');
 
 module.exports = class ServiceError extends Error {
   constructor(err) {
     super();
     this.statusCode = 500;
-    this.status = "Internal server error";
+    this.status = 'Internal server error';
     this.reason = err.message;
     this.stack = Error.captureStackTrace(this);
-    this.generateErrorDB(err);
+    this.generateError(err);
   }
 
-  generateErrorDB = (error) => {
+  generateError = (error) => {
     if (error.code) this.handleDuplicateErrorDB(error);
     else if (error.errors) this.handleValidatorErrorDB(error.errors);
-    else if (error.expiredAt) this.handleJWT(error);
-    else 
-      this.message = "Something went wrong!" 
+    else if (error.expiredAt || this.reason === 'jwt must be provided')
+      this.handleJWT();
+    else this.message = 'Something went wrong!';
   };
 
   handleCastErrorDB = (e) => {
@@ -24,19 +24,16 @@ module.exports = class ServiceError extends Error {
   };
 
   handleValidatorErrorDB = (e) => {
-    if(e.password)
-      this.statusCode = 400;
-      this.message = "Please enter a strong password";
+    if (e.password) this.statusCode = 400;
+    this.message = 'Please enter a strong password';
   };
 
   handleDuplicateErrorDB = (error) => {
-    this.message = `${Object.keys(error.keyValue)[0]} field is duplicate`,
-    this.statusCode = 409;
+    (this.message = `${Object.keys(error.keyValue)[0]} field is duplicate`),
+      (this.statusCode = 409);
   };
 
-  handleJWT(error){
-    this.message = this.reason,
-    this.statusCode = 500;
+  handleJWT() {
+    (this.message = this.reason), (this.statusCode = 500);
   }
-
 };

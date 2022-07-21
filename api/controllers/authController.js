@@ -1,14 +1,14 @@
-const catchAsync = require("../utils/catchAsync");
-const jwt = require("jsonwebtoken");
-const AppError = require("../utils/classes/AppError");
-const Users = require("../models/Users");
-const Cookies = require("../utils/classes/Cookies");
-const crypto = require("crypto");
-const HasAccount = require("../utils/HasAccount");
-const { promisify } = require("util");
+const catchAsync = require('../utils/catchAsync');
+const jwt = require('jsonwebtoken');
+const AppError = require('../utils/classes/AppError');
+const Users = require('../models/Users');
+const Cookies = require('../utils/classes/Cookies');
+const crypto = require('crypto');
+const HasAccount = require('../utils/HasAccount');
+const { promisify } = require('util');
 
 class AuthUser {
-  access = [["verifyEmail", "verifyEmailExp"]];
+  access = [['verifyEmail', 'verifyEmailExp']];
 
   find(str, mainStr) {
     let isMatch = false;
@@ -39,7 +39,7 @@ class AuthUser {
   }
 
   async getVerifiedUser(task, v_token) {
-    const h_token = crypto.createHash("sha256").update(v_token).digest("hex");
+    const h_token = crypto.createHash('sha256').update(v_token).digest('hex');
     return await this.findDoc(task, h_token);
   }
 }
@@ -69,13 +69,13 @@ class AuthViaEmail extends AuthUser {
     );
   }
 
-  async send(account = "verify", status = "verified") {
+  async send(account = 'verify', status = 'verified') {
     const user = await this.getVerifiedUser(account, this.token);
 
     if (!this.isUser(user)) {
       this.res.status(401).json({
-        status: "failed",
-        message: "Cannot verified",
+        status: 'failed',
+        message: 'Cannot verified',
       });
 
       return;
@@ -83,7 +83,7 @@ class AuthViaEmail extends AuthUser {
 
     await this.saveChanges(account, user._id, status);
     this.res.status(200).json({
-      status: "success",
+      status: 'success',
       email: user.email,
       message: this.message,
     });
@@ -94,8 +94,8 @@ exports.authenticateViaEmail = catchAsync(async (req, res) => {
   const path = req.path;
   const token = req.params.id;
 
-  if (path.search("verify") !== -1) {
-    const message = "Email is verified";
+  if (path.search('verify') !== -1) {
+    const message = 'Email is verified';
     await new AuthViaEmail(res, message, token).send();
   }
 });
@@ -105,31 +105,39 @@ jwt.verify = promisify(jwt.verify);
 exports.verifyJWT = catchAsync(async (req, res, next) => {
   const secret = process.env.JWT_SECRET_A;
 
-  const data = await jwt.verify(req.cookies.jwt.accessToken, secret);
-
-  if (!data)
+  if (!req.cookies?.jwt)
     throw new AppError(
-      500,
-      "Failed to verify the token",
-      `fn verifyJWT(), ${__dirname}`,
-      "JWT"
+      401,
+      'JWT not provided',
+      `fn verifyJWT(), ${__filename}`,
+      'JWT'
     );
-
   else {
-    req.userId = data._id;
-    next();
+    const data = await jwt.verify(req.cookies.jwt.accessToken, secret);
+
+    if (!data)
+      throw new AppError(
+        500,
+        'Failed to verify the token',
+        `fn verifyJWT(), ${__dirname}`,
+        'JWT'
+      );
+    else {
+      req.userId = data._id;
+      next();
+    }
   }
 });
 
 exports.isAvalToShare = catchAsync(async (req, res, next) => {
   const { from, to, message } = req.body;
   if (!(await HasAccount(from)))
-    throw new AppError(404, "User not found", `fn HasAccount(), ${__dirname}`);
+    throw new AppError(404, 'User not found', `fn HasAccount(), ${__dirname}`);
 
   req.from = from;
   req.to = to;
   req.message = message;
-  req.docData = Cookies.getCookie(req, "docData");
+  req.docData = Cookies.getCookie(req, 'docData');
 
   next();
 });
