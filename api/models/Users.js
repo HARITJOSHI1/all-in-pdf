@@ -7,19 +7,19 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,
-    default: "anonymous",
+    default: 'anonymous',
   },
 
   email: {
     type: String,
     trim: true,
-    default: "anonymous@xyz.com",
-    validate: [validator.isEmail, "Please enter a valid email address"],
+    default: 'anonymous@xyz.com',
+    validate: [validator.isEmail, 'Please enter a valid email address'],
   },
 
   profilePic: {
     type: String,
-    default: "https://www.gravatar.com/avatar/?d=mp",
+    default: 'https://www.gravatar.com/avatar/?d=mp',
   },
 
   phoneNo: {
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     default: undefined,
     // validate: [validator.isMobilePhone, "Please enter a valid phone number"],
-    select: false
+    select: false,
   },
 
   password: {
@@ -35,8 +35,8 @@ const userSchema = new mongoose.Schema({
     trim: true,
     min: 8,
     max: 14,
-    validate: [validator.isStrongPassword, "Please enter a strong password"],
-    select: false
+    validate: [validator.isStrongPassword, 'Please enter a strong password'],
+    select: false,
   },
 
   confirmPassword: {
@@ -49,21 +49,20 @@ const userSchema = new mongoose.Schema({
         return value === this.password;
       },
 
-      message: "Passwords do not match",
+      message: 'Passwords do not match',
     },
 
-    select: false
+    select: false,
   },
 
   type: {
     type: String,
-    enum: ["signed", "trial", "premium", "anonymous"],
-    default: "anonymous",
+    enum: ['signed', 'trial', 'premium', 'anonymous'],
+    default: 'anonymous',
   },
 
-  emailVerified: Boolean,
-  phoneNoVerified: Boolean,
-
+  emailVerified: {type: Boolean, default: false},
+  
   createdAt: Date,
   filesWorked: {
     type: Number,
@@ -99,7 +98,7 @@ const userSchema = new mongoose.Schema({
 
   message: {
     type: String,
-    trim: true
+    trim: true,
   },
 });
 

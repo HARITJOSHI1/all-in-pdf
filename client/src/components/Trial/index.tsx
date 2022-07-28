@@ -1,23 +1,21 @@
-import React from "react";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import React from 'react';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {
   Box,
   CssBaseline,
   Grid,
   Stack,
-  TextField,
   Typography,
-} from "@mui/material";
-import { connect } from "react-redux";
-import { GMQ, State } from "../reducers";
-import Logo from "../Logo";
-import Select from "react-select";
-import { PAYMENT_OPTIONS } from "./Select/PaymentOpt";
-import { customStyles } from "./Select/Styles";
-import CheckOutForm from "./CheckOut";
-import CheckOutImg from "./icons/checkoutImg.png";
-import { User } from "firebase/auth";
-import { FormDataUser } from "../actions";
+} from '@mui/material';
+import { connect } from 'react-redux';
+import { GMQ, State } from '../reducers';
+import Logo from '../Logo';
+import Select from 'react-select';
+import { PAYMENT_OPTIONS } from './Select/PaymentOpt';
+import { customStyles } from './Select/Styles';
+import CheckOutForm from './CheckOut';
+import CheckOutImg from './icons/checkoutImg.png';
+import { NewUser } from '../actions';
 
 /* 
 
@@ -35,53 +33,52 @@ Form needs
 const theme = createTheme({
   typography: {
     h1: {
-      color: "#2D3246",
+      color: '#2D3246',
     },
 
     h2: {
-      color: "#2D3246",
-      fontWeight: "700",
+      color: '#2D3246',
+      fontWeight: '700',
     },
 
     h3: {
-      color: "#2D3246",
-      fontWeight: "700",
+      color: '#2D3246',
+      fontWeight: '700',
     },
 
     h4: {
-      fontWeight: "700",
-      color: "#2D3246",
+      fontWeight: '700',
+      color: '#2D3246',
     },
 
     h5: {
-      "@media (min-width: 300px)": {
-        fontSize: "1.2rem",
+      '@media (min-width: 300px)': {
+        fontSize: '1.2rem',
       },
 
-      color: "#2D3246",
+      color: '#2D3246',
     },
 
-    fontFamily: "Plus Jakarta Sans",
+    fontFamily: 'Plus Jakarta Sans',
   },
 
   palette: {
     primary: {
-      main: "#3b4252",
+      main: '#3b4252',
     },
 
     secondary: {
-      main: "#0044ff",
-      dark: "#2D3246",
-      light: "#CECFD3",
+      main: '#0044ff',
+      dark: '#2D3246',
+      light: '#CECFD3',
     },
   },
 });
 
 interface Props {
   breakpoints: GMQ;
-  user: User | FormDataUser;
+  user: NewUser;
 }
-
 
 const Trial: React.FC<Props> = (props) => {
   const { mobile, tabLand, tabPort, desktop } = props.breakpoints;
@@ -89,16 +86,16 @@ const Trial: React.FC<Props> = (props) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <section style={{ padding: desktop ? "0 2rem" : "0", height: "100vh" }}>
+      <section style={{ padding: desktop ? '0 2rem' : '0', height: '100vh' }}>
         <Stack
-          direction={mobile ? "row" : "column"}
+          direction={mobile ? 'row' : 'column'}
           justifyContent="space-between"
-          sx={{ mb: desktop ? "0" : "3.5rem", mt: "2rem", ml: "1rem" }}
+          sx={{ mb: desktop ? '0' : '3.5rem', mt: '2rem', ml: '1rem' }}
         >
           <Logo />
         </Stack>
 
-        <Grid container sx={{ height: "85%" }}>
+        <Grid container sx={{ height: '85%' }}>
           <Grid
             item
             xs={12}
@@ -106,11 +103,11 @@ const Trial: React.FC<Props> = (props) => {
             lg={4}
             sx={[
               desktop && {
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-around",
-                pt: "8rem",
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                pt: '8rem',
               },
             ]}
           >
@@ -120,19 +117,19 @@ const Trial: React.FC<Props> = (props) => {
               alignItems="center"
               sx={[
                 desktop && {
-                  position: "relative",
-                  width: "95%",
+                  position: 'relative',
+                  width: '95%',
                 },
-                tabLand && { px: "10rem" },
-                tabPort && { px: "4rem" },
-                mobile && { px: "1rem" },
+                tabLand && { px: '10rem' },
+                tabPort && { px: '4rem' },
+                mobile && { px: '1rem' },
               ]}
               spacing={4}
             >
               <Typography variant="h4">Select payment method</Typography>
               <Box
                 sx={{
-                  width: "100%",
+                  width: '100%',
                 }}
               >
                 <Select
@@ -145,7 +142,7 @@ const Trial: React.FC<Props> = (props) => {
             </Stack>
 
             {desktop && (
-              <Box sx={{ width: "30rem", height: "30rem" }}>
+              <Box sx={{ width: '30rem', height: '30rem' }}>
                 <img
                   src={CheckOutImg}
                   alt="checkout"
@@ -165,10 +162,10 @@ const Trial: React.FC<Props> = (props) => {
                 spacing={4}
                 sx={[
                   {
-                    height: "100%",
-                    position: "relative",
-                    top: "-6rem",
-                    px: "2rem",
+                    height: '100%',
+                    position: 'relative',
+                    top: '-6rem',
+                    px: '2rem',
                   },
                 ]}
               >
@@ -192,14 +189,13 @@ const Trial: React.FC<Props> = (props) => {
               alignItems="center"
               justifyContent="center"
               sx={[
-                { height: "100%" },
-                tabLand && { pt: "2rem", px: "10rem", mb: "2rem" },
-                tabPort && { pt: "2rem", px: "4rem" },
-                mobile && { pt: "2rem", px: "1rem", mb: "2rem" },
+                { height: '100%' },
+                tabLand && { pt: '2rem', px: '10rem', mb: '2rem' },
+                tabPort && { pt: '2rem', px: '4rem' },
+                mobile && { pt: '2rem', px: '1rem', mb: '2rem' },
               ]}
             >
-              <CheckOutForm user = {props.user}/>
-
+              <CheckOutForm user={props.user} breakpoint={props.breakpoints} />
             </Stack>
           </Grid>
         </Grid>
@@ -209,7 +205,7 @@ const Trial: React.FC<Props> = (props) => {
 };
 
 const mapStateToProps = (state: State) => {
-  return { breakpoints: state.breakpoint as GMQ, user: state.user as User | FormDataUser };
+  return { breakpoints: state.breakpoint as GMQ, user: state.user as NewUser };
 };
 
 export default connect(mapStateToProps)(Trial);

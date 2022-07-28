@@ -7,8 +7,8 @@ import { GMQ, State } from '../reducers';
 import axios, { AxiosResponse } from 'axios';
 import { Grid } from 'react-loader-spinner';
 import { connect } from 'react-redux';
-import { FormDataUser, addGlobalUser, UserData } from '../actions';
-import { Context } from '../Layout';
+import { addGlobalUser, UserData, NewUser } from '../actions';
+import { Context, UserErrorState } from '../Layout';
 import { firebase } from '../../firebaseInit';
 import { User } from 'firebase/auth';
 
@@ -18,12 +18,12 @@ const Schema = Yup.object().shape({
   confirmPassword: Yup.string().oneOf(
     [Yup.ref('password'), null],
     'Passwords must match'
-  ).required(),
+  ),
 });
 
 interface Props {
   breakpoint: GMQ;
-  addGlobalUser: (user: User) => UserData;
+  addGlobalUser: (user: NewUser) => UserData;
   setModal: Dispatch<SetStateAction<boolean>>;
   num: number;
 }
@@ -35,7 +35,7 @@ export interface SignUpState {
 }
 
 const SignUp: React.FC<Props> = (props: Props) => {
-  const { setErr } = useContext(Context)[2];
+  const { setErr, errors } = useContext(Context)[2];
   const { showLogin } = useContext(Context)[3];
 
   const { control, handleSubmit, formState } = useForm<SignUpState>({
@@ -44,20 +44,17 @@ const SignUp: React.FC<Props> = (props: Props) => {
 
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
   const [isSubmit, setSubmit] = useState(false);
-  console.log(formState.errors);
 
   const onSubmit: SubmitHandler<SignUpState> = async (data: SignUpState) => {
     if (!isSubmit) {
-      let res: AxiosResponse | null = null;
+      let res: AxiosResponse<{user: NewUser}> | null = null;
 
       try {
         setSubmit(true);
 
-        console.log(showLogin);
-
         switch (showLogin) {
           case false:
-            res = await axios.post<AxiosResponse>(
+            res = await axios.post<{user: NewUser}>(
               '/api/v1/entry/signup',
               data,
               { withCredentials: true }
@@ -65,12 +62,10 @@ const SignUp: React.FC<Props> = (props: Props) => {
             break;
 
           default:
-            res = await axios.post<AxiosResponse>('/api/v1/entry/login', data, {
+            res = await axios.post<{user: NewUser}>('/api/v1/entry/login', data, {
               withCredentials: true,
             });
         }
-
-        console.log(res);
 
         if (res.data) {
           const auth = firebase.auth();
@@ -80,25 +75,29 @@ const SignUp: React.FC<Props> = (props: Props) => {
             data.password
           );
 
-          console.log(user);
-
           await firebase.updateProfile(user, {
             photoURL: 'https://www.gravatar.com/avatar/?d=mp',
           });
 
-          props.addGlobalUser(user);
+          props.addGlobalUser(res.data.user);
           setSubmit(false);
           props.setModal(false);
         }
         setSubmit(false);
       } catch (err: any) {
         setSubmit(false);
-        console.log(err?.response?.data || err.message);
-        const { message } = err?.response.data
-          ? err.response.data
-          : { message: 'Something went wrong' };
-        setErr({ message });
 
+        let message: string = err?.response?.data?.message || err.message;
+        console.log(message);
+        if (message.match('Firebase')) message = 'Something went wrong';
+
+        if (showLogin && errors)
+          setErr([...errors, { type: 'LOGIN-ERR', message }]);
+        else if (!showLogin && errors)
+          setErr([...errors, { type: 'SIGNUP-ERR', message }]);
+        else if (showLogin) 
+          setErr([{ type: 'LOGIN-ERR', message }])
+        else setErr([{ type: 'SIGNUP-ERR', message }]);
       }
     }
   };
@@ -116,7 +115,6 @@ const SignUp: React.FC<Props> = (props: Props) => {
     { errors }: FormState<SignUpState>,
     num: number
   ) => {
-    
     const labels: ('email' | 'password' | 'confirmPassword')[] = [
       'email',
       'password',

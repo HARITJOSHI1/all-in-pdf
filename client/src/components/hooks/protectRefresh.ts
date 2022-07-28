@@ -1,17 +1,16 @@
 import react from 'react';
 import useSWR from 'swr';
-import { User } from 'firebase/auth';
-import { FormDataUser } from '../actions';
+import { NewUser } from '../actions';
 import { AxiosError, AxiosResponse } from 'axios';
 
 interface Props {
-  user: User | FormDataUser;
-  proute: string;
+  user: NewUser | {};
+  proute?: string;
   refresh: string;
   stopRetries: boolean;
 }
 
-interface Result {
+export interface Result {
   result?: AxiosResponse;
   isloading: boolean;
 }
@@ -30,13 +29,14 @@ export const useProtectRefresh = <T = any>(props: Props): RefreshData => {
   });
 
   const { data: res, error: protectError } = useSWR<AxiosResponse<T>, AxiosError<T>>(
-    user && refreshed ? [proute] : null,
+    user && refreshed && ( proute as string )? [proute] : null,
     { refreshInterval: 2, shouldRetryOnError: stopRetries }
   );
 
   if (res) return { data: {result: res, isloading: false} }; 
   else if(protectError) return { error: protectError };
   else if (refreshError) return { error: refreshError };
+  else if(!proute && refreshed) return { data: { result: undefined, isloading: false } };
   else return { data: {result: undefined, isloading: true }};
 
 };

@@ -16,28 +16,28 @@ import {
   AdddMediaQ,
   addGlobalUser,
   UserData,
+  NewUser,
 } from './actions';
 import { GMQ, State } from './reducers';
 import HomePage from './HomePage';
-import { firebase } from '../firebaseInit';
-import { User } from 'firebase/auth';
 import CircularProgress from '@mui/material/CircularProgress';
 import Operation from './PDFOps/Operation';
 import Trial from './Trial';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { SWRConfig } from 'swr';
+import axios from 'axios';
+import useSWR from 'swr';
+import { useProtectRefresh } from './hooks/protectRefresh';
 
 axios.defaults.baseURL = 'http://localhost:5000';
 
 const stripePromise = loadStripe(
-  'pk_live_51LJxnCSDlhCRlZPccMm1Rh5DXlIqZmjq3QJbAlbW1QZra9HD9zqLzAZSKVQRZ73fHGiNXWTOCg10srEwW1vV0yuj009Bjf5Onl'
+  'pk_test_51LJxnCSDlhCRlZPczxYMd2i6J8wIZM1TYnvcEjtpJ2hWZyT0snYiPrrlGHA07KXc6tihJVdhnqB8uTIjCx4uRCYj00hLRuXpnS'
 );
 
 interface Props {
   addGlobalMediaQ: (q: Record<keyof GMQ, boolean>) => AdddMediaQ;
-  addGlobalUser: (user: User | null) => UserData;
+  addGlobalUser: (user: NewUser) => UserData;
 }
 
 declare module '@mui/material/styles' {
@@ -58,64 +58,18 @@ declare module '@mui/material/styles' {
 const App: React.FC<Props> = (props) => {
   const [flag, setFlag] = useState<number>(0);
   let [load, setLoad] = useState<boolean>(true);
-  load && localStorage.setItem('load', '1');
+  const {data, error } = useProtectRefresh({
+    refresh: '/api/v1/token/refresh',
+    proute: '/api/v1/entry/me',
+    user: {},
+    stopRetries: false,
+  });
+
+  if (data && !data.isloading) props.addGlobalUser(data.result?.data.data);
 
   useEffect(() => {
-    const auth = firebase.auth();
-    firebase.onAuthStateChanged(auth, (user) => {
-      if (user && Number(localStorage.getItem('load'))) {
-        props.addGlobalUser(user);
-      }
-
-      localStorage.setItem('load', '0');
-      setLoad(false);
-    });
-  }, [load]);
-
-  const AppTheme = createTheme({
-    typography: {
-      h1: {
-        color: '#2D3246',
-      },
-
-      h2: {
-        color: '#2D3246',
-        fontWeight: '700',
-      },
-
-      h3: {
-        color: '#2D3246',
-        fontWeight: '700',
-      },
-
-      h4: {
-        fontWeight: '700',
-        color: '#2D3246',
-      },
-
-      h5: {
-        '@media (min-width: 300px)': {
-          fontSize: '1.2rem',
-        },
-
-        color: '#2D3246',
-      },
-
-      fontFamily: 'Plus Jakarta Sans',
-    },
-
-    palette: {
-      primary: {
-        main: '#3b4252',
-      },
-
-      secondary: {
-        main: '#0044ff',
-        dark: '#2D3246',
-        light: '#CECFD3',
-      },
-    },
-  });
+    if(data?.result || error) setLoad(false);
+  }, [data, error]);
 
   const theme = createTheme({
     breakpoints: {
@@ -154,48 +108,41 @@ const App: React.FC<Props> = (props) => {
 
   return (
     <>
-      <SWRConfig
-        value={{
-          fetcher: async (url: string, ...args) =>
-            await axios.get(url, { withCredentials: true}),
+      <Elements
+        stripe={stripePromise}
+        options={{
+          fonts: [
+            {
+              cssSrc:
+                'https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap',
+            },
+          ],
         }}
       >
-        <Elements
-          stripe={stripePromise}
-          options={{
-            fonts: [
-              {
-                cssSrc:
-                  'https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap',
-              },
-            ],
-          }}
-        >
-          <Router history={history}>
-            <Switch>
-              {load && (
-                <Stack
-                  justifyContent="center"
-                  alignItems="center"
-                  sx={{ bgcolor: 'white', height: '100vh' }}
-                >
-                  <CircularProgress
-                    sx={{ width: '5rem !important', height: '5rem !important' }}
-                  />
-                </Stack>
-              )}
+        <Router history={history}>
+          <Switch>
+            {load && (
+              <Stack
+                justifyContent="center"
+                alignItems="center"
+                sx={{ bgcolor: 'white', height: '100vh' }}
+              >
+                <CircularProgress
+                  sx={{ width: '5rem !important', height: '5rem !important' }}
+                />
+              </Stack>
+            )}
 
-              <Route path="/superpdf/trial/7" exact component={Trial} />
+            <Route path="/superpdf/premium" exact component={Trial} />
 
-              <Layout>
-                <Route path="/" exact component={HomePage} />
-                <Route path="/tools" exact component={Tools} />
-                <Route path="/operation/:name" exact component={Operation} />
-              </Layout>
-            </Switch>
-          </Router>
-        </Elements>
-      </SWRConfig>
+            <Layout>
+              <Route path="/" exact component={HomePage} />
+              <Route path="/tools" exact component={Tools} />
+              <Route path="/operation/:name" exact component={Operation} />
+            </Layout>
+          </Switch>
+        </Router>
+      </Elements>
     </>
   );
 };

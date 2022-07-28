@@ -65,7 +65,7 @@ export default function Section6(props: Props) {
                   superpdf tools to convert, compress, e-sign, and more.
                 </Typography>
 
-                <Link to="/superpdf/trial/7" style={{ textTransform: "none", textDecoration: "none" }}>
+                <Link to="/superpdf/premium" style={{ textTransform: "none", textDecoration: "none" }}>
                   <Button
                     variant="contained"
                     sx={{
@@ -81,7 +81,7 @@ export default function Section6(props: Props) {
                     }}
                   >
                     <Typography style={{ fontWeight: "700" }}>
-                      Start Free Trial
+                      Go with premium
                     </Typography>
                   </Button>
                 </Link>

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { State, GMQ } from '../reducers';
 import { User } from 'firebase/auth';
-import { FormDataUser } from '../actions';
+import { NewUser } from '../actions';
 import { useProtectRefresh } from '../hooks/protectRefresh';
 
 interface Props {
   breakpoint: GMQ;
-  user: User | FormDataUser;
+  user: NewUser;
 }
 
 const _tools: React.FC<Props> = (props) => {
@@ -36,7 +36,7 @@ const _tools: React.FC<Props> = (props) => {
 const mapStateToProps = (state: State) => {
   return {
     breakpoint: state.breakpoint as GMQ,
-    user: state.user!,
+    user: state.user as NewUser,
   };
 };
 

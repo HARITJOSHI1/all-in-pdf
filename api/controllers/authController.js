@@ -64,6 +64,7 @@ class AuthViaEmail extends AuthUser {
       {
         [arr[0]]: status,
         [arr[1]]: undefined,
+        emailVerified: true
       },
       { new: true }
     );

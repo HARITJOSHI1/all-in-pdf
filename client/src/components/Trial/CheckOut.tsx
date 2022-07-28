@@ -7,57 +7,63 @@ import {
   styled,
   Button,
   Icon,
-} from "@mui/material";
+} from '@mui/material';
 import {
   CardNumberElement,
   CardExpiryElement,
   CardCvcElement,
   useStripe,
   useElements,
-} from "@stripe/react-stripe-js";
-import React, { useEffect, useState } from "react";
-import { useForm, SubmitHandler, Controller, FormState } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
+} from '@stripe/react-stripe-js';
+import React, { useContext, useEffect, useState } from 'react';
+import { useForm, SubmitHandler, Controller, FormState } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 import {
   StripeCardElementOptions,
   StripeElementChangeEvent,
   StripeElementType,
-} from "@stripe/stripe-js";
-import { Grid as Loader } from "react-loader-spinner";
-import { IoLockClosed } from "react-icons/io5";
-import { darken } from "@material-ui/core/styles";
-import { User } from "firebase/auth";
-import { FormDataUser } from "../actions";
-import axios, { AxiosResponse } from "axios";
+} from '@stripe/stripe-js';
+import { Grid as Loader } from 'react-loader-spinner';
+import { IoLockClosed } from 'react-icons/io5';
+import { darken } from '@material-ui/core/styles';
+import { User } from 'firebase/auth';
+import { FormDataUser, NewUser } from '../actions';
+import axios, { AxiosResponse } from 'axios';
+import { useProtectRefresh } from '../hooks/protectRefresh';
+import { Context, UserErrorState } from '../Layout';
+import { useTime } from 'framer-motion';
+import { useTimer } from '../hooks/useTimer';
+import { RenderErrors } from '../Entry/Login';
+import { GMQ } from '../reducers';
 
 const ContactTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "red",
+  '& label.Mui-focused': {
+    color: 'red',
   },
 
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: "#e8e7e6",
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: '#e8e7e6',
     },
-    "&:hover fieldset": {
-      borderColor: "#e8e7e6",
+    '&:hover fieldset': {
+      borderColor: '#e8e7e6',
     },
-    "&.Mui-focused fieldset": {
-      border: "1px solid #e8e7e6",
+    '&.Mui-focused fieldset': {
+      border: '1px solid #e8e7e6',
     },
   },
 
-  "& .MuiFormLabel-root": {
-    color: "#c3d8fa",
+  '& .MuiFormLabel-root': {
+    color: '#c3d8fa',
   },
 
-  "& .MuiInputBase-input": {
-    color: "#757473",
+  '& .MuiInputBase-input': {
+    color: '#757473',
   },
 
-  "& .MuiFormHelperText-contained": {
-    margin: "0",
+  '& .MuiFormHelperText-contained': {
+    margin: '0',
   },
 });
 
@@ -66,8 +72,8 @@ const Schema = Yup.object().shape({
   address: Yup.string().required(),
   zip: Yup.string()
     .required()
-    .length(6, "Zip should be of 6 digits")
-    .test("test_number", "Enter 6 digit pin number only", (value) =>
+    .length(6, 'Zip should be of 6 digits')
+    .test('test_number', 'Enter 6 digit pin number only', (value) =>
       /^\d+$/.test(value as string)
     ),
 });
@@ -84,17 +90,17 @@ interface AddDetails {
 const cardStyleOptions: StripeCardElementOptions = {
   style: {
     base: {
-      fontSize: "1.2rem",
-      fontFamily: "Plus Jakarta Sans",
-      color: "#757473",
+      fontSize: '1.2rem',
+      fontFamily: 'Plus Jakarta Sans',
+      color: '#757473',
 
-      "::placeholder": {
-        color: "#cccccc",
+      '::placeholder': {
+        color: '#cccccc',
       },
     },
 
     invalid: {
-      color: "#D32F2F",
+      color: '#D32F2F',
     },
   },
 };
@@ -102,7 +108,8 @@ const cardStyleOptions: StripeCardElementOptions = {
 type CardError = Record<StripeElementType, string | undefined | null>;
 
 interface Props {
-  user: User | FormDataUser;
+  user: NewUser;
+  breakpoint: GMQ
 }
 
 type UserAddress = {
@@ -113,6 +120,17 @@ type UserAddress = {
 export default function CheckOut(props: Props) {
   const { control, formState, handleSubmit } = useForm<AddDetails>({
     resolver: yupResolver(Schema),
+  });
+
+  const { errors, setErr } = useContext(Context)[2];
+  // useTimer({ errors, setErr }, 'PAY-ERR');
+  // console.log(errors);
+  
+
+  const { error } = useProtectRefresh({
+    refresh: '/api/v1/token/refresh',
+    user: props.user,
+    stopRetries: false,
   });
 
   const [countryInfo, setCountryInfo] = useState<UserAddress>();
@@ -130,29 +148,26 @@ export default function CheckOut(props: Props) {
   };
 
   const getAddress = async () => {
-   try{
-    const { coords } = await getLatLng();
-    const res = await axios.get(
-      "http://api.openweathermap.org/geo/1.0/reverse",
-      {
-        params: {
-          lat: String(coords.latitude),
-          lon: String(coords.longitude),
-          appid: "7edd0db06b172f517845c2f10671666d",
-        },
-      }
-    );
+    try {
+      const { coords } = await getLatLng();
+      const res = await axios.get(
+        'http://api.openweathermap.org/geo/1.0/reverse',
+        {
+          params: {
+            lat: String(coords.latitude),
+            lon: String(coords.longitude),
+            appid: '7edd0db06b172f517845c2f10671666d',
+          },
+        }
+      );
 
-    return res;
-   }
-
-   catch (error: any) {
-    return error as AxiosResponse;
-   }
+      return res;
+    } catch (error: any) {
+      return error as AxiosResponse;
+    }
   };
 
   useEffect(() => {
-    console.log(props.user)
     getAddress().then(({ data }) => {
       if (data) {
         const obj = {
@@ -179,23 +194,20 @@ export default function CheckOut(props: Props) {
   };
 
   const stripe = useStripe();
-  const elements = useElements();
-
-  // console.log(formState.errors);
+  const elements = useElements(); 
 
   const submitPayment: SubmitHandler<AddDetails> = async (data) => {
     if (!stripe || !elements) return;
     if (isSubmit) return;
 
     try {
-      const cardNumber = elements?.getElement("cardNumber")!;
+      const cardNumber = elements?.getElement('cardNumber')!;
       setSubmit(true);
-      // if (typeof props.user as unknown as User) {
-      //   billingData["email"] = (props.user as User).email!;
-      // } else billingData["email"] = (props.user as FormDataUser).email!;
 
-      const result = stripe.createPaymentMethod({
-        type: "card",
+      if (error) throw new Error(error.response?.data as string);
+
+      const Method = await stripe.createPaymentMethod({
+        type: 'card',
         card: cardNumber,
         billing_details: {
           name: data.userName,
@@ -210,35 +222,67 @@ export default function CheckOut(props: Props) {
         },
       });
 
+      console.log(Method);
+
       const payment_intent = await axios.post(
-        "/charge",
-        { payment_method: result, email: props.user.email! },
+        '/api/v1/superpdf/payment/charge',
+        {
+          payment_method: Method,
+          email: props.user.email!,
+          timeUp: Math.floor(new Date().getTime() / 1000),
+        },
         {
           params: {
-            method: "subscription",
-            mode: "trial",
+            method: 'subscription',
+            mode: 'trial',
           },
-          withCredentials: true
+          withCredentials: true,
         }
       );
 
-      if (payment_intent) {
-        const { client_secret, status } = payment_intent.data;
-        if (status === "requires_action") {
+      console.log(payment_intent);
+      
+
+      if(payment_intent.data.status === "active"){
+        const {message} = payment_intent.data;
+         if (errors)
+           setErr([...errors, { type: 'PAY-ERR', message }]);
+         else setErr([{ type: 'PAY-ERR', message }]);
+      }
+
+      if (payment_intent && Method.paymentMethod) {
+        const { client_secret, status, customerId, createdAt, reccur } = payment_intent.data.data;
+        if (status === 'requires_action') {
           const result = await stripe.confirmCardPayment(client_secret);
+  
           if (result.error) throw new Error(result.error.message);
+          axios.post(
+            `/api/v1/superpdf/payment/${customerId}/create`,
+            {
+              priceForSub: 'price_1LO1TJSDlhCRlZPcKQlro1aY',
+              customerId,
+              createdAt,
+              reccur,
+              transactionId: Method.paymentMethod.id
+            },
+            { withCredentials: true }
+          );
         }
 
-        alert("Success Subscribed");
+        alert('Success Subscribed');
         setSubmit(false);
       }
-    } catch (err: any) {
-      console.log(err?.response?.data || err.message);
-      const { message } = err?.response.data
-        ? err.response.data
-        : { message: "Something went wrong" };
-
+    } 
+    
+    catch (err: any) {
       setSubmit(false);
+      let message: string = err?.response?.data.message || err.message;
+      if (message && errors)
+        setErr([...errors, { type: 'PAY-ERR', message }]);
+      else if(message) {
+        setErr([{ type: 'PAY-ERR', message }]);
+      }
+
     }
   };
 
@@ -246,12 +290,13 @@ export default function CheckOut(props: Props) {
     <form
       onSubmit={handleSubmit(submitPayment)}
       style={{
-        width: "100%",
-        backgroundColor: "#F7F8F9",
-        borderRadius: "6px",
-        padding: "2rem 1.2rem",
+        width: '100%',
+        backgroundColor: '#F7F8F9',
+        borderRadius: '6px',
+        padding: '2rem 1.2rem',
       }}
     >
+      {RenderErrors(errors as UserErrorState[], 'PAY-ERR', props)}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={12}>
           <Controller
@@ -262,9 +307,9 @@ export default function CheckOut(props: Props) {
               <Stack direction="column" spacing={1}>
                 <Typography
                   sx={{
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    color: "#4d4c4b",
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    color: '#4d4c4b',
                   }}
                 >
                   Card Details
@@ -273,12 +318,12 @@ export default function CheckOut(props: Props) {
                 <Box
                   sx={{
                     border: `1px solid ${
-                      !stripeErrorState?.cardNumber ? "#e8e7e6" : "#D32F2F"
+                      !stripeErrorState?.cardNumber ? '#e8e7e6' : '#D32F2F'
                     }`,
-                    borderRadius: "3px",
-                    fontSize: "1.2rem",
-                    p: "1rem",
-                    backgroundColor: "white",
+                    borderRadius: '3px',
+                    fontSize: '1.2rem',
+                    p: '1rem',
+                    backgroundColor: 'white',
                   }}
                 >
                   <CardNumberElement
@@ -292,7 +337,7 @@ export default function CheckOut(props: Props) {
                   <span
                     id="card-errors"
                     role="alert"
-                    style={{ color: "#D32F2F", fontSize: ".8rem" }}
+                    style={{ color: '#D32F2F', fontSize: '.8rem' }}
                   >
                     {stripeErrorState?.cardNumber}
                   </span>
@@ -312,9 +357,9 @@ export default function CheckOut(props: Props) {
                 <Typography
                   component="span"
                   sx={{
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    color: "#4d4c4b",
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    color: '#4d4c4b',
                   }}
                 >
                   Expires
@@ -323,12 +368,12 @@ export default function CheckOut(props: Props) {
                 <Box
                   sx={{
                     border: `1px solid ${
-                      !stripeErrorState?.cardExpiry ? "#e8e7e6" : "#D32F2F"
+                      !stripeErrorState?.cardExpiry ? '#e8e7e6' : '#D32F2F'
                     }`,
-                    borderRadius: "3px",
-                    fontSize: "1.2rem",
-                    p: "1rem",
-                    backgroundColor: "white",
+                    borderRadius: '3px',
+                    fontSize: '1.2rem',
+                    p: '1rem',
+                    backgroundColor: 'white',
                   }}
                 >
                   <CardExpiryElement
@@ -341,7 +386,7 @@ export default function CheckOut(props: Props) {
                   <span
                     id="card-errors"
                     role="alert"
-                    style={{ color: "#D32F2F", fontSize: ".8rem" }}
+                    style={{ color: '#D32F2F', fontSize: '.8rem' }}
                   >
                     {stripeErrorState?.cardExpiry}
                   </span>
@@ -361,9 +406,9 @@ export default function CheckOut(props: Props) {
                 <Typography
                   component="span"
                   sx={{
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    color: "#4d4c4b",
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    color: '#4d4c4b',
                   }}
                 >
                   CVC
@@ -372,12 +417,12 @@ export default function CheckOut(props: Props) {
                 <Box
                   sx={{
                     border: `1px solid ${
-                      !stripeErrorState?.cardCvc ? "#e8e7e6" : "#D32F2F"
+                      !stripeErrorState?.cardCvc ? '#e8e7e6' : '#D32F2F'
                     }`,
-                    borderRadius: "3px",
-                    fontSize: "1.2rem",
-                    p: "1rem",
-                    backgroundColor: "white",
+                    borderRadius: '3px',
+                    fontSize: '1.2rem',
+                    p: '1rem',
+                    backgroundColor: 'white',
                   }}
                 >
                   <CardCvcElement
@@ -390,7 +435,7 @@ export default function CheckOut(props: Props) {
                   <span
                     id="card-errors"
                     role="alert"
-                    style={{ color: "#D32F2F", fontSize: ".8rem" }}
+                    style={{ color: '#D32F2F', fontSize: '.8rem' }}
                   >
                     {stripeErrorState?.cardCvc}
                   </span>
@@ -410,9 +455,9 @@ export default function CheckOut(props: Props) {
                 <Typography
                   component="span"
                   sx={{
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    color: "#4d4c4b",
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    color: '#4d4c4b',
                   }}
                 >
                   Name
@@ -427,10 +472,10 @@ export default function CheckOut(props: Props) {
                   error={!!formState.errors.zip}
                   FormHelperTextProps={{
                     style: {
-                      margin: "0 !important",
-                      height: "100%",
-                      width: "100%",
-                      backgroundColor: "#F7F8F9",
+                      margin: '0 !important',
+                      height: '100%',
+                      width: '100%',
+                      backgroundColor: '#F7F8F9',
                     },
                   }}
                   helperText={
@@ -439,9 +484,9 @@ export default function CheckOut(props: Props) {
                       : undefined
                   }
                   sx={{
-                    borderRadius: "3px",
-                    fontSize: "1rem",
-                    backgroundColor: "white",
+                    borderRadius: '3px',
+                    fontSize: '1rem',
+                    backgroundColor: 'white',
                   }}
                 />
               </Stack>
@@ -459,9 +504,9 @@ export default function CheckOut(props: Props) {
                 <Typography
                   component="span"
                   sx={{
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    color: "#4d4c4b",
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    color: '#4d4c4b',
                   }}
                 >
                   Address
@@ -476,12 +521,12 @@ export default function CheckOut(props: Props) {
                   error={!!formState.errors.address}
                   FormHelperTextProps={{
                     style: {
-                      marginTop: "0 !important",
-                      marginBottom: "0 !important",
-                      marginLeft: "0 !important",
-                      marginRight: "0 !important",
-                      width: "100%",
-                      backgroundColor: "#F7F8F9",
+                      marginTop: '0 !important',
+                      marginBottom: '0 !important',
+                      marginLeft: '0 !important',
+                      marginRight: '0 !important',
+                      width: '100%',
+                      backgroundColor: '#F7F8F9',
                     },
                   }}
                   helperText={
@@ -490,9 +535,9 @@ export default function CheckOut(props: Props) {
                       : undefined
                   }
                   sx={{
-                    borderRadius: "3px",
-                    fontSize: "1.2rem",
-                    backgroundColor: "white",
+                    borderRadius: '3px',
+                    fontSize: '1.2rem',
+                    backgroundColor: 'white',
                   }}
                 />
               </Stack>
@@ -506,13 +551,13 @@ export default function CheckOut(props: Props) {
             key={5}
             control={control}
             render={({ field }) => (
-              <Stack direction="column" spacing={1} sx={{ mb: "2rem" }}>
+              <Stack direction="column" spacing={1} sx={{ mb: '2rem' }}>
                 <Typography
                   component="span"
                   sx={{
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    color: "#4d4c4b",
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    color: '#4d4c4b',
                   }}
                 >
                   Zip
@@ -527,10 +572,10 @@ export default function CheckOut(props: Props) {
                   error={!!formState.errors.zip}
                   FormHelperTextProps={{
                     style: {
-                      margin: "0 !important",
-                      height: "100%",
-                      width: "100%",
-                      backgroundColor: "#F7F8F9",
+                      margin: '0 !important',
+                      height: '100%',
+                      width: '100%',
+                      backgroundColor: '#F7F8F9',
                     },
                   }}
                   helperText={
@@ -539,9 +584,9 @@ export default function CheckOut(props: Props) {
                       : undefined
                   }
                   sx={{
-                    borderRadius: "3px",
-                    fontSize: "1rem",
-                    backgroundColor: "white",
+                    borderRadius: '3px',
+                    fontSize: '1rem',
+                    backgroundColor: 'white',
                   }}
                 />
               </Stack>
@@ -554,34 +599,34 @@ export default function CheckOut(props: Props) {
         variant="contained"
         type="submit"
         sx={{
-          backgroundColor: "#00112C",
-          p: ".8rem !important",
-          borderRadius: "12px",
-          width: "100%",
-          textTransform: "none",
+          backgroundColor: '#00112C',
+          p: '.8rem !important',
+          borderRadius: '12px',
+          width: '100%',
+          textTransform: 'none',
 
-          "&:hover": {
-            backgroundColor: darken("#00112C", 0.4),
+          '&:hover': {
+            backgroundColor: darken('#00112C', 0.4),
           },
         }}
       >
         <Typography
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           {!isSubmit ? (
             <>
-              <Icon sx={{ width: "2rem", height: "2rem", mr: ".5rem" }}>
+              <Icon sx={{ width: '2rem', height: '2rem', mr: '.5rem' }}>
                 <IoLockClosed width="100%" height="100%" />
               </Icon>
 
               <Typography
                 sx={{
-                  fontSize: "1.2rem",
-                  fontWeight: "bold",
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold',
                 }}
               >
                 Pay $ 0.00
