@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
+import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Tools } from './tools';
 import { Layout } from './Layout';
@@ -22,12 +22,12 @@ import { GMQ, State } from './reducers';
 import HomePage from './HomePage';
 import CircularProgress from '@mui/material/CircularProgress';
 import Operation from './PDFOps/Operation';
-import Trial from './Trial';
+import Subscribe from './Payment';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import axios from 'axios';
-import useSWR from 'swr';
 import { useProtectRefresh } from './hooks/protectRefresh';
+import SelectPlan from './Payment/SelectPlan';
 
 axios.defaults.baseURL = 'http://localhost:5000';
 
@@ -38,6 +38,7 @@ const stripePromise = loadStripe(
 interface Props {
   addGlobalMediaQ: (q: Record<keyof GMQ, boolean>) => AdddMediaQ;
   addGlobalUser: (user: NewUser) => UserData;
+  user: NewUser;
 }
 
 declare module '@mui/material/styles' {
@@ -58,7 +59,7 @@ declare module '@mui/material/styles' {
 const App: React.FC<Props> = (props) => {
   const [flag, setFlag] = useState<number>(0);
   let [load, setLoad] = useState<boolean>(true);
-  const {data, error } = useProtectRefresh({
+  const { data, error } = useProtectRefresh({
     refresh: '/api/v1/token/refresh',
     proute: '/api/v1/entry/me',
     user: {},
@@ -68,7 +69,7 @@ const App: React.FC<Props> = (props) => {
   if (data && !data.isloading) props.addGlobalUser(data.result?.data.data);
 
   useEffect(() => {
-    if(data?.result || error) setLoad(false);
+    if (data?.result || error) setLoad(false);
   }, [data, error]);
 
   const theme = createTheme({
@@ -133,7 +134,24 @@ const App: React.FC<Props> = (props) => {
               </Stack>
             )}
 
-            <Route path="/superpdf/premium" exact component={Trial} />
+            <Route
+              path="/superpdf/premium/select-plan"
+              exact
+              // component={SelectPlan}
+              render={() =>
+                props.user ? (
+                  <Redirect to="/superpdf/premium/select-plan" />
+                ) : (
+                  <Redirect to="/" />
+                )
+              }
+            />
+
+            <Route
+              path="/superpdf/premium/subscribe"
+              exact
+              component={Subscribe}
+            />
 
             <Layout>
               <Route path="/" exact component={HomePage} />
@@ -147,4 +165,12 @@ const App: React.FC<Props> = (props) => {
   );
 };
 
-export default connect(null, { addGlobalMediaQ, addGlobalUser })(App);
+const mapStateToProps = (state: State) => {
+  return {
+    user: state.user as NewUser,
+  };
+};
+
+export default connect(mapStateToProps, { addGlobalMediaQ, addGlobalUser })(
+  App
+);

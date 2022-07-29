@@ -65,7 +65,7 @@ export default function Section6(props: Props) {
                   superpdf tools to convert, compress, e-sign, and more.
                 </Typography>
 
-                <Link to="/superpdf/premium" style={{ textTransform: "none", textDecoration: "none" }}>
+                <Link to="/superpdf/premium/select-plan" style={{ textTransform: "none", textDecoration: "none" }}>
                   <Button
                     variant="contained"
                     sx={{

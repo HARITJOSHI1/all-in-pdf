@@ -1,12 +1,6 @@
 import React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {
-  Box,
-  CssBaseline,
-  Grid,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Box, CssBaseline, Grid, Stack, Typography } from '@mui/material';
 import { connect } from 'react-redux';
 import { GMQ, State } from '../reducers';
 import Logo from '../Logo';
@@ -170,14 +164,14 @@ const Trial: React.FC<Props> = (props) => {
                 ]}
               >
                 <Typography>
-                  You will be enrolled in a trial period of 7 days for which we
-                  charge $0.00 and after 7 days your subscription will be
-                  started and charged from the next day.
+                  You will be enrolled in a subscription per month plan for
+                  which we charge rs 7.
                 </Typography>
 
                 <Typography>
-                  Within the trial period you can use superpdf 's premium
-                  features and can explore whole sets of functionalities.
+                  Within the premium period you can use all superpdf 's
+                  exclusive features and can explore whole sets of
+                  functionalities.
                 </Typography>
               </Stack>
             </Grid>
