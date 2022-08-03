@@ -7,7 +7,6 @@ const unzipper = require("unzipper");
 const zip = new JSZip();
 
 module.exports = class DocSaver {
-
   constructor() {
     this.fileName = `${crypto.randomBytes(32).toString("hex")}`;
   }
