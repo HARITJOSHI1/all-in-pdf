@@ -137,7 +137,7 @@ const App: React.FC<Props> = (props) => {
             <Route
               path="/superpdf/premium/select-plan"
               exact
-              // component={SelectPlan}
+              component={SelectPlan}
               render={() =>
                 props.user ? (
                   <Redirect to="/superpdf/premium/select-plan" />

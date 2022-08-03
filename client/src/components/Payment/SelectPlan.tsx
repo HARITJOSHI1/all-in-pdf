@@ -1,5 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import {
+  CircularProgress,
   createTheme,
   CssBaseline,
   Grid,
@@ -8,7 +9,7 @@ import {
   ListItemText,
   Stack,
 } from '@mui/material';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NewUser } from '../actions';
 import Logo from '../Logo';
@@ -21,7 +22,9 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { darken, makeStyles } from '@material-ui/core/styles';
 import { ClassNameMap } from '@material-ui/styles';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { useProtectRefresh } from '../hooks/protectRefresh';
+import { history } from '../history';
 
 const theme = createTheme({
   typography: {
@@ -215,7 +218,10 @@ const GeneratePlanCards = (classes: ClassNameMap, vp: GMQ): ReactNode => {
                 transform: 'translate(-50%)',
               }}
             >
-              <Link to="/superpdf/premium/subscribe" style = {{textDecoration: "none"}}>
+              <Link
+                to="/superpdf/premium/subscribe"
+                style={{ textDecoration: 'none' }}
+              >
                 <Button
                   variant="contained"
                   sx={{
@@ -246,31 +252,67 @@ const GeneratePlanCards = (classes: ClassNameMap, vp: GMQ): ReactNode => {
 
 const SelectPlan: React.FC<Props> = (props: Props) => {
   const classes = useStyles();
+  const { data, error } = useProtectRefresh({
+    refresh: '/api/v1/token/refresh',
+    user: {},
+    stopRetries: false,
+  }); 
+
+  const [load, setLoad] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (!data?.isloading || error || error === null) setLoad(false);
+  }, [data, error]);
+
+  if(error === null || error) history.push("/");
+
   const { mobile, tabLand, tabPort, desktop } = props.breakpoints;
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <section style={{ padding: desktop ? '0 2rem' : '0', height: '100vh' }}>
-        <Grid container spacing= {(mobile|| tabPort)? 2: 5}>
-          <Grid item xs={12} sm={12}>
-            <Stack
-              direction={mobile ? 'row' : 'column'}
-              justifyContent="space-between"
-              sx={{ mb: desktop ? '0' : '3.5rem', mt: '2rem', ml: '1rem' }}
-            >
-              <Logo />
-            </Stack>
-          </Grid>
 
-          <Grid item xs={12} sm={12} md = {12} lg= {12}>
-            <Typography variant= "h3" sx = {{color: "secondary.dark", textAlign: "center", fontSize: mobile? "2.5rem" : "3rem"}}>
-              Be our premium member
-            </Typography>
-          </Grid>
+      {load && (
+        <Stack
+          justifyContent="center"
+          alignItems="center"
+          sx={{ bgcolor: 'white', height: '100vh' }}
+        >
+          <CircularProgress
+            sx={{ width: '5rem !important', height: '5rem !important' }}
+          />
+        </Stack>
+      )}
 
-          {GeneratePlanCards(classes, props.breakpoints)}
-        </Grid>
-      </section>
+      {!load && (
+        <section style={{ padding: desktop ? '0 2rem' : '0', height: '100vh' }}>
+          <Grid container spacing={mobile || tabPort ? 2 : 5}>
+            <Grid item xs={12} sm={12}>
+              <Stack
+                direction={mobile ? 'row' : 'column'}
+                justifyContent="space-between"
+                sx={{ mb: desktop ? '0' : '3.5rem', mt: '2rem', ml: '1rem' }}
+              >
+                <Logo />
+              </Stack>
+            </Grid>
+
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <Typography
+                variant="h3"
+                sx={{
+                  color: 'secondary.dark',
+                  textAlign: 'center',
+                  fontSize: mobile ? '2.5rem' : '3rem',
+                }}
+              >
+                Be our premium member
+              </Typography>
+            </Grid>
+
+            {GeneratePlanCards(classes, props.breakpoints)}
+          </Grid>
+        </section>
+      )}
     </ThemeProvider>
   );
 };
