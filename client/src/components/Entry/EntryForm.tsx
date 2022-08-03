@@ -24,7 +24,6 @@ const Schema = Yup.object().shape({
 interface Props {
   breakpoint: GMQ;
   addGlobalUser: (user: NewUser) => UserData;
-  setModal: Dispatch<SetStateAction<boolean>>;
   num: number;
 }
 
@@ -37,6 +36,7 @@ export interface SignUpState {
 const SignUp: React.FC<Props> = (props: Props) => {
   const { setErr, errors } = useContext(Context)[2];
   const { showLogin } = useContext(Context)[3];
+  const {setModal} = useContext(Context)[1];
 
   const { control, handleSubmit, formState } = useForm<SignUpState>({
     resolver: yupResolver(Schema),
@@ -81,7 +81,7 @@ const SignUp: React.FC<Props> = (props: Props) => {
 
           props.addGlobalUser(res.data.user);
           setSubmit(false);
-          props.setModal(false);
+          setModal({show: false, fn: () => null});
         }
         setSubmit(false);
       } catch (err: any) {

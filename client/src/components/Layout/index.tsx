@@ -7,7 +7,13 @@ import {
   Container,
 } from '@mui/material';
 import { createTheme, darken, ThemeProvider } from '@mui/material/styles';
-import React, { useState, createContext, useRef, useEffect } from 'react';
+import React, {
+  useState,
+  createContext,
+  useRef,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { connect } from 'react-redux';
 import { NavBar } from '../Navbar';
 import Modal from '../Modal';
@@ -22,6 +28,7 @@ import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { OPERATIONS } from '../PDFOps/Operations';
 import ReactGA from 'react-ga';
 import { NewUser } from '../actions';
+import { boolean } from 'yup';
 
 export type UserErrorState = { type: string | null; message: string | null };
 
@@ -30,9 +37,16 @@ interface ShowAccord {
   setAccord: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+// interface ShowModal {
+//   showModal: boolean;
+//   setModal: React.Dispatch<React.SetStateAction<boolean>>;
+// }
+
 interface ShowModal {
-  showModal: boolean;
-  setModal: React.Dispatch<React.SetStateAction<boolean>>;
+  showModal: { show: boolean; fn: () => ReactNode };
+  setModal: React.Dispatch<
+    React.SetStateAction<{ show: boolean; fn: () => ReactNode }>
+  >;
 }
 
 export interface ErrorContextState {
@@ -49,7 +63,7 @@ type contextStore = [ShowAccord, ShowModal, ErrorContextState, ShowLogin];
 
 export const Context = createContext<contextStore>([
   { showAccord: false, setAccord: () => {} },
-  { showModal: false, setModal: () => {} },
+  { showModal: { show: false, fn: () => null }, setModal: () => {} },
   {
     errors: null,
     setErr: () => {},
@@ -111,7 +125,13 @@ const theme = createTheme({
 const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
   const { mobile, tabPort, tabLand, desktop } = breakpoint;
   const [showAccord, setAccord] = useState<boolean>(false);
-  const [showModal, setModal] = useState<boolean>(false);
+  const [showModal, setModal] = useState<{
+    show: boolean;
+    fn: () => ReactNode;
+  }>({
+    show: false,
+    fn: () => null,
+  });
   const [errors, setErr] = useState<UserErrorState[] | null>(null);
   const [showLogin, setLogin] = useState<boolean>(false);
 
@@ -174,7 +194,8 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
                 button
                 onClick={() => {
                   if (idx === 5) {
-                    setModal(true);
+                    // setModal(true);
+                    setModal({ show: true, fn: () => null });
                   }
                 }}
                 sx={{
@@ -209,7 +230,8 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
             exit={{ opacity: 0 }}
             button
             onClick={() => {
-              setModal(true);
+              // setModal(true);
+              setModal({ show: true, fn: () => null });
             }}
             sx={{
               py: '1.5rem',
@@ -245,8 +267,9 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
 
           <AnimatePresence>
             {showModal && (
-              <Modal on={showModal} key="modal" breakpoint={breakpoint}>
-                {!showLogin ? (
+              <Modal on={showModal.show} key="modal" breakpoint={breakpoint}>
+                {
+                  /* {!showLogin ? (
                   <SignUp breakpoint={breakpoint}>
                     <EntryForm
                       breakpoint={breakpoint}
@@ -262,7 +285,10 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
                       num={2}
                     />
                   </Login>
-                )}
+                )} */
+
+                  showModal.fn()
+                }
               </Modal>
             )}
           </AnimatePresence>

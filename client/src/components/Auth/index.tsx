@@ -57,7 +57,7 @@ const OAuth: React.FC<Props> = (props: Props) => {
 
       if (ack.data) {
         props.addGlobalUser(ack.data.user);
-        setModal(false);
+        setModal({show: false, fn: () => null});
       }
 
       // else throw new Error(ack);

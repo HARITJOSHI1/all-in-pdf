@@ -34,7 +34,7 @@ export default function SaveAndShare(props: Props) {
     return res;
   };
 
-  const openShareModal = () => setModal(true);
+  const openShareModal = () => setModal({show: true, fn: () => null});
 
   return (
     <Grid

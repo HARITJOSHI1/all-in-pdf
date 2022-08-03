@@ -1,16 +1,17 @@
-import React, { ReactNode, useState, useEffect, useContext } from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import { alpha, Box, darken, Icon, Stack, TextField } from "@mui/material";
-import { GMQ } from "../reducers";
-import EntryInfo from "./EntryInfo";
-import { motion } from "framer-motion";
-import OAuth from "../Auth";
-import Error from "../Error";
-import { Context, UserErrorState } from "../Layout";
-import { useTimer } from "../hooks/useTimer";
-import { RenderErrors } from "./Login";
+import React, { ReactNode, useState, useEffect, useContext } from 'react';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import { alpha, Box, darken, Icon, Stack, TextField } from '@mui/material';
+import { GMQ } from '../reducers';
+import EntryInfo from './EntryInfo';
+import { motion } from 'framer-motion';
+import OAuth from '../Auth';
+import Error from '../Error';
+import { Context, UserErrorState } from '../Layout';
+import { useTimer } from '../hooks/useTimer';
+import Login, { RenderErrors } from './Login';
+import EntryForm from './EntryForm';
 
 interface Props {
   breakpoint: GMQ;
@@ -20,7 +21,8 @@ interface Props {
 
 export default function Entry(props: Props) {
   const { errors, setErr } = useContext(Context)[2];
-  const { setLogin } = useContext(Context)[3];
+  // const { setLogin } = useContext(Context)[3];
+  const { setModal } = useContext(Context)[1];
   // useTimer('SIGNUP-ERR');
 
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
@@ -108,7 +110,21 @@ export default function Entry(props: Props) {
             Already have an account?{' '}
             <span
               style={{ color: '#5340FF', cursor: 'pointer' }}
-              onClick={() => setLogin(true)}
+              onClick={() =>
+                setModal({
+                  show: true,
+                  fn: () => {
+                    return (
+                      <Login breakpoint={props.breakpoint}>
+                        <EntryForm
+                          breakpoint={props.breakpoint}
+                          num={2}
+                        />
+                      </Login>
+                    );
+                  },
+                })
+              }
             >
               login
             </span>

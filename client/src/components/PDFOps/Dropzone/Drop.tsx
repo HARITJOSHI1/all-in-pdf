@@ -129,6 +129,7 @@ export default function Drop(props: Props) {
                   <UploadBtn
                     fn={uploadFiles}
                     numFiles={numFiles}
+                    text = {(numFiles ? "Upload" : "Choose Files")}
                     sx={[
                       {
                         width: '20%',

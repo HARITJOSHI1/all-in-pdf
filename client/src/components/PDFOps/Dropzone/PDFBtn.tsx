@@ -73,17 +73,9 @@ function UploadBtn(props: Props) {
             <IconForBtn style={{ width: '100%', height: '100%' }} />
           </Icon>
 
-          {numFiles ? (
             <span style={{ fontWeight: '900' }}>
-              {' '}
-              {props.text ? props.text : `Upload (${numFiles})`}{' '}
+              {`${props.text} ${numFiles? `(${numFiles})` : ""}`}
             </span>
-          ) : (
-            <span style={{ fontWeight: '900' }}>
-              {' '}
-              {props.text ? props.text : 'Choose files'}{' '}
-            </span>
-          )}
         </Typography>
       </Box>
 

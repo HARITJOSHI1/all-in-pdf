@@ -9,6 +9,8 @@ import Error from '../Error';
 import { Context, UserErrorState } from '../Layout';
 import OAuth from '../Auth';
 import { useTimer } from '../hooks/useTimer';
+import EntryForm from './EntryForm';
+import SignUp from './SignUp';
 
 interface Props {
   breakpoint: GMQ;
@@ -29,8 +31,8 @@ export const RenderErrors = (
 };
 
 export default function Entry(props: Props) {
-  const {errors} = useContext(Context)[2];
-  const { setLogin } = useContext(Context)[3];
+  const { errors } = useContext(Context)[2];
+  const { setModal } = useContext(Context)[1];
   // useTimer('SIGNUP-ERR');
 
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
@@ -124,7 +126,18 @@ export default function Entry(props: Props) {
             </Typography>
             <Typography
               component="span"
-              onClick={() => setLogin(false)}
+              onClick={() =>
+                setModal({
+                  show: true,
+                  fn: () => {
+                    return (
+                      <SignUp breakpoint={props.breakpoint}>
+                        <EntryForm breakpoint={props.breakpoint} num={3} />
+                      </SignUp>
+                    );
+                  },
+                })
+              }
               sx={{
                 color: '#5340FF',
                 fontWeight: '500',
