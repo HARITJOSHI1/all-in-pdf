@@ -7,10 +7,9 @@ import { GMQ } from '../reducers';
 import EntryInfo from './EntryInfo';
 import { motion } from 'framer-motion';
 import OAuth from '../Auth';
-import Error from '../Error';
-import { Context, UserErrorState } from '../Layout';
-import { useTimer } from '../hooks/useTimer';
-import Login, { RenderErrors } from './Login';
+import Error from '../Popup';
+import { Context, UserQueueState } from '../Layout';
+import Login, { Renderqueue } from './Login';
 import EntryForm from './EntryForm';
 
 interface Props {
@@ -20,8 +19,7 @@ interface Props {
 }
 
 export default function Entry(props: Props) {
-  const { errors, setErr } = useContext(Context)[2];
-  // const { setLogin } = useContext(Context)[3];
+  const { queue } = useContext(Context)[2];
   const { setModal } = useContext(Context)[1];
   // useTimer('SIGNUP-ERR');
 
@@ -100,7 +98,7 @@ export default function Entry(props: Props) {
           </Typography>
 
           <OAuth breakpoint={props.breakpoint} />
-          {RenderErrors(errors as UserErrorState[], 'SIGNUP-ERR', props)}
+          {Renderqueue(queue as UserQueueState[], 'SIGNUP-ERR', props)}
           {props.children}
 
           <Typography
@@ -116,10 +114,7 @@ export default function Entry(props: Props) {
                   fn: () => {
                     return (
                       <Login breakpoint={props.breakpoint}>
-                        <EntryForm
-                          breakpoint={props.breakpoint}
-                          num={2}
-                        />
+                        <EntryForm breakpoint={props.breakpoint} num={2} />
                       </Login>
                     );
                   },

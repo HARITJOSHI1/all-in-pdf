@@ -28,19 +28,17 @@ import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { OPERATIONS } from '../PDFOps/Operations';
 import ReactGA from 'react-ga';
 import { NewUser } from '../actions';
-import { boolean } from 'yup';
 
-export type UserErrorState = { type: string | null; message: string | null };
+export type UserQueueState = {
+  type: string | null;
+  message: string | null;
+  status?: boolean;
+};
 
 interface ShowAccord {
   showAccord: boolean;
   setAccord: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-// interface ShowModal {
-//   showModal: boolean;
-//   setModal: React.Dispatch<React.SetStateAction<boolean>>;
-// }
 
 interface ShowModal {
   showModal: { show: boolean; fn: () => ReactNode };
@@ -50,8 +48,8 @@ interface ShowModal {
 }
 
 export interface ErrorContextState {
-  errors: UserErrorState[] | null;
-  setErr: React.Dispatch<React.SetStateAction<UserErrorState[] | null>>;
+  queue: UserQueueState[] | null;
+  setPopup: React.Dispatch<React.SetStateAction<UserQueueState[] | null>>;
 }
 
 interface ShowLogin {
@@ -65,8 +63,8 @@ export const Context = createContext<contextStore>([
   { showAccord: false, setAccord: () => {} },
   { showModal: { show: false, fn: () => null }, setModal: () => {} },
   {
-    errors: null,
-    setErr: () => {},
+    queue: null,
+    setPopup: () => {},
   },
   { showLogin: false, setLogin: () => {} },
 ]);
@@ -132,7 +130,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
     show: false,
     fn: () => null,
   });
-  const [errors, setErr] = useState<UserErrorState[] | null>(null);
+  const [queue, setPopup] = useState<UserQueueState[] | null>(null);
   const [showLogin, setLogin] = useState<boolean>(false);
 
   useEffect(() => {
@@ -151,7 +149,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
 
   const value1: ShowAccord = { showAccord, setAccord };
   const value2: ShowModal = { showModal, setModal };
-  const value3: ErrorContextState = { errors, setErr };
+  const value3: ErrorContextState = { queue, setPopup };
   const value4: ShowLogin = { showLogin, setLogin };
 
   const mNavOpt = ['Compress', 'Convert', 'Merge', 'Edit', 'eSign'];
@@ -194,7 +192,6 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
                 button
                 onClick={() => {
                   if (idx === 5) {
-                    // setModal(true);
                     setModal({ show: true, fn: () => null });
                   }
                 }}
@@ -230,7 +227,6 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
             exit={{ opacity: 0 }}
             button
             onClick={() => {
-              // setModal(true);
               setModal({ show: true, fn: () => null });
             }}
             sx={{
@@ -266,29 +262,9 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
           <CssBaseline />
 
           <AnimatePresence>
-            {showModal && (
+            {showModal.show && (
               <Modal on={showModal.show} key="modal" breakpoint={breakpoint}>
-                {
-                  /* {!showLogin ? (
-                  <SignUp breakpoint={breakpoint}>
-                    <EntryForm
-                      breakpoint={breakpoint}
-                      setModal={setModal}
-                      num={3}
-                    />
-                  </SignUp>
-                ) : (
-                  <Login breakpoint={breakpoint}>
-                    <EntryForm
-                      breakpoint={breakpoint}
-                      setModal={setModal}
-                      num={2}
-                    />
-                  </Login>
-                )} */
-
-                  showModal.fn()
-                }
+                {showModal.fn()}
               </Modal>
             )}
           </AnimatePresence>

@@ -132,8 +132,8 @@ exports.verifyJWT = catchAsync(async (req, res, next) => {
 
 exports.isAvalToShare = catchAsync(async (req, res, next) => {
   const { from, to, message } = req.body;
-  if (!(await HasAccount(from)))
-    throw new AppError(404, 'User not found', `fn HasAccount(), ${__dirname}`);
+  // if (!(await HasAccount(from)))
+  //   throw new AppError(404, 'User not found', `fn HasAccount(), ${__dirname}`);
 
   req.from = from;
   req.to = to;

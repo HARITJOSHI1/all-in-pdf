@@ -6,6 +6,7 @@ import { BsDownload } from 'react-icons/bs';
 import { BsShare } from 'react-icons/bs';
 import axios, { AxiosResponse } from 'axios';
 import { Context } from '../../../Layout';
+import ShareForm from './ShareForm';
 
 interface Props {
   breakpoint: GMQ;
@@ -14,7 +15,7 @@ interface Props {
 
 export default function SaveAndShare(props: Props) {
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
-  const {setModal} = useContext(Context)[1];
+  const { setModal } = useContext(Context)[1];
 
   const downloadFile = async () => {
     const res = await axios.get('/api/v1/media/share/download', {
@@ -27,14 +28,20 @@ export default function SaveAndShare(props: Props) {
     const url = window.URL.createObjectURL(new Blob([res.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `${props.response.data.data}.zip`); 
+    link.setAttribute('download', `${props.response.data.data}.zip`);
     document.body.appendChild(link);
     link.click();
 
     return res;
   };
 
-  const openShareModal = () => setModal({show: true, fn: () => null});
+  const openShareModal = () =>
+    setModal({
+      show: true,
+      fn: () => (
+        <ShareForm response={props.response} />
+      ),
+    });
 
   return (
     <Grid
@@ -75,7 +82,7 @@ export default function SaveAndShare(props: Props) {
         <PDFBtn
           text="Share"
           isConn={false}
-          fn = {openShareModal}
+          fn={openShareModal}
           sx={[
             { width: '40%' },
             (mobile || tabLand) && { width: '80%' },

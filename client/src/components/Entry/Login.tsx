@@ -5,8 +5,8 @@ import Typography from '@mui/material/Typography';
 import { alpha, Box, darken, Icon, Stack, TextField } from '@mui/material';
 import { GMQ } from '../reducers';
 import { motion } from 'framer-motion';
-import Error from '../Error';
-import { Context, UserErrorState } from '../Layout';
+import Popup from '../Popup';
+import { Context, UserQueueState } from '../Layout';
 import OAuth from '../Auth';
 import { useTimer } from '../hooks/useTimer';
 import EntryForm from './EntryForm';
@@ -18,20 +18,27 @@ interface Props {
   img?: string;
 }
 
-export const RenderErrors = (
-  errors: UserErrorState[],
+export const Renderqueue = (
+  queue: UserQueueState[],
   type: string,
   props: Props
 ) => {
-  const err = errors?.find((e) => e.type === type) as UserErrorState;
+  const pop = queue?.find((e) => e.type === type) as UserQueueState;
   useTimer(type);
-  if (err) {
-    return <Error breakpoint={props.breakpoint} err={`${err.message}`} />;
+
+  if (pop) {
+    return (
+      <Popup
+        breakpoint={props.breakpoint}
+        err={`${pop.message}`}
+        status={pop.status}
+      />
+    );
   } else return null;
 };
 
 export default function Entry(props: Props) {
-  const { errors } = useContext(Context)[2];
+  const { queue } = useContext(Context)[2];
   const { setModal } = useContext(Context)[1];
   // useTimer('SIGNUP-ERR');
 
@@ -101,7 +108,7 @@ export default function Entry(props: Props) {
           </Typography>
 
           <OAuth breakpoint={props.breakpoint} />
-          {RenderErrors(errors as UserErrorState[], 'LOGIN-ERR', props)}
+          {Renderqueue(queue as UserQueueState[], 'LOGIN-ERR', props)}
           {props.children}
 
           <Stack

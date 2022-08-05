@@ -36,10 +36,10 @@ export default function Drop(props: Props) {
   const [percentUploaded, setPercentUploaded] = useState<number>(0);
   const [response, setResponse] = useState<AxiosResponse | null>(null);
 
-  // useEffect(() => {
-  //   console.log("I am here");
-  //   setAllFiles([]);
-  // }, [props]);
+  
+  useEffect(() => {
+    setAllFiles([]);
+  }, [param]);
 
   useEffect(() => {
     if (acceptedFiles.length) setAllFiles([...allFiles, ...acceptedFiles]);
@@ -68,6 +68,8 @@ export default function Drop(props: Props) {
                 Math.round(progress.loaded / progress.total) * 100
               );
             },
+
+            withCredentials: true
           }
         );
 

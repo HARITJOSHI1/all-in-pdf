@@ -1,7 +1,7 @@
 import { Box, Grid, Icon, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { GMQ } from '../../../reducers';
-import { GrDocumentZip } from 'react-icons/gr';
+import { RiFolderZipLine } from 'react-icons/ri';
 import { AxiosResponse } from 'axios';
 
 interface Props {
@@ -12,7 +12,6 @@ interface Props {
 export default function Document(props: Props) {
   const { data } = props.response;
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
-
   // console.log('Here is ur data', data);
 
   const path = window.location.pathname.split('/').pop() as string;
@@ -40,8 +39,8 @@ export default function Document(props: Props) {
         alignItems="center"
         sx={{ width: '100%', height: '100%' }}
       >
-        <Icon sx={{ width: '4rem', height: '4rem' }}>
-          <GrDocumentZip
+        <Icon sx={{ width: '4rem', height: '4rem', color: 'white !important' }}>
+          <RiFolderZipLine
             style={{ width: '100%', height: '100%' }}
             color="white"
           />
@@ -59,7 +58,7 @@ export default function Document(props: Props) {
           >
             {(data.data as string).slice(0, 15)}...
           </Typography>
-          
+
           {/* 
           <Typography
             component="span"
@@ -67,7 +66,6 @@ export default function Document(props: Props) {
           >
             22kb
           </Typography> */}
-
         </Stack>
       </Stack>
     </Grid>
