@@ -13,7 +13,7 @@ export default function UploadLoader(props: Props) {
         <Triangle width="100%" height="100%" color="white" />
       </Icon>
 
-      <Typography component="span">{`Uploading ${
+      <Typography component="span" sx = {{color: "white"}}>{`Uploading ${
         props.percentUploaded + "%"
       }`}</Typography>
     </>

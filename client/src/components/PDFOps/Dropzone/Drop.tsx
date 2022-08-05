@@ -39,6 +39,7 @@ export default function Drop(props: Props) {
   
   useEffect(() => {
     setAllFiles([]);
+    setUploaded(false);
   }, [param]);
 
   useEffect(() => {
