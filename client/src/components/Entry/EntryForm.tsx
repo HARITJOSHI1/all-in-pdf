@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useForm, SubmitHandler, Controller, FormState } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,11 +11,13 @@ import { connect } from 'react-redux';
 import { addGlobalUser, UserData, NewUser } from '../actions';
 import { Context, UserQueueState } from '../Layout';
 import { firebase } from '../../firebaseInit';
-import { User } from 'firebase/auth';
 
 const Schema = Yup.object().shape({
   email: Yup.string().email().required(),
-  password: Yup.string().min(8).max(14).required(),
+  password: Yup.string().min(8).max(8).matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-8])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+      "Must contain 8 aplha numeric characters"
+    ).required(),
   confirmPassword: Yup.string().oneOf(
     [Yup.ref('password'), null],
     'Passwords must match'
