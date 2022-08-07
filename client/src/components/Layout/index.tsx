@@ -227,7 +227,16 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
             exit={{ opacity: 0 }}
             button
             onClick={() => {
-              setModal({ show: true, fn: () => null });
+              setModal({
+                show: true,
+                fn: () => {
+                  return (
+                    <SignUp>
+                      <EntryForm breakpoint={breakpoint} num={3} />
+                    </SignUp>
+                  );
+                },
+              });
             }}
             sx={{
               py: '1.5rem',

@@ -1,11 +1,16 @@
-import { Button, Box, Typography, Icon, SxProps } from '@mui/material';
-import React from 'react';
-import { AiOutlineFileAdd } from 'react-icons/ai';
+import { Button, Box, Typography, Icon, SxProps, Stack } from '@mui/material';
+import React, { useState } from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { connect } from 'react-redux';
 import { GMQ, State } from '../../reducers';
 import { IconType } from 'react-icons/lib';
 import { AxiosResponse } from 'axios';
+import PopupBox from '../../PopupBox';
+import { PopupBoxList } from '../../PopupBox';
+import { MdAddToDrive } from 'react-icons/md';
+import { RiDropboxLine } from 'react-icons/ri';
+import GooleDriveConnect from './GooleDriveConnect';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
   isConn: boolean;
@@ -23,84 +28,132 @@ interface Props {
 function UploadBtn(props: Props) {
   const { fn, numFiles, isConn, sx, IconForBtn } = props;
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
+  const [popUpBox, setPopBox] = useState<boolean>(false);
+  const [popupBoxList, setPopupBoxList] = useState<PopupBoxList[] | null>(null);
+
+  const showPopupBox = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    const popupBoxList: PopupBoxList[] = [
+      {
+        text: 'Import from Google Drive',
+        avatar: MdAddToDrive,
+        cb: GooleDriveConnect,
+      },
+
+      {
+        text: 'Import from DropBox',
+        avatar: RiDropboxLine,
+      },
+    ];
+
+    setPopupBoxList(popupBoxList);
+    setPopBox(!popUpBox);
+  };
 
   return (
-    <Button
-      variant="contained"
-      disableRipple
-      size="medium"
-      onClick={async (e) => {
-        await fn!(e, numFiles as number);
-      }}
-      sx={[
-        {
-          px: '0 !important',
-          pt: '0',
-          pb: '0',
-          display: 'flex',
-          background: 'white',
-          alignItems: 'flex-start',
-          overflow: 'hidden',
-          '&:hover': {
-            background: 'white',
-          },
-        },
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
-    >
-      <Box
-        sx={{
-          height: '4rem',
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          '&:hover': {
-            transition: 'all .2s',
-            background: '#d4d3d2',
-          },
+    <>
+      <Button
+        variant="contained"
+        disableRipple
+        size="medium"
+        onClick={async (e) => {
+          await fn!(e, numFiles as number);
         }}
-      >
-        <Typography
-          sx={{
-            fontSize: '1rem',
+        sx={[
+          {
+            px: '0 !important',
+            pt: '0',
+            pb: '0',
             display: 'flex',
-            alignItems: 'center',
-            color: 'black',
-          }}
-        >
-          <Icon sx={{ width: '1.5rem', height: '2rem', mr: '.5rem' }}>
-            <IconForBtn style={{ width: '100%', height: '100%' }} />
-          </Icon>
+            background: 'white',
+            alignItems: 'flex-start',
+            overflow: 'hidden',
+            position: 'relative',
 
-            <span style={{ fontWeight: '900' }}>
-              {`${props.text} ${numFiles? `(${numFiles})` : ""}`}
-            </span>
-        </Typography>
-      </Box>
-
-      {isConn && (
-        <Button
-          size="small"
-          onClick={(event) => event.stopPropagation()}
+            '&:hover': {
+              background: 'white',
+            },
+          },
+          ...(Array.isArray(sx) ? sx : [sx]),
+        ]}
+      >
+        <Box
           sx={{
-            p: '1rem',
-            alignSelf: 'stretch',
-            borderLeft: '1px solid #d4d3d2',
-            borderRadius: '0',
-
+            height: '4rem',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
             '&:hover': {
               transition: 'all .2s',
               background: '#d4d3d2',
             },
           }}
         >
-          <Icon sx={{ width: '100%', height: '2rem' }}>
-            <KeyboardArrowDownIcon style={{ width: '100%', height: '100%' }} />
-          </Icon>
-        </Button>
-      )}
-    </Button>
+          <Typography
+            sx={{
+              fontSize: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              color: 'black',
+            }}
+          >
+            <Icon sx={{ width: '1.5rem', height: '2rem', mr: '.5rem' }}>
+              <IconForBtn style={{ width: '100%', height: '100%' }} />
+            </Icon>
+
+            <span style={{ fontWeight: '900' }}>
+              {`${props.text} ${numFiles ? `(${numFiles})` : ''}`}
+            </span>
+          </Typography>
+        </Box>
+
+        {isConn && (
+          <Button
+            size="small"
+            onClick={showPopupBox}
+            sx={{
+              p: '1rem',
+              alignSelf: 'stretch',
+              borderLeft: '1px solid #d4d3d2',
+              borderRadius: '0',
+
+              '&:hover': {
+                transition: 'all .2s',
+                background: '#d4d3d2',
+              },
+            }}
+          >
+            <Icon sx={{ width: '100%', height: '2rem' }}>
+              <KeyboardArrowDownIcon
+                style={{ width: '100%', height: '100%' }}
+              />
+            </Icon>
+          </Button>
+        )}
+      </Button>
+
+      <AnimatePresence>
+        {popUpBox && (
+          <Stack
+            direction="row"
+            component={motion.div}
+            initial={{ scaleY: 0 }}
+            transition={{
+              ease: 'easeIn',
+              duration: 0.2,
+            }}
+            animate={{ scaleY: 1 }}
+            exit={{ scaleY: 0 }}
+            sx={{ position: 'absolute', bottom: '5rem', zIndex: 100000 }}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          >
+            <PopupBox listArr={popupBoxList as PopupBoxList[]} />
+          </Stack>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 

@@ -3,7 +3,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { alpha, Box, darken, Icon, Stack, TextField } from '@mui/material';
-import { GMQ } from '../reducers';
+import { GMQ, State } from '../reducers';
 import { motion } from 'framer-motion';
 import Popup from '../Popup';
 import { Context, UserQueueState } from '../Layout';
@@ -11,6 +11,8 @@ import OAuth from '../Auth';
 import { useTimer } from '../hooks/useTimer';
 import EntryForm from './EntryForm';
 import SignUp from './SignUp';
+import { connect } from 'react-redux';
+import { NewUser } from '../actions';
 
 interface Props {
   breakpoint: GMQ;
@@ -37,7 +39,7 @@ export const Renderqueue = (
   } else return null;
 };
 
-export default function Entry(props: Props) {
+function Login(props: Props) {
   const { queue } = useContext(Context)[2];
   const { setModal } = useContext(Context)[1];
   // useTimer('SIGNUP-ERR');
@@ -138,7 +140,7 @@ export default function Entry(props: Props) {
                   show: true,
                   fn: () => {
                     return (
-                      <SignUp breakpoint={props.breakpoint}>
+                      <SignUp>
                         <EntryForm breakpoint={props.breakpoint} num={3} />
                       </SignUp>
                     );
@@ -160,3 +162,9 @@ export default function Entry(props: Props) {
     </Card>
   );
 }
+
+const mapStateToProps = (state: State) => {
+  return { breakpoint: state.breakpoint as GMQ, user: state.user as NewUser };
+};
+
+export default connect(mapStateToProps)(Login);

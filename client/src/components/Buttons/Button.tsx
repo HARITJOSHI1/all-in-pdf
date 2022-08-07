@@ -23,7 +23,7 @@ const Btn: React.FC<Props> = function Btn({ sx, text, breakpoint }) {
           show: true,
           fn: () => {
             return (
-              <SignUp breakpoint={breakpoint}>
+              <SignUp>
                 <EntryForm
                   breakpoint={breakpoint}
                   num={3}

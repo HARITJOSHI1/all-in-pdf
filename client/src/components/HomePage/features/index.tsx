@@ -109,7 +109,7 @@ export default function Features(props: Props) {
                             show: true,
                             fn: () => {
                               return (
-                                <SignUp breakpoint={props.breakpoint}>
+                                <SignUp>
                                   <EntryForm
                                     breakpoint={props.breakpoint}
                                     num={3}

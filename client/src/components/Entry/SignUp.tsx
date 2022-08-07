@@ -3,7 +3,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { alpha, Box, darken, Icon, Stack, TextField } from '@mui/material';
-import { GMQ } from '../reducers';
+import { GMQ, State } from '../reducers';
 import EntryInfo from './EntryInfo';
 import { motion } from 'framer-motion';
 import OAuth from '../Auth';
@@ -11,6 +11,9 @@ import Error from '../Popup';
 import { Context, UserQueueState } from '../Layout';
 import Login, { Renderqueue } from './Login';
 import EntryForm from './EntryForm';
+import { connect } from 'react-redux';
+import { NewUser } from '../actions';
+import ShareForm from '../PDFOps/Dropzone/Result/ShareForm';
 
 interface Props {
   breakpoint: GMQ;
@@ -18,12 +21,14 @@ interface Props {
   img?: string;
 }
 
-export default function Entry(props: Props) {
+function SignUp(props: Props) {
   const { queue } = useContext(Context)[2];
   const { setModal } = useContext(Context)[1];
   // useTimer('SIGNUP-ERR');
 
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
+  console.log(props.breakpoint);
+  
   return (
     <Card
       key="card"
@@ -113,7 +118,7 @@ export default function Entry(props: Props) {
                   show: true,
                   fn: () => {
                     return (
-                      <Login breakpoint={props.breakpoint}>
+                      <Login>
                         <EntryForm breakpoint={props.breakpoint} num={2} />
                       </Login>
                     );
@@ -129,3 +134,9 @@ export default function Entry(props: Props) {
     </Card>
   );
 }
+
+const mapStateToProps = (state: State) => {
+  return { breakpoint: state.breakpoint as GMQ, user: state.user as NewUser };
+};
+
+export default connect(mapStateToProps)(SignUp);
