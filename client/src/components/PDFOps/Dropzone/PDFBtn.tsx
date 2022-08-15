@@ -9,7 +9,7 @@ import PopupBox from '../../PopupBox';
 import { PopupBoxList } from '../../PopupBox';
 import { MdAddToDrive } from 'react-icons/md';
 import { RiDropboxLine } from 'react-icons/ri';
-import GooleDriveConnect from './GooleDriveConnect';
+import RemoteFileUploader from './RemoteFileUploader';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
@@ -25,20 +25,24 @@ interface Props {
   sx: SxProps;
 }
 
+export type RemoteFileRenderArgs = { remote: 'DRIVE' | 'DROPBOX' };
+
 function UploadBtn(props: Props) {
   const { fn, numFiles, isConn, sx, IconForBtn } = props;
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
   const [popUpBox, setPopBox] = useState<boolean>(false);
-  const [popupBoxList, setPopupBoxList] = useState<PopupBoxList[] | null>(null);
+  const [popupBoxList, setPopupBoxList] = useState<
+    PopupBoxList<RemoteFileRenderArgs>[] | null
+  >(null);
 
   const showPopupBox = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    const popupBoxList: PopupBoxList[] = [
+    const popupBoxList: PopupBoxList<RemoteFileRenderArgs>[] = [
       {
         text: 'Import from Google Drive',
         avatar: MdAddToDrive,
-        cb: GooleDriveConnect,
+        cb: RemoteFileUploader.bind(null, { remote: 'DRIVE' }),
       },
 
       {
@@ -146,10 +150,12 @@ function UploadBtn(props: Props) {
             }}
             animate={{ scaleY: 1 }}
             exit={{ scaleY: 0 }}
-            sx={{ position: 'absolute', bottom: '5rem', zIndex: 100000 }}
+            sx={{ position: 'absolute', bottom: '5rem' }}
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
-            <PopupBox listArr={popupBoxList as PopupBoxList[]} />
+            <PopupBox
+              listArr={popupBoxList as PopupBoxList<RemoteFileRenderArgs>[]}
+            />
           </Stack>
         )}
       </AnimatePresence>
