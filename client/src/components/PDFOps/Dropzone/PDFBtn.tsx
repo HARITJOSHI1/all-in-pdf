@@ -150,7 +150,10 @@ function UploadBtn(props: Props) {
             }}
             animate={{ scaleY: 1 }}
             exit={{ scaleY: 0 }}
-            sx={{ position: 'absolute', bottom: '5rem' }}
+            sx={{
+              position: 'absolute',
+              top: '33rem',
+            }}
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             <PopupBox

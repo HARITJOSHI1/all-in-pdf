@@ -7,19 +7,22 @@ import {
   ListItemText,
   Stack,
 } from '@mui/material';
-import React, { ReactNode, useState } from 'react';
-import useDrivePicker from 'react-google-drive-picker';
+import React, { useContext, useEffect, useState } from 'react';
 import { IconType } from 'react-icons';
 import { RemoteFileRenderArgs } from '../PDFOps/Dropzone/PDFBtn';
 import { GMQ } from '../reducers';
 import axios, { AxiosResponse } from 'axios';
-import { gapi } from 'gapi-script';
+import {
+  PickerConfig,
+  useGoogleDrive,
+} from './hooks/RemoteFileServices/useGoogleDrive';
+import { FileContextStore } from '../PDFOps/Operation';
 
 export interface PopupBoxList<T> {
   type?: string;
   avatar?: IconType;
   text: string;
-  cb?: (...args: T[]) => 'DRIVE' | 'DROPBOX';
+  cb?: (...args: T[]) => string | void;
 }
 
 interface Props {
@@ -28,60 +31,64 @@ interface Props {
 }
 
 const PopupBoxListSection = (items: PopupBoxList<RemoteFileRenderArgs>[]) => {
-  const [openPicker, authResponse] = useDrivePicker();
-  const [downloadedFilesAsBlobs, setDownloadedFilesAsBlobs] = useState();
   const clientId =
     '998380890751-s9rlc317vk76otbcmg4imjisrcrngia3.apps.googleusercontent.com';
-  // console.log(authResponse);
-  // let auth2
-  // const accessToken = gapi.auth.getToken().access_token;
-  // console.log(accessToken);
+  const apiKey = 'AIzaSyDnUoAlPrQEQCbKawAudmkvVrFdGfXfUEc';
+  const appId = 'superpdf-258ed';
+
+  const [createPicker, accessToken, downloadFilesAsBlobs, client] =
+    useGoogleDrive('https://www.googleapis.com/auth/drive', clientId);
+
+  const { setFiles } = useContext(FileContextStore)[0];
+  const { setRemoteFileLoad } = useContext(FileContextStore)[1];
+  const { setPercentUploaded } = useContext(FileContextStore)[2];
+  const config: PickerConfig = {
+    apiKey,
+    appId,
+    features: {
+      MULTISELECT_ENABLED: true,
+      NAV_HIDDEN: true,
+    },
+
+    viewType: {
+      PDFS: true,
+    },
+    exportAsBlobs: true,
+  };
+
+  function pickerCallback(data: google.picker.ResponseObject) {
+    if (data.action === google.picker.Action.PICKED) {
+      const docs = data[google.picker.Response.DOCUMENTS];
+      console.log(docs);
+
+      downloadFilesAsBlobs(docs).then((res) => {
+        const blobArr = res?.map((r) => {
+          switch (r.status) {
+            case 'fulfilled':
+              setRemoteFileLoad(false);
+              return r.value.data as File;
+            default:
+              return null;
+          }
+        })!;
+
+        setFiles(blobArr);
+        setPercentUploaded(0);
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (accessToken) createPicker(config, pickerCallback);
+  }, [accessToken]);
 
   const callFn = (item: PopupBoxList<RemoteFileRenderArgs>) => {
-    // const customViewsArray = [new google.picker.DocsView()]; // custom view
-    let val: 'DRIVE' | 'DROPBOX';
     if (item && item.cb) {
-      val = item.cb();
+      const val = item.cb();
 
       switch (val) {
         case 'DRIVE':
-          openPicker({
-            clientId,
-            developerKey: 'AIzaSyDnUoAlPrQEQCbKawAudmkvVrFdGfXfUEc',
-            viewId: 'PDFS',
-            token: authResponse?.access_token, // pass oauth token in case you already have one
-            showUploadView: true,
-            showUploadFolders: true,
-            supportDrives: true,
-            multiselect: true,
-            // customViews: customViewsArray, // custom view
-            callbackFunction: (data) => {
-              if (data.action === 'cancel') {
-                console.log('User clicked cancel/close button');
-              } else if (data.action === 'picked') {
-                // const res = axios.get(data);
-                // let blobArr: Promise<AxiosResponse<any, any>>[] | null = null;
-                // blobArr = data.docs.map((d) =>
-                //   axios.get(
-                //     `https://www.googleapis.com/drive/v3/files/${d.id}?alt=media`,
-                //     {
-                //       responseType: 'blob',
-                //       headers: {
-                //         Authorization: `Bearer ${accessToken}`,
-                //       },
-                //     }
-                //   )
-                // );
-
-                // Promise.allSettled(blobArr).then((result) => {
-                //   console.log(result);
-                // });
-              }
-
-              console.log(data, authResponse?.access_token);
-            },
-          });
-
+          client.requestAccessToken();
           break;
 
         case 'DROPBOX':

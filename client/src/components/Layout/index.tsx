@@ -25,7 +25,7 @@ import Login from '../Entry/Login';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User } from 'firebase/auth';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { OPERATIONS } from '../PDFOps/Operations';
+import { OPERATIONS, OpKeys } from '../PDFOps/Operations';
 import ReactGA from 'react-ga';
 import { NewUser } from '../actions';
 
@@ -152,8 +152,15 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
   const value3: ErrorContextState = { queue, setPopup };
   const value4: ShowLogin = { showLogin, setLogin };
 
-  const mNavOpt = ['Compress', 'Convert', 'Merge', 'Edit', 'eSign'];
-  const links = Object.keys(OPERATIONS);
+
+  const mNavOpt: { name: string; link: OpKeys }[] = [
+    { name: 'Compress', link: 'compress-pdf' },
+    { name: 'Word to PDF', link: 'word-pdf' },
+    { name: 'Merge', link: 'merge-pdf' },
+    { name: 'Edit', link: 'edit-pdf' },
+    { name: 'ESign', link: 'esign-pdf' },
+  ];
+  // const links = Object.keys(OPERATIONS);
 
   const NewList = () => {
     return (
@@ -165,19 +172,13 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
           visibility: showAccord ? 'visible' : 'hidden',
         }}
       >
-        {mNavOpt.map((ele: string, idx: number, arr: string[]) => {
+        {mNavOpt.map((ele, idx: number, arr) => {
           if (idx === 5 && user) return null;
 
           return (
             <Link
               key={idx}
-              to={
-                idx <= 4
-                  ? `/operation/${links.find((e) =>
-                      e.includes(arr[idx].toLowerCase())
-                    )}`
-                  : `/`
-              }
+              to={idx <= 4 ? `/operation/${ele.link}` : `/`}
               style={{ textDecoration: 'none' }}
             >
               <ListItem
@@ -204,7 +205,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
                 }}
               >
                 <ListItemText
-                  primary={`${ele}`}
+                  primary={`${ele.name}`}
                   disableTypography
                   sx={{
                     color: 'white',

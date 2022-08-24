@@ -1,50 +1,65 @@
-import { Button, Grid, Icon, Stack, Typography } from "@mui/material";
-import React, { useState, useEffect } from "react";
-import { useDropzone } from "react-dropzone";
-import BackupTableIcon from "@mui/icons-material/BackupTable";
-import axios, { AxiosResponse } from "axios";
-import UploadLoader from "./UploadLoader";
-import UploadBtn from "./PDFBtn";
-import { GMQ } from "../../reducers";
-import Result from "./Result/Result";
-import { AiOutlineFileAdd } from "react-icons/ai";
-import {OPERATIONS, PDFOperations} from "../Operations";
+import { Button, Grid, Icon, Stack, Typography } from '@mui/material';
+import React, { useState, useEffect, useContext } from 'react';
+import { useDropzone } from 'react-dropzone';
+import BackupTableIcon from '@mui/icons-material/BackupTable';
+import axios, { AxiosResponse } from 'axios';
+import UploadLoader from './UploadLoader';
+import UploadBtn from './PDFBtn';
+import { GMQ } from '../../reducers';
+import Result from './Result/Result';
+import { AiOutlineFileAdd } from 'react-icons/ai';
+import { OPERATIONS, PDFOperations } from '../Operations';
+import { FileContextStore } from '../Operation';
 
 interface Props {
   breakpoint: GMQ;
   param: keyof PDFOperations;
 }
 
+const MAXFILES = 10;
+
 export default function Drop(props: Props) {
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
-  const {param} = props;
-  const endPoint = param.split("-")[0];
-
+  const { param } = props;
+  const endPoint = param.split('-')[0];
   const obj = OPERATIONS[param];
-
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     accept: {
-      "application/pdf": [".pdf"],
+      'application/pdf': ['.pdf'],
     },
 
-    maxFiles: 10,
+    maxFiles: MAXFILES,
+    onError: (e) => console.log(e),
+    useFsAccessApi: false,
   });
 
-  const [allFiles, setAllFiles] = useState<File[]>([]);
+  const [allFiles, setAllFiles] = useState<(File | null)[]>([]);
   const [isUpload, setUpload] = useState<boolean>(false);
   const [isUploaded, setUploaded] = useState<boolean>(false);
-  const [percentUploaded, setPercentUploaded] = useState<number>(0);
   const [response, setResponse] = useState<AxiosResponse | null>(null);
+  const { remoteFiles, setFiles } = useContext(FileContextStore)[0];
+  const { isRemoteFileUpload } = useContext(FileContextStore)[1];
+  const [files, setAcceptedFiles] = useState<(File | null)[]>([]);
 
-  
   useEffect(() => {
     setAllFiles([]);
     setUploaded(false);
   }, [param]);
 
   useEffect(() => {
-    if (acceptedFiles.length) setAllFiles([...allFiles, ...acceptedFiles]);
-  }, [acceptedFiles.length]);
+    if(acceptedFiles.length) setAcceptedFiles([...acceptedFiles]);
+  }, [acceptedFiles.length])
+
+  useEffect(() => {
+    if (acceptedFiles.length >= MAXFILES || allFiles.length >= MAXFILES) return;
+    if (files.length || remoteFiles.length) {
+      if (remoteFiles.length) setAllFiles([...allFiles, ...remoteFiles]);
+      else setAllFiles([...allFiles, ...files]);
+    }
+
+    setAcceptedFiles([]);
+    setFiles([]);
+  }, [files.length, remoteFiles.length]);
 
   const numFiles = allFiles.length;
 
@@ -54,25 +69,15 @@ export default function Drop(props: Props) {
       try {
         setUpload(true);
         const fd = new FormData();
-        allFiles.map((file: File) => fd.append("files", file));
+        allFiles.map((file) => fd.append('files', file!));
 
-        const res = await axios.post(
-          `/api/v1/pdf/${endPoint}`,
-          fd,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
+        const res = await axios.post(`/api/v1/pdf/${endPoint}`, fd, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
 
-            onUploadProgress: (progress) => {
-              setPercentUploaded(
-                Math.round(progress.loaded / progress.total) * 100
-              );
-            },
-
-            withCredentials: true
-          }
-        );
+          withCredentials: true,
+        });
 
         if (res.data) {
           console.log(res.data);
@@ -85,7 +90,7 @@ export default function Drop(props: Props) {
         console.log(err?.response.data || err.message);
         const { message } = err?.response?.data
           ? err.response.data
-          : { message: "Something went wrong" };
+          : { message: 'Something went wrong' };
 
         setUpload(false);
         setAllFiles([]);
@@ -121,8 +126,8 @@ export default function Drop(props: Props) {
               alignItems="center"
               spacing={3}
             >
-              {isUpload ? (
-                <UploadLoader percentUploaded={percentUploaded} />
+              {isUpload || isRemoteFileUpload ? (
+                <UploadLoader />
               ) : (
                 <>
                   <Icon sx={{ width: '5rem', height: '5rem', color: 'white' }}>
@@ -132,7 +137,7 @@ export default function Drop(props: Props) {
                   <UploadBtn
                     fn={uploadFiles}
                     numFiles={numFiles}
-                    text = {(numFiles ? "Upload" : "Choose Files")}
+                    text={numFiles ? 'Upload' : 'Choose Files'}
                     sx={[
                       {
                         width: '20%',
@@ -157,7 +162,10 @@ export default function Drop(props: Props) {
         {/* {response as RecievedFileData}         */}
 
         {isUploaded && (
-            <Result breakpoint={props.breakpoint} response = {response as AxiosResponse}/>
+          <Result
+            breakpoint={props.breakpoint}
+            response={response as AxiosResponse}
+          />
         )}
       </Grid>
     </Stack>
