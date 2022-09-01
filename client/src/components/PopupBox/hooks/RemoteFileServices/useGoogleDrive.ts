@@ -48,7 +48,6 @@ export function useGoogleDrive(SCOPES: spaceSepStr, clientId: string) {
   const [client, setClient] =
     useState<google.accounts.oauth2.TokenClient | null>(null);
   const { setRemoteFileLoad } = useContext(FileContextStore)[1];
-  const { setPercentUploaded } = useContext(FileContextStore)[2];
 
   useEffect(() => {
     const arr = loadApis(

@@ -17,6 +17,8 @@ import {
   useGoogleDrive,
 } from './hooks/RemoteFileServices/useGoogleDrive';
 import { FileContextStore } from '../PDFOps/Operation';
+import { useDropboxChooser } from './hooks/RemoteFileServices/useDropboxChooser';
+// import DropboxSDK from 'dropbox';
 
 export interface PopupBoxList<T> {
   type?: string;
@@ -33,17 +35,21 @@ interface Props {
 const PopupBoxListSection = (items: PopupBoxList<RemoteFileRenderArgs>[]) => {
   const clientId =
     '998380890751-s9rlc317vk76otbcmg4imjisrcrngia3.apps.googleusercontent.com';
-  const apiKey = 'AIzaSyDnUoAlPrQEQCbKawAudmkvVrFdGfXfUEc';
+  const GOOGLE_APIKEY = 'AIzaSyDnUoAlPrQEQCbKawAudmkvVrFdGfXfUEc';
+  const DROPBOX_ACCESS_TOKEN = '9c42jlzwz6cso91';
+
   const appId = 'superpdf-258ed';
 
   const [createPicker, accessToken, downloadFilesAsBlobs, client] =
     useGoogleDrive('https://www.googleapis.com/auth/drive', clientId);
 
+  const { createDropboxChooser } = useDropboxChooser('fxwvf1dsihb4e8l');
+
   const { setFiles } = useContext(FileContextStore)[0];
   const { setRemoteFileLoad } = useContext(FileContextStore)[1];
   const { setPercentUploaded } = useContext(FileContextStore)[2];
   const config: PickerConfig = {
-    apiKey,
+    apiKey: GOOGLE_APIKEY,
     appId,
     features: {
       MULTISELECT_ENABLED: true,
@@ -92,6 +98,37 @@ const PopupBoxListSection = (items: PopupBoxList<RemoteFileRenderArgs>[]) => {
           break;
 
         case 'DROPBOX':
+          const successCb = async (
+            files: ReadonlyArray<Dropbox.ChooserFile>
+          ) => {
+            // console.log("heree");
+
+            console.log(files);
+            const blobs = files.map((f) => {
+              return axios.get(
+                f.link + '?raw=1',
+                {
+                  responseType: 'blob',
+                  headers: {
+                    Authorization: `Bearer 9c42jlzwz6cso91`,
+                  },
+                }
+              );
+            });
+
+            console.log(await Promise.allSettled(blobs));
+
+            // TODO
+          };
+
+          createDropboxChooser(
+            { successCb },
+            {
+              multiselect: true,
+              folderselect: true,
+              extensions: ['.pdf'],
+            }
+          );
           break;
       }
     }

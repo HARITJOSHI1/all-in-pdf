@@ -2482,6 +2482,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/dropbox-chooser@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@types/dropbox-chooser/-/dropbox-chooser-1.0.3.tgz#e406b7b77ebb22c5572100766ad3c6cda26e42f4"
+  integrity sha512-goWhd+XdWmivpNPKabdZ3Vus6nohXbrVqbLU8tBjz1KOMvkR+K5yDLNurj/jHvVtqb3PgT+HK8RTJIGWMbkRvQ==
+
 "@types/eslint-scope@^3.7.3":
   version "3.7.3"
   resolved "https://registry.yarnpkg.com/@types/eslint-scope/-/eslint-scope-3.7.3.tgz#125b88504b61e3c8bc6f870882003253005c3224"
@@ -4566,6 +4571,13 @@ dotenv@^10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
   integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
+
+dropbox@^10.32.0:
+  version "10.32.0"
+  resolved "https://registry.yarnpkg.com/dropbox/-/dropbox-10.32.0.tgz#f7733e423e8b7b7f7f1322f3e2ce61dad9ebe255"
+  integrity sha512-vnkcp8HNTmqYwI+VYfxE061YP9rXB2feWljAzzzF0ud4npB8H31eYKJuf6cPzFRsr8RpwVlj/SfsJkFqF2QeYA==
+  dependencies:
+    node-fetch "^2.6.1"
 
 duplexer@^0.1.2:
   version "0.1.2"
@@ -7156,7 +7168,7 @@ no-case@^3.0.4:
     lower-case "^2.0.2"
     tslib "^2.0.3"
 
-node-fetch@2.6.7:
+node-fetch@2.6.7, node-fetch@^2.6.1:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
   integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==

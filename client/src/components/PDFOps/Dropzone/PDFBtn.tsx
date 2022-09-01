@@ -46,8 +46,9 @@ function UploadBtn(props: Props) {
       },
 
       {
-        text: 'Import from DropBox',
+        text: 'Import from Dropbox',
         avatar: RiDropboxLine,
+        cb: RemoteFileUploader.bind(null, { remote: 'DROPBOX' }),
       },
     ];
 
