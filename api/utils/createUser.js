@@ -1,10 +1,10 @@
 const Users = require("../models/Users");
 const DocSaver = require("../utils/classes/DocSaver");
 const Cookies = require("./classes/Cookies");
-const {client} = require("./initRedis");
+// const {client} = require("./initRedis");
 
-const { promisify } = require("util");
-client.get = promisify(client.get);
+// const { promisify } = require("util");
+// client.get = promisify(client.get);
 
 const ifTempInitUser = async (sessionId) => {
   let doc;
@@ -27,7 +27,7 @@ exports.createUser = async (req, res, next) => {
   let id = null;
   if (!req.userId) {
     id = await ifTempInitUser(Cookies.getCookie(req, "sessionId"));
-    await client.set("userId", id);
+    // await client.set("userId", id);
     req.session.userId = id;
     new Cookies().sendCookie(res, "sessionId", id);
   }

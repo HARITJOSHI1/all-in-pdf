@@ -7,7 +7,9 @@ module.exports = function catchAsync(fun) {
       // next(err);
       console.log(err);
       if (err instanceof AppError) next(err);
-      next(new ServiceError(err));
-      // else next(err);
+      else {
+        console.log("hereeee");
+        next(new ServiceError(err));
+      }
     });
 };

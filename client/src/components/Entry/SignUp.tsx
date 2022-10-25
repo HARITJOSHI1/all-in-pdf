@@ -1,14 +1,19 @@
-import React, { ReactNode, useState, useEffect, useContext } from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import { alpha, Box, darken, Icon, Stack, TextField } from "@mui/material";
-import { GMQ } from "../reducers";
-import EntryInfo from "./EntryInfo";
-import { motion } from "framer-motion";
-import OAuth from "../Auth";
-import Error from "../Error";
-import { Context } from "../Layout";
+import React, { ReactNode, useState, useEffect, useContext } from 'react';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import { alpha, Box, darken, Icon, Stack, TextField } from '@mui/material';
+import { GMQ, State } from '../reducers';
+import EntryInfo from './EntryInfo';
+import { motion } from 'framer-motion';
+import OAuth from '../Auth';
+import Error from '../Popup';
+import { Context, UserQueueState } from '../Layout';
+import Login, { Renderqueue } from './Login';
+import EntryForm from './EntryForm';
+import { connect } from 'react-redux';
+import { NewUser } from '../actions';
+import ShareForm from '../PDFOps/Dropzone/Result/ShareForm';
 
 interface Props {
   breakpoint: GMQ;
@@ -16,51 +21,39 @@ interface Props {
   img?: string;
 }
 
-export default function Entry(props: Props) {
-  const { isErr, setErr } = useContext(Context)[2];
-  const { setLogin } = useContext(Context)[3];
-
-  useEffect(() => {
-    let id: NodeJS.Timeout;
-    if (isErr.message) {
-      id = setTimeout(() => {
-        setErr((state) => {
-          return (state = { message: "" });
-        });
-      }, 3000);
-    }
-
-    return () => {
-      clearTimeout(id);
-    };
-  }, [isErr.message]);
+function SignUp(props: Props) {
+  const { queue } = useContext(Context)[2];
+  const { setModal } = useContext(Context)[1];
+  // useTimer('SIGNUP-ERR');
 
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
+  console.log(props.breakpoint);
+  
   return (
     <Card
       key="card"
       component={motion.div}
       initial={{ scale: 0 }}
       transition={{
-        ease: "easeIn",
+        ease: 'easeIn',
         duration: 0.255,
       }}
       animate={{ scale: 1 }}
       exit={{ scale: 0 }}
       sx={[
         {
-          bgcolor: "white",
-          height: "100%",
-          width: mobile ? "90%" : "auto",
-          opacity: "1",
-          position: "relative",
-          zIndex: "100000",
-          borderRadius: "12px",
+          bgcolor: 'white',
+          height: '100%',
+          width: mobile ? '90%' : 'auto',
+          opacity: '1',
+          position: 'relative',
+          zIndex: '100000',
+          borderRadius: '12px',
         },
 
         tabPort && {
-          width: "60%",
-          height: "auto",
+          width: '60%',
+          height: 'auto',
         },
       ]}
     >
@@ -68,10 +61,10 @@ export default function Entry(props: Props) {
         direction="column"
         alignItems="center"
         sx={[
-          { height: "100%", maxHeight: "100%" },
+          { height: '100%', maxHeight: '100%' },
           (tabLand || desktop) && {
-            flexDirection: "row-reverse",
-            justifyContent: "space-between",
+            flexDirection: 'row-reverse',
+            justifyContent: 'space-between',
           },
         ]}
       >
@@ -80,49 +73,58 @@ export default function Entry(props: Props) {
         <CardContent
           sx={[
             {
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              alignSelf: "start",
-              height: "100%",
-              p: "2.5rem",
-              pb: "2.5rem !important",
-              width: "60%",
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              alignSelf: 'start',
+              height: '100%',
+              p: '2.5rem',
+              pb: '2.5rem !important',
+              width: '60%',
 
-              "& > :not(:last-child)": {
-                marginBottom: "1.5rem",
+              '& > :not(:last-child)': {
+                marginBottom: '1.5rem',
               },
             },
-            (tabPort || mobile) && { height: "100%", px: "2", width: "auto" },
+            (tabPort || mobile) && { height: '100%', px: '2', width: 'auto' },
           ]}
         >
           <Typography
             variant="h4"
             component="div"
             sx={[
-              { fontSize: "1.8rem" },
-              tabPort && { fontSize: "1.5rem" },
-              mobile && { fontSize: "1.5rem" },
+              { fontSize: '1.8rem' },
+              tabPort && { fontSize: '1.5rem' },
+              mobile && { fontSize: '1.5rem' },
             ]}
           >
             Sign Up
           </Typography>
 
           <OAuth breakpoint={props.breakpoint} />
-          {isErr.message && (
-            <Error breakpoint={props.breakpoint} err={`${isErr.message}`} />
-          )}
+          {Renderqueue(queue as UserQueueState[], 'SIGNUP-ERR', props)}
           {props.children}
 
           <Typography
             variant="h6"
-            sx={{ color: "#B7B9C1", fontSize: "1rem", fontWeight: "500" }}
+            sx={{ color: '#B7B9C1', fontSize: '1rem', fontWeight: '500' }}
           >
-            Already have an account?{" "}
+            Already have an account?{' '}
             <span
-              style={{ color: "#5340FF", cursor: "pointer" }}
-              onClick={() => setLogin(true)}
+              style={{ color: '#5340FF', cursor: 'pointer' }}
+              onClick={() =>
+                setModal({
+                  show: true,
+                  fn: () => {
+                    return (
+                      <Login>
+                        <EntryForm breakpoint={props.breakpoint} num={2} />
+                      </Login>
+                    );
+                  },
+                })
+              }
             >
               login
             </span>
@@ -132,3 +134,9 @@ export default function Entry(props: Props) {
     </Card>
   );
 }
+
+const mapStateToProps = (state: State) => {
+  return { breakpoint: state.breakpoint as GMQ, user: state.user as NewUser };
+};
+
+export default connect(mapStateToProps)(SignUp);

@@ -35,7 +35,7 @@ module.exports = class Email {
     if (docs) {
       attachments = docs.map((doc) => {
         return {
-          filename: doc.name,
+          filename: `${doc.name}.zip`,
           content: fs.createReadStream(
             path.resolve(__dirname, `../../data/${doc.name}.zip`)
           ),
@@ -44,7 +44,7 @@ module.exports = class Email {
     }
 
     if (template) {
-      html = pug.renderFile(`${__dirname}/../../views/${template}.pug`, {
+        html = pug.renderFile(`${__dirname}/../../views/${template}.pug`, {
         url: this.url,
         subject,
         message: this.message,
@@ -56,7 +56,7 @@ module.exports = class Email {
     const mailOpt = {
       from: this.sender,
       to: this.to,
-      text: template ? ht.htmlToText(html) : "",
+      text: template ? ht.htmlToText(html) : this.message,
       html,
       subject,
     };

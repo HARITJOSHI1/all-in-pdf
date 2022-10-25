@@ -1,29 +1,32 @@
-import React, { Dispatch, SetStateAction, useContext, useState } from "react";
-import { useForm, SubmitHandler, Controller, FormState } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
-import { Button, darken, Stack, TextField, Typography } from "@mui/material";
-import { padding, width } from "@mui/system";
-import { GMQ, State } from "../reducers";
-import axios, { AxiosResponse } from "axios";
-import { Grid } from "react-loader-spinner";
-import { connect } from "react-redux";
-import { FormDataUser, addGlobalUser, UserData } from "../actions";
-import { Context } from "../Layout";
-import { firebase } from "../../firebaseInit";
-import { User } from "firebase/auth";
+/* eslint-disable no-useless-escape */
+import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
+import { useForm, SubmitHandler, Controller, FormState } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
+import { Button, darken, Stack, TextField, Typography } from '@mui/material';
+import { GMQ, State } from '../reducers';
+import axios, { AxiosResponse } from 'axios';
+import { Grid } from 'react-loader-spinner';
+import { connect } from 'react-redux';
+import { addGlobalUser, UserData, NewUser } from '../actions';
+import { Context, UserQueueState } from '../Layout';
+import { firebase } from '../../firebaseInit';
 
 const Schema = Yup.object().shape({
   email: Yup.string().email().required(),
-  password: Yup.string().min(8).max(14).required(),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Passwords must match")
+  password: Yup.string().min(8).max(26).matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-8])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+      "Must contain some aplha numeric characters"
+    ).required(),
+  confirmPassword: Yup.string().oneOf(
+    [Yup.ref('password'), null],
+    'Passwords must match'
+  ),
 });
 
 interface Props {
   breakpoint: GMQ;
-  addGlobalUser: (user: User) => UserData;
-  setModal: Dispatch<SetStateAction<boolean>>;
+  addGlobalUser: (user: NewUser) => UserData;
   num: number;
 }
 
@@ -34,8 +37,9 @@ export interface SignUpState {
 }
 
 const SignUp: React.FC<Props> = (props: Props) => {
-  const { setErr } = useContext(Context)[2];
+  const { setPopup, queue } = useContext(Context)[2];
   const { showLogin } = useContext(Context)[3];
+  const { setModal } = useContext(Context)[1];
 
   const { control, handleSubmit, formState } = useForm<SignUpState>({
     resolver: yupResolver(Schema),
@@ -45,24 +49,28 @@ const SignUp: React.FC<Props> = (props: Props) => {
   const [isSubmit, setSubmit] = useState(false);
 
   const onSubmit: SubmitHandler<SignUpState> = async (data: SignUpState) => {
-
     if (!isSubmit) {
-      let res: AxiosResponse | null = null;
+      let res: AxiosResponse<{ user: NewUser }> | null = null;
 
       try {
         setSubmit(true);
+
         switch (showLogin) {
           case false:
-            res = await axios.post<AxiosResponse>(
-              "http://localhost:5000/api/v1/entry/signup",
-              data
+            res = await axios.post<{ user: NewUser }>(
+              '/api/v1/entry/signup',
+              data,
+              { withCredentials: true }
             );
             break;
 
           default:
-            res = await axios.post<AxiosResponse>(
-              "http://localhost:5000/api/v1/entry/login",
-              data
+            res = await axios.post<{ user: NewUser }>(
+              '/api/v1/entry/login',
+              data,
+              {
+                withCredentials: true,
+              }
             );
         }
 
@@ -74,21 +82,28 @@ const SignUp: React.FC<Props> = (props: Props) => {
             data.password
           );
 
-          await firebase.updateProfile(user, {photoURL: "https://www.gravatar.com/avatar/?d=mp"});
-          
-          props.addGlobalUser(user);
+          await firebase.updateProfile(user, {
+            photoURL: 'https://www.gravatar.com/avatar/?d=mp',
+          });
+
+          props.addGlobalUser(res.data.user);
           setSubmit(false);
-          props.setModal(false);
+          setModal({ show: false, fn: () => null });
         }
-      } 
-      
-      catch (err: any) {
-        console.log(err?.response.data || err.message);
-        const { message } = err?.response.data
-          ? err.response.data
-          : { message: "Something went wrong" };
-        setErr({ message });
         setSubmit(false);
+      } catch (err: any) {
+        setSubmit(false);
+
+        let message: string = err?.response?.data?.message || err.message;
+        console.log(message);
+        if (message.match('Firebase')) message = 'Something went wrong';
+
+        if (showLogin && queue)
+          setPopup([...queue, { type: 'LOGIN-ERR', message }]);
+        else if (!showLogin && queue)
+          setPopup([...queue, { type: 'SIGNUP-ERR', message }]);
+        else if (showLogin) setPopup([{ type: 'LOGIN-ERR', message }]);
+        else setPopup([{ type: 'SIGNUP-ERR', message }]);
       }
     }
   };
@@ -96,7 +111,7 @@ const SignUp: React.FC<Props> = (props: Props) => {
   const createLabel = (l: string, i: number) => {
     const newStr = l.replace(l[0], l[0].toUpperCase());
     if (i === 2) {
-      return newStr.replace("P", " P");
+      return newStr.replace('P', ' P');
     }
 
     return newStr.replace(l[0], l[0].toUpperCase());
@@ -106,13 +121,13 @@ const SignUp: React.FC<Props> = (props: Props) => {
     { errors }: FormState<SignUpState>,
     num: number
   ) => {
-    const labels: ("email" | "password" | "confirmPassword")[] = [
-      "email",
-      "password",
-      "confirmPassword",
+    const labels: ('email' | 'password' | 'confirmPassword')[] = [
+      'email',
+      'password',
+      'confirmPassword',
     ];
     return labels.map(
-      (l: "email" | "password" | "confirmPassword", idx: number) => {
+      (l: 'email' | 'password' | 'confirmPassword', idx: number) => {
         if (idx < num) {
           return (
             <Controller
@@ -124,16 +139,16 @@ const SignUp: React.FC<Props> = (props: Props) => {
                   {...field}
                   multiline
                   size="small"
-                  sx={{ width: "100%" }}
+                  sx={{ width: '100%' }}
                   label={createLabel(l, idx)}
                   error={!!errors.email}
                   FormHelperTextProps={{
                     style: {
-                      marginTop: "0.25rem",
-                      marginBottom: "0.25rem",
+                      marginTop: '0.25rem',
+                      marginBottom: '0.25rem',
                     },
                   }}
-                  helperText={errors[l] ? errors[l]?.message : " "}
+                  helperText={errors[l] ? errors[l]?.message : ' '}
                 />
               )}
             />
@@ -148,39 +163,39 @@ const SignUp: React.FC<Props> = (props: Props) => {
       direction="column"
       alignItems="center"
       sx={[
-        { width: "100%" },
-        tabPort && { width: "90%" },
-        mobile && { width: "100%" },
+        { width: '100%' },
+        tabPort && { width: '90%' },
+        mobile && { width: '100%' },
       ]}
     >
-      <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
+      <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
         {generateInputText(formState, props.num)}
 
         <Button
           variant="contained"
           type="submit"
           sx={{
-            position: "relative",
-            bgcolor: "#5340FF",
-            boxShadow: "none",
-            borderRadius: "10px",
-            textTransform: "none",
-            width: "100%",
-            p: ".8rem 4rem",
-            mt: desktop || tabLand ? "1rem" : "0",
-            "&:hover": {
-              bgcolor: darken("#5340FF", 0.2),
+            position: 'relative',
+            bgcolor: '#5340FF',
+            boxShadow: 'none',
+            borderRadius: '10px',
+            textTransform: 'none',
+            width: '100%',
+            p: '.8rem 4rem',
+            mt: desktop || tabLand ? '1rem' : '0',
+            '&:hover': {
+              bgcolor: darken('#5340FF', 0.2),
             },
           }}
         >
           {!isSubmit ? (
             <Typography
               style={{
-                fontWeight: "700",
-                fontSize: "1rem",
+                fontWeight: '700',
+                fontSize: '1rem',
               }}
             >
-              {showLogin ? "Login" : "Submit"}
+              {showLogin ? 'Login' : 'Submit'}
             </Typography>
           ) : (
             <Grid

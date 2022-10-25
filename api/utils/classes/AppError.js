@@ -1,5 +1,5 @@
 module.exports = class AppError extends Error {
-    constructor(status, msg = null, methodName, code = null, isOperational = true) {
+    constructor(status = 500, msg = null, methodName, code = null, isOperational = true) {
         super();
         this.statusCode = status;
         this.code = code;
