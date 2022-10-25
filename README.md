@@ -35,7 +35,6 @@ _<h3 align = "center"> Languages Used 💡 </h3>_
 * **Recurring payments** are powered via **stripe and paypal** and can be managed within the application with **stripe webhooks** to manage 
     payment states and their confirmation at the application's server side.
 
-
 ## Tech Stack 🚀
 
 | Core tech                  | Purpose                                     |
@@ -58,10 +57,8 @@ _<h3 align = "center"> Languages Used 💡 </h3>_
 | Stripe and stripe elements | For client side payment processing          |
 | Paypal SDK                 | Paypal payment gateway                      |
 | GAPI                       | For google GIS authentication               |
-| bcrypt                     | For hashing passwords with salt             |
-| Mongoose                   | Object Relational Mapping (ORM) for MongoDB |
-| Nodemailer                 | Email sending client for NodeJS             |   
-   
+
+
 ## Prerequisites 🔴
 * <a href = "https://yarnpkg.com/" >Yarn</a> 
 * <a href = "https://nodejs.org/en/" >Node</a> 
@@ -107,3 +104,20 @@ npm start
 ```
 
 Visit <a href= '#'> http://localhost:3000/ </a> and run server on <a href= '#'> localhost:5000/ </a> or your custom port environment variable to view the app.
+
+## Screenshots 📸
+### Desktop
+![Homepage](https://user-images.githubusercontent.com/68104721/197791078-5d6b1307-aa72-4d9d-8cec-d00f04bbdd5b.png)
+<br><br><br>
+![Tools](https://user-images.githubusercontent.com/68104721/197792225-0e3fd12b-163b-4908-8874-f9bcb8253f92.png)
+<br><br><br>
+![why choose us](https://user-images.githubusercontent.com/68104721/197793400-11daf3d9-e440-4165-b9d3-ea49046ffbda.png)
+<br><br><br>
+![signup modal](https://user-images.githubusercontent.com/68104721/197794488-bb05adbb-ccc2-4878-a0b5-c932683d9985.png)
+
+### Mobile
+| Mobile #1                                                                                                                  | Mobile #2                                                                                                              |
+|----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| ![responsive ui su](https://user-images.githubusercontent.com/68104721/197795787-7a0c4198-ddf4-49e3-b3d0-2d9b88372254.gif) | ![signup ui su](https://user-images.githubusercontent.com/68104721/197796622-abfa3558-a5cc-4d71-b4d5-caba8914d603.gif) |
+
+## and many more...
