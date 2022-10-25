@@ -60,7 +60,7 @@ _<h3 align = "center"> Languages Used 💡 </h3>_
 | GAPI                       | For google GIS authentication               |
 | bcrypt                     | For hashing passwords with salt             |
 | Mongoose                   | Object Relational Mapping (ORM) for MongoDB |
-   
+| Nodemailer                 | Email sending client for NodeJS             |   
    
 ## Prerequisites 🔴
 * <a href = "https://yarnpkg.com/" >Yarn</a> 
