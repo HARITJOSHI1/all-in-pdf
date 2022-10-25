@@ -37,6 +37,7 @@ _<h3 align = "center"> Languages Used 💡 </h3>_
 
 
 ## Tech Stack 🚀
+
 | Core tech                  | Purpose                                     |
 |----------------------------|---------------------------------------------|
 | React JS                   | Create front-end of the app                 |
@@ -59,8 +60,8 @@ _<h3 align = "center"> Languages Used 💡 </h3>_
 | GAPI                       | For google GIS authentication               |
 | bcrypt                     | For hashing passwords with salt             |
 | Mongoose                   | Object Relational Mapping (ORM) for MongoDB |
-
-
+   
+   
 ## Prerequisites 🔴
 * <a href = "https://yarnpkg.com/" >Yarn</a> 
 * <a href = "https://nodejs.org/en/" >Node</a> 
