@@ -8,19 +8,22 @@ import UploadBtn from './PDFBtn';
 import { GMQ } from '../../reducers';
 import Result from './Result/Result';
 import { AiOutlineFileAdd } from 'react-icons/ai';
-import { OPERATIONS, PDFOperations } from '../Operations';
+import { OPERATIONS, OpKeys, PDFOperations } from '../Operations';
 import { FileContextStore } from '../Operation';
+import * as H from 'history';
 
 interface Props {
   breakpoint: GMQ;
   param: keyof PDFOperations;
+  operation: PDFOperations[OpKeys];
+  history: H.History;
 }
 
 const MAXFILES = 10;
 
 export default function Drop(props: Props) {
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
-  const { param } = props;
+  const { param, history, operation } = props;
   const endPoint = param.split('-')[0];
   const obj = OPERATIONS[param];
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
@@ -41,36 +44,51 @@ export default function Drop(props: Props) {
   const { isRemoteFileUpload } = useContext(FileContextStore)[1];
   const [files, setAcceptedFiles] = useState<(File | null)[]>([]);
 
-  useEffect(() => {
-    setAllFiles([]);
-    setUploaded(false);
-  }, [param]);
+useEffect(() => {
+  if (acceptedFiles.length) setAcceptedFiles([...acceptedFiles]);
+}, [acceptedFiles.length]);
 
-  useEffect(() => {
-    if(acceptedFiles.length) setAcceptedFiles([...acceptedFiles]);
-  }, [acceptedFiles.length])
+useEffect(() => {
+  if (
+    (allFiles.length >= operation.capacity ||
+      acceptedFiles.length > operation.capacity) &&
+    operation.capacity === 1
+  )
+    return;
+  if (
+    files.length <= MAXFILES - allFiles.length &&
+    remoteFiles.length <= MAXFILES - allFiles.length &&
+    allFiles.length <= MAXFILES &&
+    (files.length || remoteFiles.length)
+  ) {
+    if (remoteFiles.length) setAllFiles([...allFiles, ...remoteFiles]);
+    else setAllFiles([...allFiles, ...files]);
+  }
 
-  useEffect(() => {
-    if (acceptedFiles.length >= MAXFILES || allFiles.length >= MAXFILES) return;
-    if (files.length || remoteFiles.length) {
-      if (remoteFiles.length) setAllFiles([...allFiles, ...remoteFiles]);
-      else setAllFiles([...allFiles, ...files]);
-    }
+  setAcceptedFiles([]);
+  setFiles([]);
+}, [files.length, remoteFiles.length]);
 
-    setAcceptedFiles([]);
-    setFiles([]);
-  }, [files.length, remoteFiles.length]);
 
   const numFiles = allFiles.length;
 
-  const uploadFiles = async (e?: React.MouseEvent, numFiles?: number) => {
+  const uploadFiles = async (e?: React.MouseEvent, numFiles?: number, visitRoute = true) => {
     if (numFiles && e !== undefined) {
       e.stopPropagation();
       try {
-        setUpload(true);
-        const fd = new FormData();
-        allFiles.map((file) => fd.append('files', file!));
+        if (operation.route && visitRoute) {
+          history.push({
+            pathname: operation.route,
+            search: `?mode=${endPoint}`,
+            state: {
+              allFiles,
+            },
+          });
+        }
 
+        setUpload(true);
+         const fd = new FormData();
+         allFiles.map((file) => fd.append('files', file!));
         const res = await axios.post(`/api/v1/pdf/${endPoint}`, fd, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -87,7 +105,7 @@ export default function Drop(props: Props) {
           setAllFiles([]);
         }
       } catch (err: any) {
-        console.log(err?.response.data || err.message);
+        console.log(err?.response?.data || err.message);
         const { message } = err?.response?.data
           ? err.response.data
           : { message: 'Something went wrong' };
@@ -171,3 +189,4 @@ export default function Drop(props: Props) {
     </Stack>
   );
 }
+

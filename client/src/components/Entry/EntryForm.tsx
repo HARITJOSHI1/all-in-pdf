@@ -14,9 +14,9 @@ import { firebase } from '../../firebaseInit';
 
 const Schema = Yup.object().shape({
   email: Yup.string().email().required(),
-  password: Yup.string().min(8).max(8).matches(
+  password: Yup.string().min(8).max(26).matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-8])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-      "Must contain 8 aplha numeric characters"
+      "Must contain some aplha numeric characters"
     ).required(),
   confirmPassword: Yup.string().oneOf(
     [Yup.ref('password'), null],

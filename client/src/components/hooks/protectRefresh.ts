@@ -1,4 +1,4 @@
-import react from 'react';
+import React from 'react';
 import useSWR from 'swr';
 import { NewUser } from '../actions';
 import { AxiosError, AxiosResponse } from 'axios';

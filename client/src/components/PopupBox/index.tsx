@@ -48,6 +48,7 @@ const PopupBoxListSection = (items: PopupBoxList<RemoteFileRenderArgs>[]) => {
   const { setFiles } = useContext(FileContextStore)[0];
   const { setRemoteFileLoad } = useContext(FileContextStore)[1];
   const { setPercentUploaded } = useContext(FileContextStore)[2];
+  
   const config: PickerConfig = {
     apiKey: GOOGLE_APIKEY,
     appId,
@@ -65,15 +66,16 @@ const PopupBoxListSection = (items: PopupBoxList<RemoteFileRenderArgs>[]) => {
   function pickerCallback(data: google.picker.ResponseObject) {
     if (data.action === google.picker.Action.PICKED) {
       const docs = data[google.picker.Response.DOCUMENTS];
-      console.log(docs);
 
       downloadFilesAsBlobs(docs).then((res) => {
-        const blobArr = res?.map((r) => {
+        const blobArr = res?.map((r, idx) => {
           switch (r.status) {
             case 'fulfilled':
               setRemoteFileLoad(false);
+              r.value.data.name = docs[idx].name;
               return r.value.data as File;
             default:
+              setRemoteFileLoad(false);
               return null;
           }
         })!;
@@ -106,7 +108,7 @@ const PopupBoxListSection = (items: PopupBoxList<RemoteFileRenderArgs>[]) => {
             console.log(files);
             const blobs = files.map((f) => {
               return axios.get(
-                f.link + '?raw=1',
+                f.link,
                 {
                   responseType: 'blob',
                   headers: {
@@ -115,8 +117,6 @@ const PopupBoxListSection = (items: PopupBoxList<RemoteFileRenderArgs>[]) => {
                 }
               );
             });
-
-            console.log(await Promise.allSettled(blobs));
 
             // TODO
           };

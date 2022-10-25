@@ -122,6 +122,7 @@ export function useGoogleDrive(SCOPES: spaceSepStr, clientId: string) {
 
   const loadApis = (...args: string[]) => {
     if (gisInit) return;
+    
     const initializePicker = () => {
       if (pickerInit) return;
       window.gapi.load('picker', () => setPickerInit(true));

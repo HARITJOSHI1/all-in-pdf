@@ -6,7 +6,6 @@ import { RouteComponentProps } from 'react-router-dom';
 import { PDFOperations, OPERATIONS, OpKeys } from './Operations';
 import { Grid, Icon, Stack, Typography } from '@mui/material';
 import StarRatings from 'react-star-ratings';
-import Axios from 'axios';
 
 interface MatchParams {
   name: keyof PDFOperations;
@@ -48,7 +47,7 @@ export const FileContextStore = React.createContext<RemoteFileContextStore>([
 
 function _Operation(props: Props) {
   const PARAM = props.match.params.name;
-
+  const history = props.history;
   const obj = OPERATIONS[PARAM];
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
   const [rating, setRating] = useState<number>(0);
@@ -133,7 +132,12 @@ function _Operation(props: Props) {
 
       <section>
         <FileContextStore.Provider value={RemoteFileContextVal}>
-          <Drop breakpoint={props.breakpoint} param={PARAM} />
+          <Drop
+            breakpoint={props.breakpoint}
+            param={PARAM}
+            history={history}
+            operation={obj}
+          />
         </FileContextStore.Provider>
       </section>
 
