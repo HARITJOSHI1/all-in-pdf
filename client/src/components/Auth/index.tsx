@@ -27,7 +27,7 @@ interface OAuthData {
 
 const OAuth: React.FC<Props> = (props: Props) => {
   const { setModal } = useContext(Context)[1];
-  const { setErr, errors } = useContext(Context)[2];
+  const { setPopup, queue } = useContext(Context)[2];
   const { showLogin } = useContext(Context)[3];
 
   const callOAuth = async (to: string) => {
@@ -57,36 +57,36 @@ const OAuth: React.FC<Props> = (props: Props) => {
 
       if (ack.data) {
         props.addGlobalUser(ack.data.user);
-        setModal(false);
+        setModal({ show: false, fn: () => null });
       }
 
       // else throw new Error(ack);
     } catch (err: any) {
       let message: string = err?.response?.data.message || err.message;
-      
+
       const currentUser = firebase.auth().currentUser as User;
       await firebase.deleteUser(currentUser).then(() => {
         props.addGlobalUser(null);
       });
 
       if (message.match('Firebase')) message = 'Something went wrong';
-      if (showLogin && errors)
-        setErr([...errors, { type: 'LOGIN-ERR', message }]);
-      else if (!showLogin && errors)
-        setErr([...errors, { type: 'SIGNUP-ERR', message }]);
-      else if (showLogin) setErr([{ type: 'LOGIN-ERR', message }]);
-      else setErr([{ type: 'SIGNUP-ERR', message }]);
+      if (showLogin && queue)
+        setPopup([...queue, { type: 'LOGIN-ERR', message }]);
+      else if (!showLogin && queue)
+        setPopup([...queue, { type: 'SIGNUP-ERR', message }]);
+      else if (showLogin) setPopup([{ type: 'LOGIN-ERR', message }]);
+      else setPopup([{ type: 'SIGNUP-ERR', message }]);
     }
   };
 
   async function sendUserInfo(user: OAuthData) {
-    let res: AxiosResponse<{user: NewUser}> | null = null;
+    let res: AxiosResponse<{ user: NewUser }> | null = null;
     if (showLogin) {
-      res = await axios.post<{user: NewUser}>('/api/v1/entry/login', user, {
+      res = await axios.post<{ user: NewUser }>('/api/v1/entry/login', user, {
         withCredentials: true,
       });
     } else {
-      res = await axios.post<{user: NewUser}>('/api/v1/entry/signUp', user, {
+      res = await axios.post<{ user: NewUser }>('/api/v1/entry/signUp', user, {
         withCredentials: true,
       });
     }

@@ -31,10 +31,10 @@ import { User } from 'firebase/auth';
 import { FormDataUser, NewUser } from '../actions';
 import axios, { AxiosResponse } from 'axios';
 import { useProtectRefresh } from '../hooks/protectRefresh';
-import { Context, UserErrorState } from '../Layout';
+import { Context, UserQueueState } from '../Layout';
 import { useTime } from 'framer-motion';
 import { useTimer } from '../hooks/useTimer';
-import { RenderErrors } from '../Entry/Login';
+import { Renderqueue } from '../Entry/Login';
 import { GMQ } from '../reducers';
 
 const ContactTextField = styled(TextField)({
@@ -109,7 +109,7 @@ type CardError = Record<StripeElementType, string | undefined | null>;
 
 interface Props {
   user: NewUser;
-  breakpoint: GMQ
+  breakpoint: GMQ;
 }
 
 type UserAddress = {
@@ -122,10 +122,9 @@ export default function CheckOut(props: Props) {
     resolver: yupResolver(Schema),
   });
 
-  const { errors, setErr } = useContext(Context)[2];
-  // useTimer({ errors, setErr }, 'PAY-ERR');
-  // console.log(errors);
-  
+  const { queue, setPopup } = useContext(Context)[2];
+  // useTimer({ queue, setPopup }, 'PAY-ERR');
+  // console.log(queue);
 
   const { error } = useProtectRefresh({
     refresh: '/api/v1/token/refresh',
@@ -179,7 +178,7 @@ export default function CheckOut(props: Props) {
     });
   }, []);
 
-  const [stripeErrorState, setError] = useState<CardError>({
+  const [stripequeuetate, setPopupor] = useState<CardError>({
     cardNumber: null,
     cardExpiry: null,
     cardCvc: null,
@@ -187,14 +186,14 @@ export default function CheckOut(props: Props) {
 
   const handleStripeError = (e: StripeElementChangeEvent) => {
     const err = {
-      ...stripeErrorState,
+      ...stripequeuetate,
       [e.elementType]: e.error?.message,
     } as CardError;
-    setError(err);
+    setPopupor(err);
   };
 
   const stripe = useStripe();
-  const elements = useElements(); 
+  const elements = useElements();
 
   const submitPayment: SubmitHandler<AddDetails> = async (data) => {
     if (!stripe || !elements) return;
@@ -241,20 +240,19 @@ export default function CheckOut(props: Props) {
       );
 
       console.log(payment_intent);
-      
 
-      if(payment_intent.data.status === "active"){
-        const {message} = payment_intent.data;
-         if (errors)
-           setErr([...errors, { type: 'PAY-ERR', message }]);
-         else setErr([{ type: 'PAY-ERR', message }]);
+      if (payment_intent.data.status === 'active') {
+        const { message } = payment_intent.data;
+        if (queue) setPopup([...queue, { type: 'PAY-ERR', message }]);
+        else setPopup([{ type: 'PAY-ERR', message }]);
       }
 
       if (payment_intent && Method.paymentMethod) {
-        const { client_secret, status, customerId, createdAt, reccur } = payment_intent.data.data;
+        const { client_secret, status, customerId, createdAt, reccur } =
+          payment_intent.data.data;
         if (status === 'requires_action') {
           const result = await stripe.confirmCardPayment(client_secret);
-  
+
           if (result.error) throw new Error(result.error.message);
           axios.post(
             `/api/v1/superpdf/payment/${customerId}/create`,
@@ -263,7 +261,7 @@ export default function CheckOut(props: Props) {
               customerId,
               createdAt,
               reccur,
-              transactionId: Method.paymentMethod.id
+              transactionId: Method.paymentMethod.id,
             },
             { withCredentials: true }
           );
@@ -272,17 +270,13 @@ export default function CheckOut(props: Props) {
         alert('Success Subscribed');
         setSubmit(false);
       }
-    } 
-    
-    catch (err: any) {
+    } catch (err: any) {
       setSubmit(false);
       let message: string = err?.response?.data.message || err.message;
-      if (message && errors)
-        setErr([...errors, { type: 'PAY-ERR', message }]);
-      else if(message) {
-        setErr([{ type: 'PAY-ERR', message }]);
+      if (message && queue) setPopup([...queue, { type: 'PAY-ERR', message }]);
+      else if (message) {
+        setPopup([{ type: 'PAY-ERR', message }]);
       }
-
     }
   };
 
@@ -296,7 +290,7 @@ export default function CheckOut(props: Props) {
         padding: '2rem 1.2rem',
       }}
     >
-      {RenderErrors(errors as UserErrorState[], 'PAY-ERR', props)}
+      {Renderqueue(queue as UserQueueState[], 'PAY-ERR', props)}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={12}>
           <Controller
@@ -318,7 +312,7 @@ export default function CheckOut(props: Props) {
                 <Box
                   sx={{
                     border: `1px solid ${
-                      !stripeErrorState?.cardNumber ? '#e8e7e6' : '#D32F2F'
+                      !stripequeuetate?.cardNumber ? '#e8e7e6' : '#D32F2F'
                     }`,
                     borderRadius: '3px',
                     fontSize: '1.2rem',
@@ -333,13 +327,13 @@ export default function CheckOut(props: Props) {
                   />
                 </Box>
 
-                {stripeErrorState?.cardNumber && (
+                {stripequeuetate?.cardNumber && (
                   <span
-                    id="card-errors"
+                    id="card-queue"
                     role="alert"
                     style={{ color: '#D32F2F', fontSize: '.8rem' }}
                   >
-                    {stripeErrorState?.cardNumber}
+                    {stripequeuetate?.cardNumber}
                   </span>
                 )}
               </Stack>
@@ -368,7 +362,7 @@ export default function CheckOut(props: Props) {
                 <Box
                   sx={{
                     border: `1px solid ${
-                      !stripeErrorState?.cardExpiry ? '#e8e7e6' : '#D32F2F'
+                      !stripequeuetate?.cardExpiry ? '#e8e7e6' : '#D32F2F'
                     }`,
                     borderRadius: '3px',
                     fontSize: '1.2rem',
@@ -382,13 +376,13 @@ export default function CheckOut(props: Props) {
                   />
                 </Box>
 
-                {stripeErrorState?.cardExpiry && (
+                {stripequeuetate?.cardExpiry && (
                   <span
-                    id="card-errors"
+                    id="card-queue"
                     role="alert"
                     style={{ color: '#D32F2F', fontSize: '.8rem' }}
                   >
-                    {stripeErrorState?.cardExpiry}
+                    {stripequeuetate?.cardExpiry}
                   </span>
                 )}
               </Stack>
@@ -417,7 +411,7 @@ export default function CheckOut(props: Props) {
                 <Box
                   sx={{
                     border: `1px solid ${
-                      !stripeErrorState?.cardCvc ? '#e8e7e6' : '#D32F2F'
+                      !stripequeuetate?.cardCvc ? '#e8e7e6' : '#D32F2F'
                     }`,
                     borderRadius: '3px',
                     fontSize: '1.2rem',
@@ -431,13 +425,13 @@ export default function CheckOut(props: Props) {
                   />
                 </Box>
 
-                {stripeErrorState?.cardCvc && (
+                {stripequeuetate?.cardCvc && (
                   <span
-                    id="card-errors"
+                    id="card-queue"
                     role="alert"
                     style={{ color: '#D32F2F', fontSize: '.8rem' }}
                   >
-                    {stripeErrorState?.cardCvc}
+                    {stripequeuetate?.cardCvc}
                   </span>
                 )}
               </Stack>

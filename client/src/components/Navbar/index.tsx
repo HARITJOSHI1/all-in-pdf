@@ -36,23 +36,23 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
     <>
       <AppBar
         position="sticky"
-        id = "navbar"
+        id="navbar"
         sx={{
-          bgcolor: "white",
+          bgcolor: 'white',
           boxShadow: 7,
         }}
       >
         <Container maxWidth="desktop">
           <Toolbar
             disableGutters
-            sx={{ display: "flex", justifyContent: "space-between" }}
+            sx={{ display: 'flex', justifyContent: 'space-between' }}
           >
             <Box
               sx={[
-                { display: "flex", alignItems: "center", ml: "6rem" },
+                { display: 'flex', alignItems: 'center', ml: '6rem' },
                 (mobile || tabPort || tabLand) && {
-                  width: "100%",
-                  ml: "1rem",
+                  width: '100%',
+                  ml: '1rem',
                 },
               ]}
             >
@@ -72,10 +72,10 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
               direction="row"
               spacing={5}
               sx={[
-                { mr: "3rem" },
-                mobile && { mr: "1rem" },
-                tabPort && { mr: "1rem" },
-                tabLand && { mr: "1rem" },
+                { mr: '3rem' },
+                mobile && { mr: '1rem' },
+                tabPort && { mr: '1rem' },
+                tabLand && { mr: '1rem' },
               ]}
             >
               <Translator />
@@ -86,21 +86,22 @@ const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {
                 (desktop || tabLand) && (
                   <SignUpBtn
                     text="Sign Up"
+                    breakpoint= {breakpoint}
                     sx={[
                       {
-                        backgroundColor: "#0055FF",
-                        text: "Edit",
-                        color: "white",
-                        fontSize: "1rem",
-                        fontWeight: "800",
-                        letterSpacing: "1px",
-                        px: "1.5rem",
-                        textTransform: "none",
+                        backgroundColor: '#0055FF',
+                        text: 'Edit',
+                        color: 'white',
+                        fontSize: '1rem',
+                        fontWeight: '800',
+                        letterSpacing: '1px',
+                        px: '1.5rem',
+                        textTransform: 'none',
                       },
 
                       {
-                        "&:hover": {
-                          bgcolor: darken("#0055FF", 0.2),
+                        '&:hover': {
+                          bgcolor: darken('#0055FF', 0.2),
                         },
                       },
                     ]}

@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import React, { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { useForm, SubmitHandler, Controller, FormState } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -8,13 +9,15 @@ import axios, { AxiosResponse } from 'axios';
 import { Grid } from 'react-loader-spinner';
 import { connect } from 'react-redux';
 import { addGlobalUser, UserData, NewUser } from '../actions';
-import { Context, UserErrorState } from '../Layout';
+import { Context, UserQueueState } from '../Layout';
 import { firebase } from '../../firebaseInit';
-import { User } from 'firebase/auth';
 
 const Schema = Yup.object().shape({
   email: Yup.string().email().required(),
-  password: Yup.string().min(8).max(14).required(),
+  password: Yup.string().min(8).max(26).matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-8])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+      "Must contain some aplha numeric characters"
+    ).required(),
   confirmPassword: Yup.string().oneOf(
     [Yup.ref('password'), null],
     'Passwords must match'
@@ -24,7 +27,6 @@ const Schema = Yup.object().shape({
 interface Props {
   breakpoint: GMQ;
   addGlobalUser: (user: NewUser) => UserData;
-  setModal: Dispatch<SetStateAction<boolean>>;
   num: number;
 }
 
@@ -35,8 +37,9 @@ export interface SignUpState {
 }
 
 const SignUp: React.FC<Props> = (props: Props) => {
-  const { setErr, errors } = useContext(Context)[2];
+  const { setPopup, queue } = useContext(Context)[2];
   const { showLogin } = useContext(Context)[3];
+  const { setModal } = useContext(Context)[1];
 
   const { control, handleSubmit, formState } = useForm<SignUpState>({
     resolver: yupResolver(Schema),
@@ -47,14 +50,14 @@ const SignUp: React.FC<Props> = (props: Props) => {
 
   const onSubmit: SubmitHandler<SignUpState> = async (data: SignUpState) => {
     if (!isSubmit) {
-      let res: AxiosResponse<{user: NewUser}> | null = null;
+      let res: AxiosResponse<{ user: NewUser }> | null = null;
 
       try {
         setSubmit(true);
 
         switch (showLogin) {
           case false:
-            res = await axios.post<{user: NewUser}>(
+            res = await axios.post<{ user: NewUser }>(
               '/api/v1/entry/signup',
               data,
               { withCredentials: true }
@@ -62,9 +65,13 @@ const SignUp: React.FC<Props> = (props: Props) => {
             break;
 
           default:
-            res = await axios.post<{user: NewUser}>('/api/v1/entry/login', data, {
-              withCredentials: true,
-            });
+            res = await axios.post<{ user: NewUser }>(
+              '/api/v1/entry/login',
+              data,
+              {
+                withCredentials: true,
+              }
+            );
         }
 
         if (res.data) {
@@ -81,7 +88,7 @@ const SignUp: React.FC<Props> = (props: Props) => {
 
           props.addGlobalUser(res.data.user);
           setSubmit(false);
-          props.setModal(false);
+          setModal({ show: false, fn: () => null });
         }
         setSubmit(false);
       } catch (err: any) {
@@ -91,13 +98,12 @@ const SignUp: React.FC<Props> = (props: Props) => {
         console.log(message);
         if (message.match('Firebase')) message = 'Something went wrong';
 
-        if (showLogin && errors)
-          setErr([...errors, { type: 'LOGIN-ERR', message }]);
-        else if (!showLogin && errors)
-          setErr([...errors, { type: 'SIGNUP-ERR', message }]);
-        else if (showLogin) 
-          setErr([{ type: 'LOGIN-ERR', message }])
-        else setErr([{ type: 'SIGNUP-ERR', message }]);
+        if (showLogin && queue)
+          setPopup([...queue, { type: 'LOGIN-ERR', message }]);
+        else if (!showLogin && queue)
+          setPopup([...queue, { type: 'SIGNUP-ERR', message }]);
+        else if (showLogin) setPopup([{ type: 'LOGIN-ERR', message }]);
+        else setPopup([{ type: 'SIGNUP-ERR', message }]);
       }
     }
   };

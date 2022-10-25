@@ -22,6 +22,7 @@ import { GMQ, State } from './reducers';
 import HomePage from './HomePage';
 import CircularProgress from '@mui/material/CircularProgress';
 import Operation from './PDFOps/Operation';
+import SubOperation from './PDFOps/SubOperation';
 import Subscribe from './Payment';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -157,6 +158,11 @@ const App: React.FC<Props> = (props) => {
               <Route path="/" exact component={HomePage} />
               <Route path="/tools" exact component={Tools} />
               <Route path="/operation/:name" exact component={Operation} />
+              <Route
+                path="/operation/doc/:name"
+                exact
+                component={SubOperation}
+              />
             </Layout>
           </Switch>
         </Router>

@@ -3,9 +3,11 @@ import Document from "./Document";
 import React from "react";
 import SaveAndShare from "./SaveAndShare";
 import { GMQ } from "../../../reducers";
+import { AxiosResponse } from "axios";
 
 interface Props {
   breakpoint: GMQ;
+  response: AxiosResponse;
 }
 
 export default function Result(props: Props) {
@@ -18,16 +20,20 @@ export default function Result(props: Props) {
         sm={12}
         md={12}
         lg={12}
-        sx={[{
-          py: "4rem",
-          display: "flex",
-          flexDirection: (tabPort || mobile) ? "column": "row",
-          justifyContent: tabLand ? "space-between" : "space-around",
-        }, tabLand && {p: "2rem 4rem"}, tabPort && {p: "2rem", height: "100vh"}, mobile && {p: "1rem", height: "80vh"}]}
+        sx={[
+          {
+            py: '4rem',
+            display: 'flex',
+            flexDirection: tabPort || mobile ? 'column' : 'row',
+            justifyContent: tabLand ? 'space-between' : 'space-around',
+          },
+          tabLand && { p: '2rem 4rem' },
+          tabPort && { p: '2rem', height: '100vh' },
+          mobile && { p: '1rem', height: '80vh' },
+        ]}
       >
-        <Document breakpoint={props.breakpoint}/>
-        <SaveAndShare breakpoint={props.breakpoint} />
-        
+        <Document breakpoint={props.breakpoint} response={props.response} />
+        <SaveAndShare breakpoint={props.breakpoint} response={props.response} />
       </Grid>
     </>
   );

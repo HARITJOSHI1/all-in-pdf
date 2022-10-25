@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
-import React, { useState } from "react";
-import Grid from "@mui/material/Grid";
+import React, { useState } from 'react';
+import Grid from '@mui/material/Grid';
 import {
   Box,
   List,
@@ -11,55 +11,55 @@ import {
   TextField,
   styled,
   Button,
-} from "@mui/material";
-import Logo from "../Logo";
-import { GMQ } from "../reducers";
-import Heading from "../Heading";
+} from '@mui/material';
+import Logo from '../Logo';
+import { GMQ } from '../reducers';
+import Heading from '../Heading';
 
 interface Props {
   breakpoint: GMQ;
 }
 
 const ContactTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "#5996f7",
+  '& label.Mui-focused': {
+    color: '#5996f7',
   },
 
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: "#434E5B",
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: '#434E5B',
     },
-    "&:hover fieldset": {
-      borderColor: "#5996f7",
+    '&:hover fieldset': {
+      borderColor: '#5996f7',
     },
-    "&.Mui-focused fieldset": {
-      borderColor: "#5996f7",
+    '&.Mui-focused fieldset': {
+      borderColor: '#5996f7',
     },
   },
 
-  "& .MuiFormLabel-root": {
-    color: "#c3d8fa",
+  '& .MuiFormLabel-root': {
+    color: '#c3d8fa',
   },
 
-  "& .MuiInputBase-input": {
-    color: "#c3d8fa",
+  '& .MuiInputBase-input': {
+    color: '#c3d8fa',
   },
 });
 
-const product = ["Product", "About", "Help"];
-const site = ["Site", "Sitemap", "Resources"];
+const product = ['Product', 'About', 'Help'];
+const site = ['Site', 'Sitemap', 'Resources'];
 
 const GenFootList = (props: { list: string[] }) => {
   const list = props.list.map((ele: string, idx: number) => {
     return (
       <ListItem disablePadding key={idx}>
-        <ListItemText sx={{ margin: "0" }}>
+        <ListItemText sx={{ margin: '0' }}>
           {idx === 0 ? (
             <Heading
               sx={{
-                color: "secondary.light",
-                fontWeight: "700",
-                fontSize: "1rem",
+                color: 'secondary.light',
+                fontWeight: '700',
+                fontSize: '1rem',
               }}
             >
               {ele}
@@ -69,17 +69,17 @@ const GenFootList = (props: { list: string[] }) => {
               component="span"
               sx={[
                 {
-                  fontSize: ".9rem",
-                  color: "secondary.light",
-                  transition: ".2s",
-                  display: "inline-block",
-                  cursor: "pointer",
+                  fontSize: '.9rem',
+                  color: 'secondary.light',
+                  transition: '.2s',
+                  display: 'inline-block',
+                  cursor: 'pointer',
                 },
                 {
-                  "&:hover": {
-                    transform: "translateY(-5px)",
-                    color: "#5996f7",
-                    borderRadius: "3px",
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                    color: '#5996f7',
+                    borderRadius: '3px',
                   },
                 },
               ]}
@@ -110,7 +110,7 @@ interface ContactErr {
 export default function Footer(props: Props) {
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
   const [formData, setForm] = useState<Contact>({});
-  const [err, setErr] = useState<ContactErr[]>([]);
+  const [err, setPopup] = useState<ContactErr[]>([]);
   // const ref = useRef<Contact>(null);
 
   const isAlAdded = (name: string, errArr: ContactErr[]) => {
@@ -120,9 +120,9 @@ export default function Footer(props: Props) {
 
   const checkNum = (name: string, value: string, errArr: ContactErr[]) => {
     const err: ContactErr = {};
-    if (value !== "" && Number.isFinite(+value)) {
+    if (value !== '' && Number.isFinite(+value)) {
       err.error = name;
-      err.msg = "Numbers not allowed";
+      err.msg = 'Numbers not allowed';
       if (!isAlAdded(name, errArr)) errArr.push(err);
       return true;
     }
@@ -137,9 +137,9 @@ export default function Footer(props: Props) {
     const res = reg.test(value);
     const err: ContactErr = {};
 
-    if (res && value !== "") {
+    if (res && value !== '') {
       err.error = name;
-      err.msg = "Invalid Email";
+      err.msg = 'Invalid Email';
       if (!isAlAdded(name, errArr)) errArr.push(err);
       return true;
     }
@@ -156,7 +156,7 @@ export default function Footer(props: Props) {
     if (checkEmail(name, value, err)) errFound = true;
 
     if (errFound) {
-      setErr([...err]);
+      setPopup([...err]);
       return;
     }
 
@@ -165,7 +165,7 @@ export default function Footer(props: Props) {
       if (e.error === name) err.splice(idx, 1);
     });
 
-    setErr([...err]);
+    setPopup([...err]);
     setForm({ ...formData });
   };
 
@@ -179,20 +179,20 @@ export default function Footer(props: Props) {
   };
 
   return (
-    <Box sx={{ pt: "4rem" }}>
+    <Box sx={{ pt: '4rem' }}>
       <Stack
         sx={{
-          bgcolor: "secondary.dark",  
+          bgcolor: 'secondary.dark',
           flexGrow: 1,
-          py: "2rem",
-          pl: mobile ? "1rem" : "4rem",
+          py: '2rem',
+          pl: mobile ? '1rem' : '4rem',
         }}
       >
         <Grid container spacing={5}>
           <Grid item xs={12} sm={8} lg={3}>
-            <Stack direction="column" spacing={3} sx={{ pt: "0.25rem" }}>
+            <Stack direction="column" spacing={3} sx={{ pt: '0.25rem' }}>
               <Logo color="secondary.light" />
-              <Typography sx={{ color: "secondary.light" }}>
+              <Typography sx={{ color: 'secondary.light' }}>
                 Power to pdf's
               </Typography>
             </Stack>
@@ -218,15 +218,15 @@ export default function Footer(props: Props) {
             <Box component="form" autoComplete="off">
               <Heading
                 sx={{
-                  color: "secondary.light",
-                  fontWeight: "700",
-                  fontSize: "1rem",
+                  color: 'secondary.light',
+                  fontWeight: '700',
+                  fontSize: '1rem',
                 }}
               >
                 Contact
               </Heading>
 
-              <Grid container spacing={3} sx={{ mt: "1rem" }}>
+              <Grid container spacing={3} sx={{ mt: '1rem' }}>
                 <Grid item xs={12} sm={6} lg={5}>
                   <ContactTextField
                     id="outlined-multiline-flexible"
@@ -235,8 +235,8 @@ export default function Footer(props: Props) {
                     multiline
                     maxRows={4}
                     onChange={handleChange}
-                    error={findErr("firstName") ? true : false}
-                    helperText={findErr("firstName") ? err[idx]?.msg : ""}
+                    error={findErr('firstName') ? true : false}
+                    helperText={findErr('firstName') ? err[idx]?.msg : ''}
                   />
                 </Grid>
 
@@ -248,8 +248,8 @@ export default function Footer(props: Props) {
                     multiline
                     maxRows={4}
                     onChange={handleChange}
-                    error={findErr("lastName") ? true : false}
-                    helperText={findErr("lastName") ? err[idx]?.msg : ""}
+                    error={findErr('lastName') ? true : false}
+                    helperText={findErr('lastName') ? err[idx]?.msg : ''}
                   />
                 </Grid>
 
@@ -260,10 +260,10 @@ export default function Footer(props: Props) {
                     label="Email"
                     multiline
                     maxRows={4}
-                    sx={[!mobile && { width: "100%" }]}
+                    sx={[!mobile && { width: '100%' }]}
                     onChange={handleChange}
-                    error={findErr("email") ? true : false}
-                    helperText={findErr("email") ? err[idx]?.msg : ""}
+                    error={findErr('email') ? true : false}
+                    helperText={findErr('email') ? err[idx]?.msg : ''}
                   />
                 </Grid>
 
@@ -274,7 +274,7 @@ export default function Footer(props: Props) {
                     label="Address"
                     multiline
                     minRows={5}
-                    sx={[!mobile && { width: "100%" }]}
+                    sx={[!mobile && { width: '100%' }]}
                     onChange={handleChange}
                   />
                 </Grid>
@@ -284,17 +284,17 @@ export default function Footer(props: Props) {
                     variant="outlined"
                     sx={[
                       {
-                        letterSpacing: "3px",
-                        color: "#5996f7",
-                        fontSize: "1rem",
-                        border: "1px solid #434E5B",
-                        p: "1rem 2rem",
-                        transition: ".2s"
+                        letterSpacing: '3px',
+                        color: '#5996f7',
+                        fontSize: '1rem',
+                        border: '1px solid #434E5B',
+                        p: '1rem 2rem',
+                        transition: '.2s',
                       },
 
                       {
-                        "&:hover": {
-                          borderColor: "#5996f7",
+                        '&:hover': {
+                          borderColor: '#5996f7',
                         },
                       },
                     ]}

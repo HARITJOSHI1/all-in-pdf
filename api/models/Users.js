@@ -57,7 +57,7 @@ const userSchema = new mongoose.Schema({
 
   type: {
     type: String,
-    enum: ['signed', 'trial', 'premium', 'anonymous'],
+    enum: ['signed', 'premium', 'anonymous'],
     default: 'anonymous',
   },
 
@@ -74,7 +74,6 @@ const userSchema = new mongoose.Schema({
     default: 0,
   },
 
-  location: String,
   passCreatedAt: Date,
   resetToken: {
     type: String,

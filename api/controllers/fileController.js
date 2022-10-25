@@ -28,6 +28,8 @@ exports.compress = catchAsync(async (req, res, next) => {
   console.log("File compressing ......");
   const comp = await CompressPDF.compress(req.files);
 
+  console.log("zip size: ", comp.zipSize);
+
   if (!comp)
     throw new AppError(
       500,

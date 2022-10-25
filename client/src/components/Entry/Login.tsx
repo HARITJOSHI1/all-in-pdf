@@ -3,12 +3,16 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { alpha, Box, darken, Icon, Stack, TextField } from '@mui/material';
-import { GMQ } from '../reducers';
+import { GMQ, State } from '../reducers';
 import { motion } from 'framer-motion';
-import Error from '../Error';
-import { Context, UserErrorState } from '../Layout';
+import Popup from '../Popup';
+import { Context, UserQueueState } from '../Layout';
 import OAuth from '../Auth';
 import { useTimer } from '../hooks/useTimer';
+import EntryForm from './EntryForm';
+import SignUp from './SignUp';
+import { connect } from 'react-redux';
+import { NewUser } from '../actions';
 
 interface Props {
   breakpoint: GMQ;
@@ -16,21 +20,28 @@ interface Props {
   img?: string;
 }
 
-export const RenderErrors = (
-  errors: UserErrorState[],
+export const Renderqueue = (
+  queue: UserQueueState[],
   type: string,
   props: Props
 ) => {
-  const err = errors?.find((e) => e.type === type) as UserErrorState;
+  const pop = queue?.find((e) => e.type === type) as UserQueueState;
   useTimer(type);
-  if (err) {
-    return <Error breakpoint={props.breakpoint} err={`${err.message}`} />;
+
+  if (pop) {
+    return (
+      <Popup
+        breakpoint={props.breakpoint}
+        err={`${pop.message}`}
+        status={pop.status}
+      />
+    );
   } else return null;
 };
 
-export default function Entry(props: Props) {
-  const {errors} = useContext(Context)[2];
-  const { setLogin } = useContext(Context)[3];
+function Login(props: Props) {
+  const { queue } = useContext(Context)[2];
+  const { setModal } = useContext(Context)[1];
   // useTimer('SIGNUP-ERR');
 
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
@@ -99,7 +110,7 @@ export default function Entry(props: Props) {
           </Typography>
 
           <OAuth breakpoint={props.breakpoint} />
-          {RenderErrors(errors as UserErrorState[], 'LOGIN-ERR', props)}
+          {Renderqueue(queue as UserQueueState[], 'LOGIN-ERR', props)}
           {props.children}
 
           <Stack
@@ -124,7 +135,18 @@ export default function Entry(props: Props) {
             </Typography>
             <Typography
               component="span"
-              onClick={() => setLogin(false)}
+              onClick={() =>
+                setModal({
+                  show: true,
+                  fn: () => {
+                    return (
+                      <SignUp>
+                        <EntryForm breakpoint={props.breakpoint} num={3} />
+                      </SignUp>
+                    );
+                  },
+                })
+              }
               sx={{
                 color: '#5340FF',
                 fontWeight: '500',
@@ -140,3 +162,9 @@ export default function Entry(props: Props) {
     </Card>
   );
 }
+
+const mapStateToProps = (state: State) => {
+  return { breakpoint: state.breakpoint as GMQ, user: state.user as NewUser };
+};
+
+export default connect(mapStateToProps)(Login);
