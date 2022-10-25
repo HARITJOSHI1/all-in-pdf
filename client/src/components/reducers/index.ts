@@ -1,8 +1,7 @@
-import { UserData, FormDataUser } from './../actions/index';
+import { UserData, FormDataUser, NewUser } from './../actions/index';
 import { combineReducers } from "redux";
 import * as Types from "../actions/types";
 import { AdddMediaQ } from "../actions";
-import { User } from "firebase/auth";
 // eslint-disable-next-line import/no-anonymous-default-export
 
 export interface GMQ {
@@ -14,7 +13,7 @@ export interface GMQ {
 
 export interface State {
   breakpoint: GMQ | null;
-  user: User | FormDataUser | null;
+  user: NewUser | null;
 }
 
 const globalMedia: GMQ = {
@@ -39,7 +38,7 @@ const mediaQueryReducer = (state = {}, action: AdddMediaQ) => {
 const globalUserReducer = (state = null, action: UserData) => {
   switch (action.type) {
     case Types.User.user:
-      return action.payload;
+      return action.payload
 
     default:
       return state;

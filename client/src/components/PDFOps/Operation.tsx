@@ -22,6 +22,7 @@ interface RatingsData {
 
 function _Operation(props: Props) {
   const PARAM = props.match.params.name;
+  
   const obj = OPERATIONS[PARAM];
   const { mobile, tabPort, tabLand, desktop } = props.breakpoint;
   const [rating, setRating] = useState<number>(0);

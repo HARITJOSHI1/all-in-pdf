@@ -13,7 +13,7 @@ import { connect } from "react-redux";
 import { GMQ, State } from "../reducers";
 import Translator from "../Translator";
 import { User } from "firebase/auth";
-import { FormDataUser } from "../actions";
+import { FormDataUser, NewUser } from "../actions";
 import DisplayImg from "./DisplayImg";
 import { OpKeys } from "../PDFOps/Operations";
 
@@ -27,7 +27,7 @@ const navOpts: {name: string, link: OpKeys}[] = [
 
 interface Props {
   breakpoint: GMQ;
-  user: User | FormDataUser | null;
+  user: NewUser | null;
 }
 
 const _NavBar: React.FC<Props> = ({ breakpoint, user }) => {

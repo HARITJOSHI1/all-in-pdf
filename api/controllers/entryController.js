@@ -48,9 +48,7 @@ exports.signUp = catchAsync(async (req, res) => {
   res.status(201).json({
     status: "signedUp",
     token,
-    data: {
-      user: filter(user),
-    },
+    user: filter(user),
   });
 });
 
@@ -80,8 +78,9 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // 4. Send response
   res.status(200).json({
-    status: "loggedIn",
+    status: 'loggedIn',
     token,
+    user: filter(user)
   });
 });
 

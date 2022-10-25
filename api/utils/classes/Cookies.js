@@ -2,7 +2,8 @@ module.exports = class Cookies {
   constructor() {
     this.cookieOpt = {
       httpOnly: true,
-      expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+      maxAge : 90 * 24 * 60 * 60 * 1000,
+      // expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
       secure: process.env.NODE_ENV === "production" ? true : false,
     };
   }
