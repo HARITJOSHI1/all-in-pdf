@@ -36,6 +36,31 @@ _<h3 align = "center"> Languages Used 💡 </h3>_
     payment states and their confirmation at the application's server side.
 
 
+## Tech Stack 🚀
+| Core tech                  | Purpose                                     |
+|----------------------------|---------------------------------------------|
+| React JS                   | Create front-end of the app                 |
+| Node JS                    | Create back end of the app                  |
+| Express JS                 | Used middlewares for Node JS                |
+| MongoDB                    | Database                                    |
+| Typescript                 | For type safety                             |
+| Firebase                   | Used OAuth providers                        |
+| JWT                        | Implemented refresh tokens                  |
+| PDFTRON                    | Server side PDF renderer, supports PDF suit |
+| PSPDFKIT                   | Client side PDF renderer                    |
+| Multer                     | Processing multipart-form data              |
+| React Router               | For client side routing                     |
+| Axios                      | For data fetching                           |
+| SWR                        | For optimized data fetching                 |
+| Redux                      | Globle State management                     |
+| MUI                        | For material UI components                  |
+| Stripe and stripe elements | For client side payment processing          |
+| Paypal SDK                 | Paypal payment gateway                      |
+| GAPI                       | For google GIS authentication               |
+| bcrypt                     | For hashing passwords with salt             |
+| Mongoose                   | Object Relational Mapping (ORM) for MongoDB |
+
+
 ## Prerequisites 🔴
 * <a href = "https://yarnpkg.com/" >Yarn</a> 
 * <a href = "https://nodejs.org/en/" >Node</a> 
