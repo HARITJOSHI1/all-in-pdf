@@ -25,10 +25,8 @@ const addDocInfoCookie = (res, doc) =>
   new Cookies().sendCookie(res, "docData", [{ name: doc }]);
 
 exports.compress = catchAsync(async (req, res, next) => {
-  console.log("File compressing ......");
+  console.log("File compression started......");
   const comp = await CompressPDF.compress(req.files);
-
-  console.log("zip size: ", comp.zipSize);
 
   if (!comp)
     throw new AppError(
