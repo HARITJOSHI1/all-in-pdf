@@ -13,9 +13,7 @@ const Cookies = require("../utils/classes/Cookies");
 const multerStorage = multer.memoryStorage();
 const multerFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname);
-  if (ext.matchAll(/^.*\.(|doc|docx|pdf|ppt|pptx)$/g)) {
-    cb(null, file);
-  }
+  if (ext.matchAll(/^.*\.(|doc|docx|pdf|ppt|pptx)$/g)) cb(null, file)
 };
 
 const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
@@ -37,7 +35,7 @@ exports.compress = catchAsync(async (req, res, next) => {
 
   req.filename = comp.fileName;
   req.msg = "PDF compressed";
-
+  req.document = comp;    
   addDocInfoCookie(res, comp.fileName);
   next();
 });
