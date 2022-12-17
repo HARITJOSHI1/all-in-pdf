@@ -24,8 +24,9 @@ module.exports = class ServiceError extends Error {
   };
 
   handleValidatorErrorDB = (e) => {
+    console.log("This is the error: ", e);
     if (e.password) this.statusCode = 400;
-    this.message = 'Please enter a strong password';
+    this.message = e.message;
   };
 
   handleDuplicateErrorDB = (error) => {

@@ -32,13 +32,11 @@ module.exports = class CompressPDF extends DocSaver {
         metadata.files.push({
           originalName: file.originalname,
           size: file.size,
-          compressedSize: Buffer.byteLength(buf)
+          compressedSize: Buffer.byteLength(buf),
         });
 
         metadata.buffer = [...metadata.buffer, ...buff];
-      } 
-      
-      catch (err) {
+      } catch (err) {
         throw new ServiceError(err);
       }
     }

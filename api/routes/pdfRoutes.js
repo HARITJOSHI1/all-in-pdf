@@ -1,5 +1,6 @@
 const express = require("express");
 const Router = express.Router();
+const {scheduleDelete} = require("../utils/deleteUnusedFiles");
 const {
   uploadFiles,
   compress,
@@ -10,9 +11,7 @@ const {
   deletePages
 } = require("../controllers/fileController");
 
-const {scheduleDelete} = require("../utils/deleteUnusedFiles");
-const {verifyJWT} = require("../controllers/authController");
-
+const { addUsage } = require('../controllers/usageController');
 Router.use(uploadFiles);
 
 Router.post("/compress", compress);
@@ -22,6 +21,7 @@ Router.post("/word-to-pdf", uploadFiles, wordToPDF);
 Router.post("/rotate", rotate);
 Router.post("/deletePages", deletePages);
 
+// Router.use(addUsage);
 Router.use(scheduleDelete);
 
 module.exports = Router;

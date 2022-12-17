@@ -5,7 +5,6 @@ module.exports = function catchAsync(fun) {
   return (req, res, next) =>
     fun(req, res, next).catch((err) => {
       // next(err);
-      console.log(err);
       if (err instanceof AppError) next(err);
       else {
         console.log("hereeee");
