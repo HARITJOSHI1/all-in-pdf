@@ -4,6 +4,7 @@ const createRefreshToken = require("../utils/createRefreshToken");
 const { VerificationEmail } = require("../utils/classes/HandleEmail");
 const Cookies = require("../utils/classes/Cookies");
 const AppError = require("../utils/classes/AppError");
+const Email = require("../utils/classes/Emails");
 
 async function checkUserExists(Model, req) {
   await Model.findByIdAndDelete(Cookies.getCookie(req, "sessionId"));
@@ -43,7 +44,21 @@ exports.signUp = catchAsync(async (req, res) => {
     new Cookies().sendCookie(res, "jwt", token);
   }
 
-  // email TODO
+  try {
+    await new Email({
+      from: "support@superpdf.org.in",
+      to: req.body.email,
+      url:"#"
+    }).sendWelcomeEmail();
+  } 
+  
+  catch (err) {
+    throw new AppError(
+      500,
+      "Welcome email sending failure",
+      `fn send(), ${__dirname}`
+    );
+  }
 
   res.status(201).json({
     status: "signedUp",

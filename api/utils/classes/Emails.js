@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 
 module.exports = class Email {
-  constructor({ from, to, url, message, greet = null, caption = null }) {
+  constructor({ from, to, url = null, message = null, greet = null, caption = null }) {
     this.sender = from;
     this.to = to;
     this.url = url;
@@ -66,11 +66,15 @@ module.exports = class Email {
     this.transporter().sendMail(mailOpt);
   }
 
-  sendVerificationEmail() {
-    this.send("verify", "Verify your Email");
+  async sendWelcomeEmail(){
+    await this.send("welcome", "Welcome to one stop pdf solution");
   }
 
-  sendResponseEmail(doc) {
-    this.send(null, "Shared document", doc);
+  async sendVerificationEmail() {
+    await this.send("verify", "Verify your Email");
+  }
+
+  async sendResponseEmail(doc) {
+    await this.send(null, "Shared document", doc);
   }
 };

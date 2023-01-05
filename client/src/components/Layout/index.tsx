@@ -21,11 +21,9 @@ import { GMQ, State } from '../reducers';
 import Footer from '../Footer';
 import EntryForm from '../Entry/EntryForm';
 import SignUp from '../Entry/SignUp';
-import Login from '../Entry/Login';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User } from 'firebase/auth';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { OPERATIONS, OpKeys } from '../PDFOps/Operations';
+import { OpKeys } from '../PDFOps/Operations';
 import ReactGA from 'react-ga';
 import { NewUser } from '../actions';
 

@@ -52,7 +52,7 @@ const OAuth: React.FC<Props> = (props: Props) => {
           profilePic: user?.photoURL,
         }
       );
-
+      
       const ack = await sendUserInfo(newUser);
 
       if (ack.data) {
