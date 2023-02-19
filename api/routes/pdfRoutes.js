@@ -12,6 +12,8 @@ const {
 } = require("../controllers/fileController");
 
 const { addUsage } = require('../controllers/usageController');
+const { textExtract } = require('../controllers/ocrController');
+
 Router.use(uploadFiles);
 
 Router.post("/compress", compress);
@@ -20,6 +22,8 @@ Router.post("/merge", merge);
 Router.post("/word-to-pdf", uploadFiles, wordToPDF);
 Router.post("/rotate", rotate);
 Router.post("/deletePages", deletePages);
+Router.post("/ocr-text-extract", textExtract);
+
 
 // Router.use(addUsage);
 Router.use(scheduleDelete);
