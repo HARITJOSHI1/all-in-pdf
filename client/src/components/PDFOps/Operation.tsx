@@ -1,9 +1,9 @@
-import React, { ReactNode, useState, useEffect, useMemo } from 'react';
+import React, {useState, useEffect} from 'react';
 import { GMQ, State } from '../reducers';
 import Drop from './Dropzone/Drop';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import { PDFOperations, OPERATIONS, OpKeys } from './Operations';
+import { PDFOperations, OPERATIONS } from './Operations';
 import { Grid, Icon, Stack, Typography } from '@mui/material';
 import StarRatings from 'react-star-ratings';
 

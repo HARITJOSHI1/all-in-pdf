@@ -20,7 +20,8 @@ export type OpKeys =
   | 'esign-pdf'
   | 'edit-pdf'
   | 'deletePages-pdf'
-  | 'rotate-pdf';
+  | 'rotate-pdf'
+  | 'ocr-pdf';
 // | 'encrypt-pdf';
 
 export type PDFOperations = Record<
@@ -274,6 +275,37 @@ export const OPERATIONS: PDFOperations = {
         icon: FiLoader,
         head: 'Wait for process',
         des: 'You just have to sit and relax and it will take a few seconds for our rotation tool to work its magic.',
+      },
+
+      {
+        icon: MdDownloadDone,
+        head: 'Work done',
+        des: "Yozwa!! Your pdf's are successfully merged which are perfect for uploading files to the web and through email.",
+      },
+    ],
+  },
+
+  'ocr-pdf': {
+    bgColor: '#8c5ae0',
+    bgDark: '#614394',
+    capacity: 1,
+    route: '/operation/doc/ocr-pdf',
+    border: '2px dashed #3b098f',
+    name: 'OCR PDF',
+    icon: Merge,
+    des: "OCR PDF's",
+
+    longDes: [
+      {
+        icon: AiOutlineFilePdf,
+        head: 'Add files',
+        des: "Just drag-and-drop your PDF file in the box above, wait for the process to complete and download your file. It's that simple.",
+      },
+
+      {
+        icon: FiLoader,
+        head: 'Wait for process',
+        des: 'You just have to sit and relax and it will take a few seconds for our OCR tool to work its magic.',
       },
 
       {

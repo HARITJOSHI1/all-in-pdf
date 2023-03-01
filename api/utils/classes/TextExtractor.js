@@ -18,7 +18,8 @@ module.exports = class TextExtractor extends DocSaver {
 
     async function _extract(file) {
       try {
-        await PDFNet.addResourceSearchPath(__dirname, '../../lib');
+
+        await PDFNet.addResourceSearchPath(path.resolve(__dirname, '../../lib/Lib'));
         const useIRIS = await PDFNet.OCRModule.isIRISModuleAvailable();
         
         if (!(await PDFNet.OCRModule.isModuleAvailable())) {
@@ -53,14 +54,14 @@ module.exports = class TextExtractor extends DocSaver {
 
         metadata.buffer = [...metadata.buffer, ...buff];
       } catch (err) {
+        console.log(err);
         throw new ServiceError(err);
       }
     }
 
     function setLanguage(useIRIS, opts) {
       if (useIRIS) opts.setOCREngine("iris");
-      else return;
-      // opts.addLang('eng');
+      opts.addLang('eng');
     }
 
     await Promise.all(tasks);

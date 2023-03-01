@@ -16,7 +16,7 @@ module.exports = class DocSaver {
   }
 
   constructor() {
-    this.fileName = `${crypto.randomBytes(32).toString('hex')}`;
+    this.fileName = `${crypto.randomBytes(32).toString('hex')}.zip`;
   }
 
   async toSave(metadata) {
@@ -70,8 +70,8 @@ module.exports = class DocSaver {
       path: 'Users',
       select: '_id',
     });
-    console.log('saved to database');
 
+    console.log('saved to database');
     this.docId = data;
   }
 };

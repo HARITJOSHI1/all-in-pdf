@@ -10,6 +10,7 @@ import pdf from './icons/pdf.png';
 import { PDFViewer } from '../WebViewer';
 import { connect } from 'react-redux';
 import * as H from 'history';
+import { TextExtractor } from './TextExtractor';
 
 interface MatchParams {
   name: keyof PDFOperations;
@@ -100,11 +101,13 @@ function SubOperation(props: Props) {
       </Stack>
     );
   };
-
+  
   const renderViewer = (file: File) => {
     switch (qParams.get('mode')) {
-      // @ts-ignore
+      
       case 'deletePages':
+        console.log("I in delete");
+        
         if (state?.allFiles.length)
           return (
             <DeletePages file={file}>
@@ -128,7 +131,12 @@ function SubOperation(props: Props) {
               }}
             </DeletePages>
           );
-      // eslint-disable-next-line no-fallthrough
+
+        else return;
+      // case 'extract': 
+      //   console.log("I am in extract");
+      //   return <TextExtractor />
+      
       default:
         return <div>Not Allowed</div>;
     }

@@ -1,8 +1,9 @@
 const catchAsync = require("../utils/catchAsync");
 const TextExtractor = require("../utils/classes/TextExtractor");
+const Response = require("../utils/Response");
 
-exports.textExtract = catchAsync(async (req, res) => {
-  console.log("Text Extraction started...");  
+exports.textExtract = catchAsync(async (req, res, next) => {
+  console.log("Text Extraction started...");
   const pdf = req.files[0];
   const results = await TextExtractor.extract(pdf);
 
@@ -13,6 +14,9 @@ exports.textExtract = catchAsync(async (req, res) => {
       ` fn textExtract(),  ${__dirname}`
     );
 
-  else console.log("here are the results: ", results);
-  res.send();
+  console.log(results);  
+  req.filename = results.fileName;
+  req.msg = "OCR applied on the pdf";
+  req.document = results;    
+  next();
 });
