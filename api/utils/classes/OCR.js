@@ -79,8 +79,8 @@ module.exports = class OCR extends DocSaver {
 
       // 1. Parse CSV file
       const lngCode = await parserCSV(lang, csvFilePath);
-
-      // 2. move traineddata file to ../lib/Lib folder
+      
+      // 2. copy traineddata file to ../lib/Lib folder
       const oldPath = path.resolve(
         __dirname,
         `../../trainedLanguageData/${lngCode}.traineddata`
@@ -91,7 +91,7 @@ module.exports = class OCR extends DocSaver {
         `../../lib/Lib/${lngCode}.traineddata`
       );
 
-      fs.rename(oldPath, newPath, (err) => {
+      fs.copyFile(oldPath, newPath, (err) => {
         if (err) throw new ServiceError(err);
       });
       opts.addLang(lngCode);
