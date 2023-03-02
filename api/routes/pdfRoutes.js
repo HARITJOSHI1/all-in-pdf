@@ -22,8 +22,8 @@ Router.post("/merge", merge);
 Router.post("/word-to-pdf", uploadFiles, wordToPDF);
 Router.post("/rotate", rotate);
 Router.post("/deletePages", deletePages);
-Router.post("/ocr-pdf", langDetect, textExtract);
-
+Router.post("/ocr-pdf", textExtract);
+Router.post("/lang_detect-pdf", langDetect);
 
 // Router.use(addUsage);
 Router.use(scheduleDelete);

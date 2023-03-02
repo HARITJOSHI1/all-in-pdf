@@ -37,6 +37,5 @@ exports.scheduleDelete = catchAsync(async (req, res, next) => {
       // await client.del("userId");
     });
   }
-
   new Response(res, 200, "success", req.msg, req.filename);
 });

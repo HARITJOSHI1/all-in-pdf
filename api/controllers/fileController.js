@@ -8,7 +8,7 @@ const DeletePages = require("../utils/classes/DeletePages");
 const catchAsync = require("../utils/catchAsync");
 const Encryption = require("../utils/classes/Security");
 const AppError = require("../utils/classes/AppError");
-const Cookies = require("../utils/classes/Cookies");
+const {addDocInfoCookie} = require("../utils/addDocToCookie");
 
 const multerStorage = multer.memoryStorage();
 const multerFilter = (req, file, cb) => {
@@ -18,9 +18,6 @@ const multerFilter = (req, file, cb) => {
 const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 
 exports.uploadFiles = upload.array("files", 10);
-
-const addDocInfoCookie = (res, doc) =>
-  new Cookies().sendCookie(res, "docData", [{ name: doc }]);
 
 exports.compress = catchAsync(async (req, res, next) => {
   console.log("File compression started......");
