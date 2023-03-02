@@ -1,3 +1,4 @@
+const path = require('path');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const server = require('./app');
@@ -12,7 +13,7 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
 });
 
-dotenv.config({path: './config.env'});
+dotenv.config({path: path.resolve(__dirname, "./config.env")});
 const PORT = process.env.PORT || 5000;
 
 const DB_PASS = process.env.DB_PASSWORD;

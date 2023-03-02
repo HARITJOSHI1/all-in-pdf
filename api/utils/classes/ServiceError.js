@@ -30,6 +30,7 @@ module.exports = class ServiceError extends Error {
   };
 
   handleDuplicateErrorDB = (error) => {
+    console.log(error.message);
     (this.message = `${Object.keys(error.keyValue)[0]} field is duplicate`),
       (this.statusCode = 409);
   };

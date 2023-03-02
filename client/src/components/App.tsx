@@ -29,6 +29,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { useProtectRefresh } from './hooks/protectRefresh';
 import SelectPlan from './Payment/SelectPlan';
+import ShowAllToolsPage from './AllTools/ShowAllToolsPage';
 
 axios.defaults.baseURL = 'http://localhost:5000';
 
@@ -156,6 +157,7 @@ const App: React.FC<Props> = (props) => {
 
             <Layout>
               <Route path="/" exact component={HomePage} />
+              <Route path="/all-tools" exact component={ShowAllToolsPage} />
               <Route path="/tools" exact component={Tools} />
               <Route path="/operation/:name" exact component={Operation} />
               <Route

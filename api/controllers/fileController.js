@@ -15,8 +15,8 @@ const multerFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname);
   if (ext.matchAll(/^.*\.(|doc|docx|pdf|ppt|pptx)$/g)) cb(null, file)
 };
-
 const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
+
 exports.uploadFiles = upload.array("files", 10);
 
 const addDocInfoCookie = (res, doc) =>

@@ -10,6 +10,7 @@ import {
 import { GMQ } from "../reducers";
 import Tools from "../tools/Tools";
 import { OPERATIONS, OpKeys } from "../PDFOps/Operations";
+import { Link } from "react-router-dom";
 
 interface Props {
   breakpoint: GMQ;
@@ -62,19 +63,23 @@ export default function Section2(props: Props) {
               justifyContent="center"
               sx={{ width: "100%" }}
             >
-              <Button
-                variant="contained"
-                sx={{
-                  bgcolor: "#0055FF",
-                  textTransform: "none",
-                  p: ".5rem 2rem",
-                  "&:hover": {
-                    bgcolor: darken("#0055FF", 0.2),
-                  },
-                }}
-              >
-                <Typography style={{ fontWeight: "700" }}>See more </Typography>
-              </Button>
+              <Link to="/all-tools" style={{textDecoration: "none"}}>
+                <Button
+                  variant="contained"
+                  sx={{
+                    bgcolor: "#0055FF",
+                    textTransform: "none",
+                    p: ".5rem 2rem",
+                    "&:hover": {
+                      bgcolor: darken("#0055FF", 0.2),
+                    },
+                  }}
+                >
+                  <Typography style={{ fontWeight: "700" }}>
+                    See more{" "}
+                  </Typography>
+                </Button>
+              </Link>
             </Stack>
           </Grid>
         </Grid>

@@ -12,7 +12,7 @@ const {
 } = require("../controllers/fileController");
 
 const { addUsage } = require('../controllers/usageController');
-const { textExtract } = require('../controllers/ocrController');
+const { textExtract, langDetect } = require('../controllers/ocrController');
 
 Router.use(uploadFiles);
 
@@ -22,7 +22,7 @@ Router.post("/merge", merge);
 Router.post("/word-to-pdf", uploadFiles, wordToPDF);
 Router.post("/rotate", rotate);
 Router.post("/deletePages", deletePages);
-Router.post("/ocr-text-extract", textExtract);
+Router.post("/ocr-pdf", langDetect, textExtract);
 
 
 // Router.use(addUsage);

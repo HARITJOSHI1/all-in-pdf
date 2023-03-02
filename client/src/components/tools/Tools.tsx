@@ -33,8 +33,8 @@ export default function Tools(props: Props) {
   return (
     <>
       {Object.keys(OPERATIONS).map((t: OpKeys | string, idx: number) => {
-        if (idx === props.count) return null;
-        else if (idx < 6) {
+        if (idx > props.count - 1) return null;
+        else{
           const key = t as OpKeys;
           const obj = OPERATIONS[key];
 
