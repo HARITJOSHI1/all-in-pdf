@@ -289,6 +289,7 @@ export const OPERATIONS: PDFOperations = {
     bgColor: '#8c5ae0',
     bgDark: '#614394',
     capacity: 1,
+    route: '/operation/doc/ocr-pdf',
     border: '2px dashed #3b098f',
     name: 'OCR PDF',
     icon: Merge,

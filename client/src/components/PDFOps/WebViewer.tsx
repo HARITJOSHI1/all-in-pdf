@@ -54,7 +54,7 @@ export const PDFViewer: React.FC<Props> = (props: Props) => {
         WebViewer.unload(container);
       }
     };
-  }, [props.doc.name]);
+  }, [props.doc?.name]);
 
   return (
     <>

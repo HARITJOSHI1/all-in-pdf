@@ -1,7 +1,6 @@
-import { UserData, FormDataUser, NewUser } from './../actions/index';
+import { UserData, FormDataUser, NewUser, AddMediaQ } from './../actions/index';
 import { combineReducers } from "redux";
 import * as Types from "../actions/types";
-import { AdddMediaQ } from "../actions";
 // eslint-disable-next-line import/no-anonymous-default-export
 
 export interface GMQ {
@@ -24,7 +23,7 @@ const globalMedia: GMQ = {
 };
 
 
-const mediaQueryReducer = (state = {}, action: AdddMediaQ) => {
+const mediaQueryReducer = (state = {}, action: AddMediaQ) => {
   switch (action.type) {
     case Types.Query.mediaQuery:
       const mediaKey = Object.keys(action.payload)[0] as keyof GMQ;

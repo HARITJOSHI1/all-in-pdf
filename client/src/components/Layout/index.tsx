@@ -132,8 +132,7 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
   const [showLogin, setLogin] = useState<boolean>(false);
 
   useEffect(() => {
-    const unlisten = history.listen((location) => {
-      ReactGA.pageview(location.pathname + location.search);
+    const unlisten = history.listen(() => {
       window.scrollTo(0, 0);
       setAccord(false);
     });
@@ -149,7 +148,6 @@ const _Layout: React.FC<Props> = ({ children, breakpoint, user, history }) => {
   const value2: ShowModal = { showModal, setModal };
   const value3: ErrorContextState = { queue, setPopup };
   const value4: ShowLogin = { showLogin, setLogin };
-
 
   const mNavOpt: { name: string; link: OpKeys }[] = [
     { name: 'Compress', link: 'compress-pdf' },

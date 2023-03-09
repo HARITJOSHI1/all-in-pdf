@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import {
   addGlobalMediaQ,
-  AdddMediaQ,
+  AddMediaQ,
   addGlobalUser,
   UserData,
   NewUser,
@@ -38,7 +38,7 @@ const stripePromise = loadStripe(
 );
 
 interface Props {
-  addGlobalMediaQ: (q: Record<keyof GMQ, boolean>) => AdddMediaQ;
+  addGlobalMediaQ: (q: Record<keyof GMQ, boolean>) => AddMediaQ;
   addGlobalUser: (user: NewUser) => UserData;
   user: NewUser;
 }

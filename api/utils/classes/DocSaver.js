@@ -16,7 +16,7 @@ module.exports = class DocSaver {
   }
 
   constructor() {
-    this.fileName = `${crypto.randomBytes(32).toString('hex')}.zip`;
+    this.fileName = `${crypto.randomBytes(32).toString('hex')}`;
   }
 
   async toSave(metadata) {

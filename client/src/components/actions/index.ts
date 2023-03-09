@@ -1,7 +1,7 @@
 import * as Types from './types';
 import { GMQ } from '../reducers';
 
-export interface AdddMediaQ {
+export interface AddMediaQ {
   type: Types.Query.mediaQuery;
   payload: Record<keyof GMQ, boolean>;
 }
@@ -34,7 +34,7 @@ export interface NewUser {
   message?: string;
 }
 
-export const addGlobalMediaQ = (q: Record<keyof GMQ, boolean>): AdddMediaQ => {
+export const addGlobalMediaQ = (q: Record<keyof GMQ, boolean>): AddMediaQ => {
   return {
     type: Types.Query.mediaQuery,
     payload: q,
