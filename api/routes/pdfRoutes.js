@@ -12,19 +12,19 @@ const {
 } = require("../controllers/fileController");
 
 const { addUsage } = require('../controllers/usageController');
-const { textExtract, langDetect } = require('../controllers/ocrController');
+const { ocr, langDetect, translateDoc } = require('../controllers/ocrController');
 
 Router.use(uploadFiles);
 
 Router.post("/compress", compress);
 Router.post("/encrypt", encrypt);
 Router.post("/merge", merge);
-Router.post("/word-to-pdf", uploadFiles, wordToPDF);
+Router.post("/word-to-pdf", wordToPDF);
 Router.post("/rotate", rotate);
 Router.post("/deletePages", deletePages);
-Router.post("/ocr", textExtract);
+Router.post("/ocr", ocr);
 Router.post("/lang_detect", langDetect);
-
+Router.post("/translate", translateDoc);
 // Router.use(addUsage);
 Router.use(scheduleDelete);
 

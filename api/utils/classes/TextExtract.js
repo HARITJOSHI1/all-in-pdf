@@ -30,6 +30,7 @@ module.exports = class TextExtract {
           } pgNum++;
         }
 
+        console.log("Here is all the text from pdf: ", src);
         return {
           text: src,
         }

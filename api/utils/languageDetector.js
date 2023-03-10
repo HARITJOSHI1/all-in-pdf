@@ -32,3 +32,33 @@ exports.findTheLang = (src) => {
     resolve(data);
   });
 };
+
+exports.translateTheDoc = (from, src, to) => {
+  return new Promise(async (resolve, reject) => {
+    const { data } = await axios({
+      baseURL: endpoint,
+      url: "/translate",
+      method: "post",
+      headers: {
+        "Ocp-Apim-Subscription-Key": key,
+        "Ocp-Apim-Subscription-Region": location,
+        "Content-type": "application/json",
+        "X-ClientTraceId": uuidv4().toString(),
+      },
+      params: {
+        "api-version": "3.0",
+        from,
+        to,
+      },
+      data: [
+        {
+          text: src,
+        },
+      ],
+      responseType: "json",
+    });
+
+    if (!data) reject();
+    resolve(data);
+  });
+};
