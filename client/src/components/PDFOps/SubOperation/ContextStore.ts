@@ -15,7 +15,7 @@ export type SubOpState = [LangSelectState];
 export const DataStore = createContext<SubOpState>([
   {
     data: {
-      type: SubTypes.LANG_SELECT,
+      type: SubTypes.DEFAULT,
       value: null,
     },
 

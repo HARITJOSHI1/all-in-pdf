@@ -33,6 +33,8 @@
     "@types/react-star-ratings": "^2.3.0",
     "@types/redux-form": "^8.3.5",
     "axios": "^0.27.2",
+    "browserlist": "^1.0.1",
+    "caniuse-lite": "^1.0.30001465",
     "card-validator": "^8.1.1",
     "dropbox": "^10.32.0",
     "firebase": "^9.8.1",
@@ -70,8 +72,8 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "move-static": "cp -R ./node_modules/pspdfkit/dist/pspdfkit-lib public/pspdfkit-lib",
-    "start": "react-scripts start && npm run move-static",
+    "move-static": "Copy-Item ./node_modules/pspdfkit/dist/pspdfkit-lib -Destination public/pspdfkit-lib -Recurse",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

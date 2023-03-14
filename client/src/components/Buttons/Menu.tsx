@@ -2,11 +2,11 @@ import React from "react";
 import { Stack, Button } from "@mui/material";
 import WidgetsOutlinedIcon from "@mui/icons-material/WidgetsOutlined";
 import { Link } from "react-router-dom";
-import {OpKeys} from "../PDFOps/Operations";
+import { OpKeys } from "../PDFOps/Operations";
 
 interface Props {
   breakpoint: boolean[];
-  navOpts: { name: string; link: OpKeys}[];
+  navOpts: { name: string; link: OpKeys }[];
 }
 
 const MenuBtn: React.FC<Props> = ({ breakpoint, navOpts }) => {
@@ -23,22 +23,24 @@ const MenuBtn: React.FC<Props> = ({ breakpoint, navOpts }) => {
         },
       ]}
     >
-      <Button
-        aria-label="tools"
-        size="medium"
-        sx={{ textTransform: "none" }}
-        startIcon={
-          <WidgetsOutlinedIcon
-            sx={{
-              fontWeight: "200",
-              fontSize: "1.2rem",
-              color: "black",
-            }}
-          />
-        }
-      >
-        Tools
-      </Button>
+      <Link to="/all-tools" style={{ textDecoration: "none" }}>
+        <Button
+          aria-label="tools"
+          size="medium"
+          sx={{ textTransform: "none" }}
+          startIcon={
+            <WidgetsOutlinedIcon
+              sx={{
+                fontWeight: "200",
+                fontSize: "1.2rem",
+                color: "black",
+              }}
+            />
+          }
+        >
+          Tools
+        </Button>
+      </Link>
 
       <Stack
         spacing={5}
@@ -51,7 +53,11 @@ const MenuBtn: React.FC<Props> = ({ breakpoint, navOpts }) => {
       >
         {navOpts.map((opt, idx: number) => {
           return (
-            <Link key={idx} to={`/operation/${opt.link}`} style={{ textDecoration: "none" }}>
+            <Link
+              key={idx}
+              to={`/operation/${opt.link}`}
+              style={{ textDecoration: "none" }}
+            >
               <Button
                 disableRipple
                 size="small"

@@ -38,7 +38,7 @@ const ShowAllToolsPage: React.FC<Props> = (props) => {
 
         <Grid item xs={12} sm={10} md={9} lg={7}>
           <Grid container spacing={4}>
-            <Tools breakpoint={props.breakpoint} count={9} />
+            <Tools breakpoint={props.breakpoint} />
           </Grid>
         </Grid>
       </Grid>

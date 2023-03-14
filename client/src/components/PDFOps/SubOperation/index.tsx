@@ -13,6 +13,7 @@ import { LangSelector } from "./LangSelector";
 import { RenderDocIcons } from "./RenderIcons";
 import { DataStore, LangStateData, SubOpState } from "./ContextStore";
 import * as Types from "./subTypes/types";
+import PDFTranslator from "./PDFTranslator";
 
 interface MatchParams {
   name: keyof PDFOperations;
@@ -33,8 +34,8 @@ function SubOperation(props: Props) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const state = location.state;
   const allFiles = state.allFiles;
-  const [data, setData] = useState<LangStateData>({
-    type: Types.SubTypes.LANG_SELECT,
+  const [langSelect, setLangSelectData] = useState<LangStateData>({
+    type: Types.SubTypes.DEFAULT,
     value: null,
   });
 
@@ -79,7 +80,12 @@ function SubOperation(props: Props) {
           );
         else return;
       case "ocr":
+        setLangSelectData({ type: Types.SubTypes.LANG_SELECT, value: null });
         return <LangSelector />;
+
+      case "translate":
+        return <PDFTranslator />;
+
       default:
         return <div>Not Allowed</div>;
     }
@@ -107,8 +113,8 @@ function SubOperation(props: Props) {
 
   const Store: SubOpState = [
     {
-      data,
-      setData,
+      data: langSelect,
+      setData: setLangSelectData,
     },
   ];
 

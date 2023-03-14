@@ -25,7 +25,7 @@ interface Tool {
 
 interface Props {
   breakpoint: GMQ;
-  count: number;
+  count?: number;
 }
 
 export default function Tools(props: Props) {
@@ -33,7 +33,7 @@ export default function Tools(props: Props) {
   return (
     <>
       {Object.keys(OPERATIONS).map((t: OpKeys | string, idx: number) => {
-        if (idx > props.count - 1) return null;
+        if (props.count && idx > props.count - 1) return null;
         else{
           const key = t as OpKeys;
           const obj = OPERATIONS[key];

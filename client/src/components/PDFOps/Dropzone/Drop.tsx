@@ -99,11 +99,10 @@ export default function Drop(props: Props) {
       (files.length || remoteFiles.length)
     ) {
       if (remoteFiles.length) setAllFiles([...allFiles, ...remoteFiles]);
-      else {
-        setAllFiles([...allFiles, ...files]);
-        if (param.includes("ocr")) setBtntxt("Select language");
-        else setBtntxt("Upload");
-      }
+      else setAllFiles([...allFiles, ...files]);
+      if (param.includes("ocr")) setBtntxt("Select language");
+      else if (param.includes("translate")) setBtntxt("Next");
+      else setBtntxt("Upload");
     }
 
     setAcceptedFiles([]);
