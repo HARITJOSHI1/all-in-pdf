@@ -80,11 +80,14 @@ function SubOperation(props: Props) {
           );
         else return;
       case "ocr":
-        setLangSelectData({ type: Types.SubTypes.LANG_SELECT, value: null });
+        if (langSelect.type === Types.SubTypes.DEFAULT)
+          setLangSelectData({ type: Types.SubTypes.LANG_SELECT, value: null });
         return <LangSelector />;
 
       case "translate":
-        return <PDFTranslator />;
+        return (
+          <PDFTranslator file={allFiles[0]!} breakpoints={props.breakpoint} />
+        );
 
       default:
         return <div>Not Allowed</div>;

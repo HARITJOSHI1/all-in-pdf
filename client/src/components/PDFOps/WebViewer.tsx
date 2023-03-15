@@ -1,16 +1,16 @@
-import React, { Component, useEffect, useRef } from 'react';
-import WebViewer, { Instance } from 'pspdfkit';
-import { useQuery } from '../hooks/useQuery';
+import React, { useEffect, useRef } from "react";
+import WebViewer, { Instance } from "pspdfkit";
+import { useQuery } from "../hooks/useQuery";
 
-interface Props {
+interface ViewerProps {
   doc: File;
   width: string;
   height: string;
-  removeItemsFromViewer: (instance: Instance) => void;
-  customizeThumbnails: (containerNode: Node) => void;
+  removeItemsFromViewer?: (instance: Instance) => void;
+  customizeThumbnails?: (containerNode: Node) => void;
 }
 
-export const PDFViewer: React.FC<Props> = (props: Props) => {
+export const PDFViewer: React.FC<ViewerProps> = (props) => {
   const viewer = useRef<HTMLDivElement>(null);
   const qParams = useQuery();
 
@@ -29,12 +29,16 @@ export const PDFViewer: React.FC<Props> = (props: Props) => {
         customUI: {
           [WebViewer.UIElement.Sidebar]: {
             [WebViewer.SidebarMode.THUMBNAILS]({ containerNode }) {
-              if (qParams.get('mode') !== 'deletePages')
+              if (qParams.get("mode") !== "deletePages")
                 return { node: containerNode };
               return {
                 node: containerNode,
                 onRenderItem() {
-                  props.customizeThumbnails(containerNode);
+                  switch (qParams.get("mode")) {
+                    case "deletePages":
+                      props.customizeThumbnails!(containerNode);
+                      break;
+                  }
                 },
               };
             },
@@ -42,9 +46,13 @@ export const PDFViewer: React.FC<Props> = (props: Props) => {
         },
       });
 
-      switch (qParams.get('mode')) {
-        case 'deletePages':
-          props.removeItemsFromViewer(instance);
+      switch (qParams.get("mode")) {
+        case "deletePages":
+          props.removeItemsFromViewer!(instance);
+          break;
+
+        case "translate":
+          props.removeItemsFromViewer!(instance);
           break;
       }
     })();

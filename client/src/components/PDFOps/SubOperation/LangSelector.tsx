@@ -206,17 +206,17 @@ const generateLangGrid = (
             <Grid
               key={idx}
               item
-              xs={12}
-              sm={4}
-              md={4}
-              lg={3}
+              xs={12} // mobile
+              sm={4} // potrait
+              md={4} // tab landscape
+              lg={3} // desktop
               data-id={start + idx}
             >
               <Stack
                 justifyContent="center"
                 alignItems="center"
                 sx={{
-                  p: "3rem",
+                  p: "2.5rem", // p -> padding
                   backgroundColor: eleSelected === idx ? "#a6cef5" : "#dae9f7",
                   borderRadius: "5px",
                   cursor: "pointer",
@@ -245,7 +245,21 @@ const generateLangGrid = (
   );
 };
 
-export const LangSelector: React.FC = () => {
+interface Props {
+  width?: string;
+  itemPadding?: string;
+  borderRadius?: string;
+  fontSize?: string;
+  rows?: number;
+  cols?: number;
+}
+
+
+const divider = (rows: number, cols: number, total = 184) => {
+  // return {totalPages, incrementer};
+};
+
+export const LangSelector: React.FC<Props> = (props) => {
   const state = useContext(DataStore).find(
     (store) => store.data.type === SubTypes.LANG_SELECT
   )!;
@@ -271,7 +285,7 @@ export const LangSelector: React.FC = () => {
   }, [selectedLang]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
     setSelectedLang(-1);
   }, [page]);
 
@@ -280,25 +294,30 @@ export const LangSelector: React.FC = () => {
       <Typography variant="h2" sx={{ fontSize: "2rem" }}>
         Select the language of your pdf file
       </Typography>
+
+      {/* ----------------------------------------------------------------------- */}
       <div style={{ width: "80%" }}>
         {generateLangGrid(LANGUAGES, start, 21, ref, selectedLang)}
       </div>
+      {/* ----------------------------------------------------------------------- */}
 
       <Stack direction="row" spacing={2}>
+        {/* Paginate logic */}
         <Button
           onClick={() => {
-            if (page >= 9) return;
-            setStart(start + 21);
+            if (page >= 10) return;
+            setStart(start + 20);
             setPage(page + 1);
           }}
           variant="outlined"
           sx={{ p: "1rem 2rem", textDecoration: "none", textTransform: "none" }}
-        >{`Page ${page}/9 >>`}</Button>
+        >{`Page ${page}/10 >>`}</Button>
 
+        {/* Back Paginate logic */}
         {start > 0 && (
           <Button
             onClick={() => {
-              setStart(start - 21);
+              setStart(start - 20);
               setPage(page - 1);
             }}
             variant="outlined"
