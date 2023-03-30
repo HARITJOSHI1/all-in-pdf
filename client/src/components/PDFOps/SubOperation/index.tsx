@@ -85,6 +85,8 @@ function SubOperation(props: Props) {
         return <LangSelector />;
 
       case "translate":
+        if (langSelect.type === Types.SubTypes.DEFAULT)
+          setLangSelectData({ type: Types.SubTypes.LANG_SELECT, value: null });
         return (
           <PDFTranslator file={allFiles[0]!} breakpoints={props.breakpoint} />
         );

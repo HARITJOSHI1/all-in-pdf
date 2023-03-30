@@ -6,6 +6,7 @@ import axios from "axios";
 import languages from "./languages";
 import { GMQ } from "../../reducers";
 import TranslateIcon from "@mui/icons-material/Translate";
+import { LangSelector } from "./LangSelector";
 
 interface Props {
   file: File;
@@ -135,7 +136,7 @@ export default class PDFTranslator extends Component<Props, State> {
                 <span>{!lang_detected ? "Detecting..." : lang_detected}</span>
               </Stack>
 
-              <Box sx={{ width: "100%" }}>
+              <Box >
                 <PDFViewer
                   doc={this.props.file!}
                   width="100%"
@@ -148,7 +149,7 @@ export default class PDFTranslator extends Component<Props, State> {
 
           <Grid item xs={12} sm={12} md={6} lg={6}>
             <Stack sx={{ bgcolor: "#95d4f0", height: "100%" }}>
-              Lang Selector
+              <LangSelector />
             </Stack>
           </Grid>
         </Grid>

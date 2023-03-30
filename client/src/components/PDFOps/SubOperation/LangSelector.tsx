@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Grid, Stack, Typography, Button } from "@mui/material";
+import { Grid, Stack, Typography, Button, Box } from "@mui/material";
 import { DataStore } from "./ContextStore";
 import { SubTypes } from "./subTypes/types";
 
@@ -290,7 +290,7 @@ export const LangSelector: React.FC<Props> = (props) => {
   }, [page]);
 
   return (
-    <>
+    <Box width= {props.width}>
       <Typography variant="h2" sx={{ fontSize: "2rem" }}>
         Select the language of your pdf file
       </Typography>
@@ -331,6 +331,6 @@ export const LangSelector: React.FC<Props> = (props) => {
           </Button>
         )}
       </Stack>
-    </>
+    </Box>
   );
 };
