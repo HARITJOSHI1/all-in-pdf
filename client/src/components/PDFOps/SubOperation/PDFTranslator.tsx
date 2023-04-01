@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Box, Grid, Icon, Stack } from "@mui/material";
+import { Box, Grid, Icon, Stack, List } from "@mui/material";
 import WebViewer, { Instance } from "pspdfkit";
 import { PDFViewer } from "../WebViewer";
 import axios from "axios";
@@ -35,7 +35,7 @@ interface Detection {
   isTransliterationSupported: boolean;
 }
 
-interface QueryResponse extends APIResponse {}
+interface QueryResponse extends APIResponse { }
 
 export default class PDFTranslator extends Component<Props, State> {
   state: State = {
@@ -112,7 +112,7 @@ export default class PDFTranslator extends Component<Props, State> {
     return (
       <section style={{ width: "97%" }}>
         <Grid container spacing={8}>
-          <Grid item xs={12} sm={12} md={6} lg={6}>
+          <Grid item xs={12} sm={12} md={12} lg={6}>
             <Stack direction="column" spacing={2}>
               <Stack
                 alignItems="center"
@@ -147,9 +147,11 @@ export default class PDFTranslator extends Component<Props, State> {
             </Stack>
           </Grid>
 
-          <Grid item xs={12} sm={12} md={6} lg={6}>
-            <Stack sx={{ bgcolor: "#95d4f0", height: "100%" }}>
-              <LangSelector />
+          <Grid item xs={12} sm={12} md={12} lg={6}>
+            <Stack>
+              <List sx= {{height: "35rem", overflowY: "scroll", width: "100%"}}>
+                <LangSelector containerWidth="100%" fontSize="1.2rem" itemPadding=".6rem" borderRadius="45px" />
+              </List>
             </Stack>
           </Grid>
         </Grid>

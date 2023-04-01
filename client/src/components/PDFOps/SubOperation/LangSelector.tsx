@@ -23,13 +23,13 @@ const LANGUAGES = [
   "Basque",
   "Belarusian",
   "Bengali",
-  "Bihari languages",
+  "Bihari",
   "Bislama",
   "Bosnian",
   "Breton",
   "Bulgarian",
   "Burmese",
-  "Catalan, Valencian",
+  "Catalan",
   "Central Khmer",
   "Chamorro",
   "Chechen",
@@ -61,7 +61,7 @@ const LANGUAGES = [
   "Georgian",
   "German",
   "Gikuyu",
-  "Greek (Modern)",
+  "Greek",
   "Greenlandic",
   "Guarani",
   "Gujarati",
@@ -76,7 +76,7 @@ const LANGUAGES = [
   "Ido",
   "Igbo",
   "Indonesian",
-  "Interlingua (International Auxiliary Language Association)",
+  "Interlingua",
   "Interlingue",
   "Inuktitut",
   "Inupiaq",
@@ -146,7 +146,7 @@ const LANGUAGES = [
   "Serbian",
   "Shona",
   "Sindhi",
-  "Sinhala, Sinhalese",
+  "Sinhalese",
   "Slovak",
   "Slovenian",
   "Somali",
@@ -172,7 +172,7 @@ const LANGUAGES = [
   "Turkish",
   "Turkmen",
   "Twi",
-  "Uighur, Uyghur",
+  "Uighur",
   "Ukrainian",
   "Urdu",
   "Uzbek",
@@ -195,8 +195,11 @@ const generateLangGrid = (
   start: number,
   end: number,
   ref: React.RefObject<HTMLDivElement>,
-  eleSelected: number
+  eleSelected: number,
+  labelStyle: Props
 ) => {
+
+  const { width, borderRadius, itemPadding } = labelStyle;
   return (
     <Grid container spacing={3} ref={ref}>
       {lang.slice(start).map((l, idx) => {
@@ -216,11 +219,12 @@ const generateLangGrid = (
                 justifyContent="center"
                 alignItems="center"
                 sx={{
-                  p: "2.5rem", // p -> padding
+                  p: itemPadding? itemPadding : "1.1rem", // p -> padding
                   backgroundColor: eleSelected === idx ? "#a6cef5" : "#dae9f7",
-                  borderRadius: "5px",
+                  borderRadius: borderRadius ? borderRadius : "12px",
                   cursor: "pointer",
                   transition: "all .5s",
+                  width: width? width : "100%",
 
                   "&:hover": {
                     backgroundColor: "#a6cef5",
@@ -230,8 +234,8 @@ const generateLangGrid = (
                 <Typography
                   sx={{
                     color: "#1d77cc",
-                    fontSize: "1.2rem",
-                    fontWeight: "700",
+                    fontSize: "1rem",
+                    fontWeight: "650",
                   }}
                 >
                   {l}
@@ -246,6 +250,7 @@ const generateLangGrid = (
 };
 
 interface Props {
+  containerWidth?: string;
   width?: string;
   itemPadding?: string;
   borderRadius?: string;
@@ -269,6 +274,8 @@ export const LangSelector: React.FC<Props> = (props) => {
   const [selectedLang, setSelectedLang] = useState<number>(-1);
   const ref = useRef<HTMLDivElement>(null);
 
+  const { containerWidth, width, itemPadding, borderRadius, fontSize, rows, cols } = props;
+
   useEffect(() => {
     Array.from(ref.current?.children!).forEach((node, idx) =>
       node.firstChild?.addEventListener("click", () => {
@@ -290,14 +297,14 @@ export const LangSelector: React.FC<Props> = (props) => {
   }, [page]);
 
   return (
-    <Box width= {props.width}>
-      <Typography variant="h2" sx={{ fontSize: "2rem" }}>
+    <Stack direction="column" alignItems="center" spacing= "2rem">
+      <Typography variant="h2" sx={{ fontSize: fontSize ? fontSize : "2rem" }}>
         Select the language of your pdf file
       </Typography>
 
       {/* ----------------------------------------------------------------------- */}
-      <div style={{ width: "80%" }}>
-        {generateLangGrid(LANGUAGES, start, 21, ref, selectedLang)}
+      <div style={{ width: containerWidth ? containerWidth : "80%" }}>
+        {generateLangGrid(LANGUAGES, start, 41, ref, selectedLang, { width, borderRadius, itemPadding })}
       </div>
       {/* ----------------------------------------------------------------------- */}
 
@@ -331,6 +338,6 @@ export const LangSelector: React.FC<Props> = (props) => {
           </Button>
         )}
       </Stack>
-    </Box>
+    </Stack>
   );
 };
