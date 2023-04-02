@@ -9,11 +9,11 @@ import { Button, Grid, Icon, Stack, Typography, darken } from "@mui/material";
 import { PDFViewer } from "../WebViewer";
 import { connect } from "react-redux";
 import * as H from "history";
-import { LangSelector } from "./LangSelector";
 import { RenderDocIcons } from "./RenderIcons";
 import { DataStore, LangStateData, SubOpState } from "./ContextStore";
 import * as Types from "./subTypes/types";
-import PDFTranslator from "./PDFTranslator";
+import { PDFTranslator } from "./Translator/PDFTranslator";
+import OCR from "./OCR";
 
 interface MatchParams {
   name: keyof PDFOperations;
@@ -82,7 +82,7 @@ function SubOperation(props: Props) {
       case "ocr":
         if (langSelect.type === Types.SubTypes.DEFAULT)
           setLangSelectData({ type: Types.SubTypes.LANG_SELECT, value: null });
-        return <LangSelector />;
+        return <OCR history= {props.history} allFiles={allFiles} />;
 
       case "translate":
         if (langSelect.type === Types.SubTypes.DEFAULT)
@@ -94,26 +94,6 @@ function SubOperation(props: Props) {
       default:
         return <div>Not Allowed</div>;
     }
-  };
-
-  const processTheData = (contextState: SubOpState) => {
-    contextState.forEach((store) => {
-      switch (store.data.type) {
-        case Types.SubTypes.LANG_SELECT:
-          props.history.push({
-            pathname: `/operation/ocr-pdf`,
-            state: {
-              allFiles,
-              dataFrmRoute: JSON.stringify(store),
-              forwarded: true,
-            },
-          });
-          break;
-
-        default:
-          break;
-      }
-    });
   };
 
   const Store: SubOpState = [
@@ -132,27 +112,6 @@ function SubOperation(props: Props) {
         sx={{ pt: "3rem" }}
       >
         <DataStore.Provider value={Store}>{renderViewer()}</DataStore.Provider>
-        <Stack direction="row" justifyContent="center">
-          <Button
-            onClick={processTheData.bind(null, Store)}
-            variant="contained"
-            size="large"
-            sx={{
-              p: ".4rem 6rem",
-              mt: "-2rem",
-              backgroundColor: "#0055FF",
-              textTransform: "none",
-              fontSize: "1.2rem",
-              fontWeight: "700",
-
-              "&:hover": {
-                backgroundColor: darken("#0055FF", 0.2),
-              },
-            }}
-          >
-            Done
-          </Button>
-        </Stack>
       </Stack>
     </section>
   );

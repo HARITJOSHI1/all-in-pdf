@@ -8,7 +8,6 @@ const Response = require('../utils/Response');
 
 exports.shareMediaByEmail = catchAsync(async (req, res, next) => {
   const { docData } = req;
-  // const doc = await Document.findById(docId);
 
   if (!docData.length)
     throw new AppError(

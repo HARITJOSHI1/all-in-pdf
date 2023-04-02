@@ -63,15 +63,12 @@ export default function Drop(props: Props) {
 
   useEffect(() => {
     if (routeState?.dataFrmRoute) {
-      const frmRoute = JSON.parse(
-        routeState.dataFrmRoute
-      ) as ReturnInTupleType<SubOpState>;
-
-      switch (frmRoute.data?.type) {
+      const data = JSON.parse(routeState.dataFrmRoute);
+      switch (data.type) {
         case Types.SubTypes.LANG_SELECT:
           setAllFiles(routeState.allFiles);
           setBtntxt("Upload");
-          setQueryParams({ lang: frmRoute.data.value! });
+          setQueryParams({ lang: data.value });
           break;
       }
     }
