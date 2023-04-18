@@ -82,13 +82,27 @@ function SubOperation(props: Props) {
       case "ocr":
         if (langSelect.type === Types.SubTypes.DEFAULT)
           setLangSelectData({ type: Types.SubTypes.LANG_SELECT, value: null });
-        return <OCR history= {props.history} allFiles={allFiles} />;
+        return <OCR history={props.history} allFiles={allFiles} />;
 
       case "translate":
         if (langSelect.type === Types.SubTypes.DEFAULT)
           setLangSelectData({ type: Types.SubTypes.LANG_SELECT, value: null });
         return (
           <PDFTranslator file={allFiles[0]!} breakpoints={props.breakpoint} />
+        );
+
+      case "edit":
+        return (
+          <Grid container sx={{ width: "100%" }}>
+            <RenderDocIcons
+              breakpoints={props.breakpoint}
+              state={state}
+              setSelectedFile={setSelectedFile}
+            />
+            {selectedFile && (
+              <PDFViewer doc={selectedFile!} width="100%" height="100vh" />
+            )}
+          </Grid>
         );
 
       default:

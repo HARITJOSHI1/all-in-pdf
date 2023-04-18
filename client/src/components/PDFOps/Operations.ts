@@ -38,6 +38,7 @@ export type PDFOperations = Record<
     icon: string;
     des: string;
     route?: string;
+    popUp?: boolean;
     capacity: 1 | "all";
     longDes: {
       icon: IconType;
@@ -171,9 +172,10 @@ export const OPERATIONS: PDFOperations = {
   "edit-pdf": {
     bgColor: "#f72828",
     bgDark: "#B92525",
-    capacity: "all",
+    capacity: 'all',
     border: "2px dashed #660303",
     name: "Edit PDF",
+    route: "/operation/doc/edit-pdf",
     icon: Edit,
     des: "Add shapes, text and images to your PDF's",
 
@@ -262,6 +264,7 @@ export const OPERATIONS: PDFOperations = {
   "rotate-pdf": {
     bgColor: "#8c5ae0",
     bgDark: "#614394",
+    popUp: true,
     capacity: 1,
     border: "2px dashed #3b098f",
     name: "Rotate PDF",

@@ -9,7 +9,8 @@ interface BaseProps {
   text: string;
   bg?: string;
   width: string;
-  disable?: boolean
+  disable?: boolean,
+  fontSize?: string
 }
 
 type TaskProps<T> = {
@@ -21,7 +22,8 @@ export const TaskButton: <T>(p: TaskProps<T>) => React.ReactElement = ({
   bg,
   text,
   width,
-  disable
+  disable,
+  fontSize
 }) => {
   return (
     <Button
@@ -35,7 +37,7 @@ export const TaskButton: <T>(p: TaskProps<T>) => React.ReactElement = ({
         mt: "-2rem",
         backgroundColor: "#0055FF",
         textTransform: "none",
-        fontSize: "1.2rem",
+        fontSize: fontSize || "1.2rem",
         fontWeight: "700",
 
         "&:hover": {

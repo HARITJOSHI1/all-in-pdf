@@ -11,11 +11,11 @@ import { AiOutlineFileAdd } from "react-icons/ai";
 import { OPERATIONS, OpKeys, PDFOperations } from "../Operations";
 import { FileContextStore } from "../Operation";
 import * as H from "history";
-import { SubOpState } from "../SubOperation/ContextStore";
 import { useLocation } from "react-router-dom";
 import * as Types from "../SubOperation/subTypes/types";
+import { Context } from "../../Layout";
+import { OrientationSelector } from "../SubOperation/OrientationSelector";
 
-type ReturnInTupleType<T> = T extends Array<infer E> ? E : any;
 
 interface Props {
   breakpoint: GMQ;
@@ -61,6 +61,8 @@ export default function Drop(props: Props) {
   const [files, setAcceptedFiles] = useState<(File | null)[]>([]);
   const [queryParams, setQueryParams] = useState<{ [key: string]: string }>({});
 
+  const { setModal } = useContext(Context)[1];
+
   useEffect(() => {
     if (routeState?.dataFrmRoute) {
       const data = JSON.parse(routeState.dataFrmRoute);
@@ -97,8 +99,12 @@ export default function Drop(props: Props) {
     ) {
       if (remoteFiles.length) setAllFiles([...allFiles, ...remoteFiles]);
       else setAllFiles([...allFiles, ...files]);
+      
       if (param.includes("ocr")) setBtntxt("Select language");
-      else if (param.includes("translate")) setBtntxt("Next");
+      else if (param.includes("translate") || param.includes("rotate"))
+        setBtntxt("Next");
+      else if (param.includes("edit"))
+        setBtntxt("Edit file");
       else setBtntxt("Upload");
     }
 
@@ -111,6 +117,20 @@ export default function Drop(props: Props) {
   const uploadFiles = async (e?: React.MouseEvent, numFiles?: number) => {
     if (numFiles && e !== undefined) {
       e.stopPropagation();
+
+      if (operation.popUp === true) {
+        setModal({
+          show: true,
+          fn: () => (
+            <OrientationSelector
+              breakpoints={props.breakpoint}
+              numFiles={+allFiles.length}
+            />
+          ),
+        });
+
+        return;
+      }
 
       try {
         if (operation.route && !routeState?.forwarded) {
